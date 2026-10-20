@@ -1,8 +1,10 @@
 # VILLA NEST — Architecture · Interior · Smart Home
 
-Website cao cấp cho thương hiệu **VILLA NEST**. Trang chủ là một **bức toàn cảnh 3D điện ảnh, liền mạch**: ba không
-gian **SMART HOME — CONSTRUCTION — INTERIOR** nối tiếp nhau như những bức tường cong của một căn phòng tối — cuối ảnh
-này ăn khớp với đầu ảnh kia — và vẫn xoay để chuyển cảnh khi bấm, kéo hay vuốt.
+Website cao cấp cho thương hiệu **VILLA NEST** — *Design · Build · Live*. Trang chủ là một **bức toàn cảnh 3D điện
+ảnh, liền mạch**: bức tường với màn hình điều khiển trung tâm của hệ thống **Smart Home** → công trình đang
+**xây dựng** với giáo chống, ván khuôn → **nội thất** hoàn thiện, nối tiếp nhau như những bức tường cong của một căn
+phòng — cuối ảnh này ăn khớp với đầu ảnh kia — và xoay để chuyển cảnh khi bấm, kéo hay vuốt. Song ngữ Việt / Anh
+(mặc định tiếng Việt), có âm thanh nền bật/tắt và link riêng cho từng lĩnh vực.
 
 ![VILLA NEST — desktop](docs/screenshot-desktop.jpg)
 
@@ -14,14 +16,21 @@ này ăn khớp với đầu ảnh kia — và vẫn xoay để chuyển cảnh 
   mép phải tấm này luôn trùng khít mép trái tấm kia ở mọi khung hình, kể cả khi đang xoay. Hai ảnh kề nhau chồng lên
   nhau một dải hẹp và hòa dần vào nhau (`mask-image`); khi xử lý ảnh, màu và ánh sáng ở hai mép chạm nhau còn được
   kéo về cùng một tông nên đường nối gần như biến mất.
-- **Mở màn ~2 giây**: màn hình tối → máy quay lia nhẹ qua bức toàn cảnh, biệt thự hiện ra từ bóng tối và lấy nét →
-  logo, menu, nhãn hiện lên sau cùng.
+- **Mở màn ~2 giây**: màn hình tối → máy quay lia nhẹ qua bức toàn cảnh, công trình hiện ra từ bóng tối và lấy nét →
+  header, tiêu đề, thanh điều hướng hiện lên lần lượt.
+- **Giao diện biên tập**: header có logo, slogan *DESIGN · BUILD · LIVE*, nút âm thanh và nút chọn ngôn ngữ (cờ VI/EN);
+  mỗi lĩnh vực có tiêu đề serif lớn với dòng nghiêng màu vàng, mô tả và nút "Khám phá"; chữ đổi theo hiệu ứng khi
+  chuyển cảnh; thanh điều hướng 01 · 02 · 03 kèm phụ đề; nút mũi tên dọc với bộ đếm; gợi ý "Click · Vuốt · Phím mũi tên".
+- **Song ngữ**: tiếng Việt mặc định, chọn tiếng Anh bằng cờ (trình duyệt nhớ lựa chọn), hoặc mở `?lang=en`.
+- **Âm thanh nền**: được tổng hợp ngay trong trình duyệt bằng Web Audio (không cần file nhạc, chạy offline) — mỗi
+  không gian một hợp âm, chuyển cảnh có tiếng "vút" nhẹ. Mặc định tắt (trình duyệt không cho tự phát âm thanh).
+- **Link riêng từng lĩnh vực**: `/#smart-home`, `/#construction`, `/#interior` — địa chỉ tự cập nhật khi chuyển cảnh.
 - **Chiều sâu điện ảnh**: ảnh hai bên nghiêng ±12°, nhoè và tối dần ra mép màn hình; mép trên/dưới tan vào bóng tối;
   phản chiếu trên sàn bóng, ánh sáng môi trường đổi màu theo ảnh ở giữa, vignette và film grain.
 - **Vòng xoay vô hạn, không giật**: toàn bộ trạng thái là một số liên tục `progress`; mỗi ảnh có hai bản sao quanh
   vòng nên cả hai mép màn hình luôn có ảnh nối tiếp, không bao giờ trống hay nhảy vị trí.
 - **Tương tác đầy đủ**: click ảnh bên, kéo chuột, vuốt cảm ứng có quán tính, phím ← →, bánh xe chuột / trackpad,
-  hai mũi tên, nhãn bên dưới, hover (ảnh bên nghiêng vào và sáng lên), parallax nhẹ theo chuột, menu toàn màn hình.
+  nút mũi tên, nhãn bên dưới, hover (ảnh bên sáng lên), parallax nhẹ theo chuột.
 - **Ảnh nội bộ, sắc nét**: AVIF (4:4:4, chất lượng cao) + WebP, 5 kích thước tới 3200 px cho màn hình Retina/4K và
   bản dọc cho điện thoại, thu nhỏ bằng Lanczos và làm nét nhẹ. Ảnh được tải
   **và giải mã** trước khi cảnh xuất hiện — không bao giờ có khung trắng khi chuyển cảnh. Không phụ thuộc CDN hay
@@ -31,8 +40,8 @@ này ăn khớp với đầu ảnh kia — và vẫn xoay để chuyển cảnh 
 
 ## Công nghệ
 
-React 19 · Vite 8 · TypeScript · GSAP 3 · CSS 3D Transforms · CSS Mask Image · sharp (xử lý ảnh) · Montserrat
-(Fontsource, tự host).
+React 19 · Vite 8 · TypeScript · GSAP 3 · CSS 3D Transforms · CSS Mask Image · Web Audio · sharp (xử lý ảnh) ·
+Montserrat + Cormorant Garamond (Fontsource, tự host, đủ dấu tiếng Việt).
 
 ## Yêu cầu
 
@@ -91,20 +100,23 @@ static server nào); mở trực tiếp `dist/index.html` bằng `file://` sẽ 
 │   └── favicon.svg
 ├── scripts/optimize-images.mjs Pipeline ảnh: chỉnh màu, cắt tấm, hòa mép, resize, mã hoá AVIF/WebP
 └── src/
-    ├── App.tsx                 Ghép Header, Menu, Loader và HeroCarousel
+    ├── App.tsx                 Ghép Header, Loader, HeroCarousel; âm thanh; link #lĩnh-vực
     ├── config/animation.ts     ★ Toàn bộ thông số hiệu ứng / chuyển động / bố cục
+    ├── assets/brand/           ★ Đặt logo công ty ở đây (logo.svg / logo.png / logo.webp)
+    ├── audio/AmbientSound.ts   Âm thanh nền tổng hợp bằng Web Audio
+    ├── i18n/                   Ngôn ngữ: strings.ts (chữ giao diện VI/EN), LanguageProvider
     ├── data/
-    │   ├── slides.ts           Nội dung 3 lĩnh vực (nhãn, mô tả ảnh, credit)
+    │   ├── slides.ts           ★ Nội dung song ngữ của 3 lĩnh vực (tiêu đề, mô tả, nút, link)
     │   └── media.json          Cấu hình ảnh: kích thước, điểm lấy nét, chỉnh màu (dùng chung với script)
     ├── components/
     │   ├── HeroCarousel/
     │   │   ├── HeroCarousel.tsx    Markup + nạp trước ảnh + nối React với engine
     │   │   ├── CarouselEngine.ts   Engine GSAP: progress, kéo/vuốt/phím/wheel, intro, chế độ nhẹ
     │   │   ├── carouselMath.ts     Toán thuần: trạng thái CENTER/LEFT/RIGHT, mask làm mềm cạnh
+    │   │   ├── HeroCopy.tsx        Khối chữ: số thứ tự, tiêu đề serif, mô tả, nút "Khám phá"
     │   │   ├── SlideImage.tsx      <picture> AVIF/WebP, art-direction ngang/dọc
     │   │   └── HeroCarousel.css
-    │   ├── Header/             Logo + nút menu hamburger
-    │   ├── MenuOverlay/        Menu toàn màn hình
+    │   ├── Header/             Logo, slogan, nút âm thanh, chọn ngôn ngữ
     │   └── Loader/             Vạch tiến trình tối giản khi ảnh đang tải
     ├── styles/                 tokens.css (màu, font, khoảng cách) · global.css
     └── utils/device.ts         Nhận diện chế độ chất lượng & media query
@@ -140,10 +152,25 @@ trang tự cập nhật.
 Màu sắc và font nằm trong [`src/styles/tokens.css`](src/styles/tokens.css): nền `#101113`, chữ `#F4F0E9`,
 chữ phụ `#A6A6A6`, điểm nhấn `#C8AA78`.
 
+## Logo công ty
+
+Đặt file logo (nền trong suốt) vào `src/assets/brand/` với tên `logo.svg`, `logo.png` hoặc `logo.webp`, rồi build
+lại. Khi chưa có file, header hiện chữ "VILLA NEST · Architecture & Construction".
+
+## Nội dung & ngôn ngữ
+
+- Chữ của từng lĩnh vực (tiêu đề, dòng nghiêng, mô tả, nút, link của nút) nằm trong `src/data/slides.ts`, mỗi lĩnh vực
+  có bản `vi` và `en`.
+- Chữ giao diện (slogan, nút âm thanh, gợi ý thao tác…) nằm trong `src/i18n/strings.ts`.
+- Nút "Khám phá" hiện trỏ tới link riêng của lĩnh vực đó (`#construction`…); thay `ctaHref` bằng trang dự án thật khi có.
+
 ## Thay ảnh
 
-1. Đặt ảnh gốc ngang, chất lượng cao (khuyến nghị ≥ 3000 px chiều rộng) vào `assets-src/`, ví dụ
-   `assets-src/construction.jpg`.
+1. Đặt ảnh gốc chất lượng cao vào `assets-src/`. Có hai loại nguồn:
+   - **Ảnh riêng** cho một lĩnh vực (`images.<id>.source`), ví dụ `smart-home.jpg`;
+   - **Dải toàn cảnh** (`strips`) — một ảnh rộng liền mạch được cắt thành nhiều tấm cạnh nhau, nên đường nối giữa các
+     tấm đó trùng từng điểm ảnh. Hiện tại Construction và Interior được cắt từ
+     `panorama-construction-interior.jpg` (ảnh concept 2000 px đã phóng to ×4 bằng Real-ESRGAN).
 2. Chỉnh `src/data/media.json` nếu cần:
    - `order` — thứ tự ảnh trên bức toàn cảnh (ảnh cuối nối vòng về ảnh đầu),
    - `focus` — điểm canh khi cắt ảnh cho tấm ngang `[x, y]` (0–1),
@@ -160,9 +187,9 @@ chữ phụ `#A6A6A6`, điểm nhấn `#C8AA78`.
 
 | Thiết bị    | Thao tác                                                                                   |
 | ----------- | ------------------------------------------------------------------------------------------ |
-| Chuột       | Click ảnh bên, kéo trái/phải, cuộn bánh xe, mũi tên ‹ ›, click nhãn, rê chuột lên ảnh bên  |
+| Chuột       | Click ảnh bên, kéo trái/phải, cuộn bánh xe, nút ← → bên phải, click nhãn 01–03, rê chuột lên ảnh bên |
 | Cảm ứng     | Vuốt trái/phải (vuốt dọc không bị chặn), chạm ảnh bên, chạm nhãn                           |
-| Bàn phím    | ← → chuyển slide; Tab tới nhãn / mũi tên / menu, Enter để chọn; Esc đóng menu              |
+| Bàn phím    | ← → chuyển slide; Tab tới nhãn / mũi tên / âm thanh / ngôn ngữ, Enter để chọn              |
 
 ## Hiệu năng & khả năng tiếp cận
 
@@ -185,7 +212,7 @@ Kiểm thử tự động bằng Playwright (Chromium) trên bản build:
 - Desktop 1920×1080, 1440×900, 1280×720, 2560×1080; iPhone 14 Pro (cảm ứng), Android 360×800, iPad dọc 820×1180,
   điện thoại xoay ngang 844×390.
 - Click ảnh bên, kéo chuột, kéo ngắn bật lại, vuốt cảm ứng, vuốt nhanh, vuốt dọc bị bỏ qua, phím ← → (kể cả bấm dồn
-  dập qua điểm lặp vòng), bánh xe / trackpad (một cử chỉ = một slide), mũi tên, nhãn, menu, Esc, logo.
+  dập qua điểm lặp vòng), bánh xe / trackpad (một cử chỉ = một slide), mũi tên, nhãn, logo, đổi ngôn ngữ VI/EN, bật/tắt âm thanh, link #lĩnh-vực.
 - Kiểm tra từng khung hình 60 fps bằng đồng hồ giả lập: không có ảnh nào nhảy vị trí hay nhấp nháy khi lặp vòng.
 - Không có lỗi console, không có request ra ngoài Internet, không có thanh cuộn ngang; chạy đúng sau Nginx với cấu hình
   trong `deploy/nginx.conf`.

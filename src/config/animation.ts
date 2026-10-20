@@ -162,18 +162,18 @@ export const carouselConfig: CarouselConfig = {
     portrait: {
       query: '(max-aspect-ratio: 1/1)',
       slideWidth: 0.8,
-      maxSlideHeight: 0.6,
+      maxSlideHeight: 0.4,
       aspectRatio: media.geometry.portraitAspect,
-      centerY: 0.44,
+      centerY: 0.35,
       perspective: 1000,
       sideBlur: 2.5,
     },
     landscape: {
       query: 'all',
-      slideWidth: 0.58,
-      maxSlideHeight: 0.62,
+      slideWidth: 0.66,
+      maxSlideHeight: 0.7,
       aspectRatio: media.geometry.landscapeAspect,
-      centerY: 0.47,
+      centerY: 0.52,
     },
   },
 }

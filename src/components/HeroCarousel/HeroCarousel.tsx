@@ -10,8 +10,10 @@ import {
 } from 'react'
 import { carouselConfig } from '../../config/animation'
 import type { Slide } from '../../data/slides'
+import { useI18n } from '../../i18n/context'
 import { getQualityHint } from '../../utils/device'
 import { CarouselEngine } from './CarouselEngine'
+import { HeroCopy } from './HeroCopy'
 import { SlideImage } from './SlideImage'
 import './HeroCarousel.css'
 
@@ -24,7 +26,9 @@ export interface HeroCarouselHandle {
 interface HeroCarouselProps {
   slides: Slide[]
   ref?: Ref<HeroCarouselHandle>
-  /** False while something covers the carousel (e.g. the menu): disables drag / wheel / keys. */
+  /** Space shown in the centre on first load. */
+  initialIndex?: number
+  /** False while something covers the carousel: disables drag / wheel / keys. */
   interactive?: boolean
   onActiveChange?: (index: number) => void
   /** 0 → 1 while the slide images load and decode. */
@@ -38,10 +42,12 @@ const IMAGE_TIMEOUT = 8000
 /** Panels needed around the ring so both screen edges always show a neighbour. */
 const MIN_RING_PANELS = 5
 
-function Chevron({ direction }: { direction: 'left' | 'right' }) {
+const pad = (n: number) => String(n).padStart(2, '0')
+
+function Arrow({ direction }: { direction: 'left' | 'right' }) {
   return (
-    <svg viewBox="0 0 16 32" aria-hidden="true">
-      <path d={direction === 'left' ? 'M14.5 1.5 2 16l12.5 14.5' : 'M1.5 1.5 14 16 1.5 30.5'} />
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d={direction === 'left' ? 'M19 12H5m6-6-6 6 6 6' : 'M5 12h14m-6-6 6 6-6 6'} />
     </svg>
   )
 }
@@ -49,17 +55,20 @@ function Chevron({ direction }: { direction: 'left' | 'right' }) {
 export function HeroCarousel({
   slides,
   ref,
+  initialIndex = carouselConfig.initialIndex,
   interactive = true,
   onActiveChange,
   onLoadProgress,
   onReady,
 }: HeroCarouselProps) {
+  const { lang, t } = useI18n()
   const rootRef = useRef<HTMLElement>(null)
   const stageRef = useRef<HTMLDivElement>(null)
   const slideRefs = useRef<(HTMLDivElement | null)[]>([])
   const ambientRefs = useRef<(HTMLDivElement | null)[]>([])
   const engineRef = useRef<CarouselEngine | null>(null)
-  const [active, setActive] = useState(carouselConfig.initialIndex)
+  const [active, setActive] = useState(initialIndex)
+  const [ready, setReady] = useState(false)
   // With only three images each one is placed twice around the ring (panel k shows image
   // k % n): the panorama continues past both screen edges even while it rotates.
   const ring = useMemo(() => {
@@ -76,8 +85,12 @@ export function HeroCarousel({
     onActiveChange?.(index)
   })
   const handleProgress = useEffectEvent((ratio: number) => onLoadProgress?.(ratio))
-  const handleReady = useEffectEvent(() => onReady?.())
+  const handleReady = useEffectEvent(() => {
+    setReady(true)
+    onReady?.()
+  })
   const isInteractive = useEffectEvent(() => interactive)
+  const getInitialIndex = useEffectEvent(() => initialIndex)
 
   useLayoutEffect(() => {
     const root = rootRef.current
@@ -93,7 +106,7 @@ export function HeroCarousel({
       period: slides.length,
       ambient: ambientRefs.current.slice(0, slides.length).filter((el) => el !== null),
       config: carouselConfig,
-      initialIndex: carouselConfig.initialIndex,
+      initialIndex: getInitialIndex(),
       lowPower: quality.lowPower,
       qualityForced: quality.forced,
       onActiveChange: (index) => handleActive(index),
@@ -102,8 +115,8 @@ export function HeroCarousel({
     engine.setEnabled(isInteractive())
     engineRef.current = engine
 
-    // Preload: wait until every slide image is downloaded *and decoded* before the scene
-    // is revealed, so no transition ever shows an empty or half-painted frame.
+    // Preload: wait until every image is downloaded *and decoded* before the scene is
+    // revealed, so no transition ever shows an empty or half-painted frame.
     let cancelled = false
     let loaded = 0
     const images = slideEls
@@ -149,7 +162,7 @@ export function HeroCarousel({
   )
 
   return (
-    <section ref={rootRef} className="hc" aria-roledescription="carousel" aria-label="Villa Nest services">
+    <section ref={rootRef} className="hc" aria-roledescription="carousel" aria-label={t.carousel}>
       <div className="hc-atmosphere" aria-hidden="true">
         <div className="hc-ambient" data-atmosphere>
           {slides.map((slide, i) => (
@@ -178,15 +191,19 @@ export function HeroCarousel({
             data-slide-index={k}
             role="group"
             aria-roledescription="slide"
-            aria-label={`${slide.title} (${index + 1} / ${slides.length})`}
+            aria-label={`${slide.copy[lang].title} (${index + 1} / ${slides.length})`}
           >
             <div className="hc-slide__reveal" data-reveal>
               <div className="hc-slide__frame" data-frame>
-                <SlideImage slide={slide} priority={copy === 0 && index === carouselConfig.initialIndex} />
+                <SlideImage
+                  slide={slide}
+                  alt={slide.copy[lang].alt}
+                  priority={copy === 0 && index === initialIndex}
+                />
               </div>
               <div className="hc-slide__reflection" aria-hidden="true">
                 <div className="hc-slide__mirror">
-                  <SlideImage slide={slide} decorative />
+                  <SlideImage slide={slide} alt="" />
                 </div>
               </div>
             </div>
@@ -196,27 +213,27 @@ export function HeroCarousel({
 
       <div className="hc-overlay" aria-hidden="true">
         <div className="hc-vignette" />
+        <div className="hc-scrim" />
         <div className="hc-grain" />
       </div>
 
-      <button
-        type="button"
-        className="hc-arrow hc-arrow--prev"
-        aria-label="Previous space"
-        onClick={() => engineRef.current?.prev()}
-      >
-        <Chevron direction="left" />
-      </button>
-      <button
-        type="button"
-        className="hc-arrow hc-arrow--next"
-        aria-label="Next space"
-        onClick={() => engineRef.current?.next()}
-      >
-        <Chevron direction="right" />
-      </button>
+      <HeroCopy slides={slides} active={active} ready={ready} />
 
-      <nav className="hc-nav" aria-label="Services">
+      <div className="hc-controls">
+        <button type="button" className="hc-controls__btn" aria-label={t.prev} onClick={() => engineRef.current?.prev()}>
+          <Arrow direction="left" />
+        </button>
+        <p className="hc-controls__count" aria-hidden="true">
+          <span>{pad(active + 1)}</span>
+          <i />
+          <span>{pad(slides.length)}</span>
+        </p>
+        <button type="button" className="hc-controls__btn" aria-label={t.next} onClick={() => engineRef.current?.next()}>
+          <Arrow direction="right" />
+        </button>
+      </div>
+
+      <nav className="hc-nav" aria-label={t.services}>
         <ul className="hc-nav__list">
           {slides.map((slide, i) => (
             <li key={slide.id}>
@@ -226,16 +243,21 @@ export function HeroCarousel({
                 aria-current={i === active ? 'true' : undefined}
                 onClick={() => engineRef.current?.goTo(i)}
               >
-                <span className="hc-nav__dot" aria-hidden="true" />
-                <span className="hc-nav__label">{slide.label}</span>
+                <span className="hc-nav__index">{pad(i + 1)}</span>
+                <span className="hc-nav__title">{slide.copy[lang].title}</span>
+                <span className="hc-nav__subtitle">{slide.copy[lang].subtitle}</span>
               </button>
             </li>
           ))}
         </ul>
+        <p className="hc-nav__hint" aria-hidden="true">
+          <span className="hc-nav__mouse" />
+          {t.hint}
+        </p>
       </nav>
 
       <p className="visually-hidden" aria-live="polite">
-        {slides[active]?.title}
+        {slides[active]?.copy[lang].title}
       </p>
     </section>
   )

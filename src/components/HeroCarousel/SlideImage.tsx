@@ -8,8 +8,8 @@ const LANDSCAPE_SIZES = `${Math.round(landscape.slideWidth * (1 + carouselConfig
 
 interface SlideImageProps {
   slide: Slide
-  /** Decorative copies (the floor reflection) get an empty alt text. */
-  decorative?: boolean
+  /** Description in the current language; empty for decorative copies (the floor reflection). */
+  alt: string
   priority?: boolean
 }
 
@@ -18,7 +18,7 @@ interface SlideImageProps {
  * elsewhere, AVIF first with a WebP fallback. The files are already cropped to the exact
  * panel shape, so the seams line up with the neighbouring panels.
  */
-export function SlideImage({ slide, decorative = false, priority = false }: SlideImageProps) {
+export function SlideImage({ slide, alt, priority = false }: SlideImageProps) {
   const { image } = slide
   return (
     <picture>
@@ -29,7 +29,7 @@ export function SlideImage({ slide, decorative = false, priority = false }: Slid
       <img
         className="hc-slide__img"
         src={image.fallback}
-        alt={decorative ? '' : slide.alt}
+        alt={alt}
         draggable={false}
         decoding="async"
         fetchPriority={priority ? 'high' : 'auto'}

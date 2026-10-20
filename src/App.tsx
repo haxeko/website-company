@@ -1,63 +1,75 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { AmbientSound } from './audio/AmbientSound'
 import { Header } from './components/Header'
 import { HeroCarousel, type HeroCarouselHandle } from './components/HeroCarousel'
 import { Loader } from './components/Loader'
-import { MenuOverlay } from './components/MenuOverlay'
 import { carouselConfig } from './config/animation'
 import { slides } from './data/slides'
+import { useI18n } from './i18n/context'
 import './App.css'
 
+/** `#construction` → its index, so every space has a shareable link. */
+function indexFromHash(): number | null {
+  const id = decodeURIComponent(window.location.hash.slice(1))
+  const index = slides.findIndex((slide) => slide.id === id)
+  return index >= 0 ? index : null
+}
+
 export default function App() {
+  const { t } = useI18n()
   const carouselRef = useRef<HeroCarouselHandle>(null)
-  const toggleRef = useRef<HTMLButtonElement>(null)
-  const [menuOpen, setMenuOpen] = useState(false)
-  const [activeIndex, setActiveIndex] = useState(carouselConfig.initialIndex)
+  const soundRef = useRef<AmbientSound | null>(null)
+  const [initialIndex] = useState(() => indexFromHash() ?? carouselConfig.initialIndex)
+  const activeRef = useRef(initialIndex)
   const [loadProgress, setLoadProgress] = useState(0)
   const [ready, setReady] = useState(false)
+  const [soundOn, setSoundOn] = useState(false)
 
-  const closeMenu = useCallback(() => {
-    setMenuOpen(false)
-    toggleRef.current?.focus({ preventScroll: true })
+  const handleActiveChange = useCallback((index: number) => {
+    activeRef.current = index
+    soundRef.current?.setScene(index)
+    const hash = `#${slides[index].id}`
+    if (window.location.hash !== hash) window.history.replaceState(null, '', hash)
   }, [])
 
-  const toggleMenu = useCallback(() => {
-    if (menuOpen) closeMenu()
-    else setMenuOpen(true)
-  }, [menuOpen, closeMenu])
-
-  const selectFromMenu = useCallback(
-    (index: number) => {
-      closeMenu()
-      carouselRef.current?.goTo(index)
-    },
-    [closeMenu],
-  )
-
-  const goHome = useCallback(() => {
-    setMenuOpen(false)
-    carouselRef.current?.goTo(carouselConfig.initialIndex)
+  // Typing or following a link to another #space moves the carousel there.
+  useEffect(() => {
+    const onHashChange = () => {
+      const index = indexFromHash()
+      if (index !== null) carouselRef.current?.goTo(index)
+    }
+    window.addEventListener('hashchange', onHashChange)
+    return () => window.removeEventListener('hashchange', onHashChange)
   }, [])
 
+  const toggleSound = useCallback(() => {
+    soundRef.current ??= new AmbientSound()
+    const sound = soundRef.current
+    if (sound.isEnabled) {
+      sound.disable()
+      setSoundOn(false)
+    } else {
+      void sound.enable(activeRef.current)
+      setSoundOn(true)
+    }
+  }, [])
+
+  useEffect(() => () => soundRef.current?.dispose(), [])
+
+  const goHome = useCallback(() => carouselRef.current?.goTo(carouselConfig.initialIndex), [])
   const handleReady = useCallback(() => setReady(true), [])
 
   return (
     <div className="app" data-ready={ready}>
       <Loader progress={loadProgress} done={ready} />
-      <Header menuOpen={menuOpen} onToggleMenu={toggleMenu} onLogoClick={goHome} toggleRef={toggleRef} />
-      <MenuOverlay
-        open={menuOpen}
-        slides={slides}
-        activeIndex={activeIndex}
-        onSelect={selectFromMenu}
-        onClose={closeMenu}
-      />
-      <main className="app__main" inert={menuOpen}>
-        <h1 className="visually-hidden">VILLA NEST — Architecture, Interior &amp; Smart Home</h1>
+      <Header soundOn={soundOn} onToggleSound={toggleSound} onLogoClick={goHome} />
+      <main className="app__main">
+        <h1 className="visually-hidden">{t.heading}</h1>
         <HeroCarousel
           ref={carouselRef}
           slides={slides}
-          interactive={!menuOpen}
-          onActiveChange={setActiveIndex}
+          initialIndex={initialIndex}
+          onActiveChange={handleActiveChange}
           onLoadProgress={setLoadProgress}
           onReady={handleReady}
         />

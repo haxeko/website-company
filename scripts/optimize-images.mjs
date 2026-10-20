@@ -100,6 +100,26 @@ function coverCrop(width, height, aspect, fx, fy) {
   return { left: 0, top: Math.round((height - h) * fy), width, height: h }
 }
 
+/**
+ * Crop of one panel cut from a continuous strip image: neighbouring slots are exactly one
+ * pitch apart, so the strips they share are the same pixels and that seam is invisible.
+ */
+function stripCrop(info, strip, slot, aspect) {
+  let pitch = strip.pitch ? strip.pitch * info.width : info.height * aspect
+  let height = pitch / aspect
+  if (height > info.height) {
+    height = info.height
+    pitch = height * aspect
+  }
+  const width = Math.round(pitch * (1 + seam))
+  const left = Math.round(strip.centerX * info.width + slot * pitch - width / 2)
+  const top = Math.round((info.height - height) * (strip.focusY ?? 0.5))
+  if (left < 0 || left + width > info.width) {
+    throw new Error(`strip slot ${slot} (${left}…${left + width}px) falls outside the ${info.width}px source`)
+  }
+  return { left, top, width, height: Math.round(height) }
+}
+
 /** Per-row average colour of the columns [x0, x1), smoothed vertically. */
 function edgeProfile(img, W, H, x0, x1) {
   const rows = new Float32Array(H * 3)
@@ -239,7 +259,8 @@ for (const file of await readdir(outputDir)) {
 const graded = {}
 for (const slug of media.order) {
   const cfg = media.images[slug]
-  const { data, info } = await sharp(join(sourceDir, cfg.source))
+  const source = cfg.strip ? media.strips[cfg.strip].source : cfg.source
+  const { data, info } = await sharp(join(sourceDir, source))
     .rotate()
     .toColourspace('srgb')
     .removeAlpha()
@@ -251,8 +272,15 @@ for (const slug of media.order) {
 
 // 2. Build both panoramas (landscape + portrait) and encode them.
 const layouts = [
-  { suffix: '', aspect: media.geometry.landscapeAspect, widths: media.landscapeWidths, focus: (c) => c.focus },
   {
+    name: 'landscape',
+    suffix: '',
+    aspect: media.geometry.landscapeAspect,
+    widths: media.landscapeWidths,
+    focus: (c) => c.focus,
+  },
+  {
+    name: 'portrait',
     suffix: '-portrait',
     aspect: media.geometry.portraitAspect,
     widths: media.portraitWidths,
@@ -268,8 +296,10 @@ for (const layout of layouts) {
   const panels = []
   for (const slug of media.order) {
     const { data, info } = graded[slug]
-    const [fx, fy] = layout.focus(media.images[slug])
-    const crop = coverCrop(info.width, info.height, cropAspect, fx, fy)
+    const cfg = media.images[slug]
+    const crop = cfg.strip
+      ? stripCrop(info, media.strips[cfg.strip][layout.name], cfg.slot, layout.aspect)
+      : coverCrop(info.width, info.height, cropAspect, ...layout.focus(cfg))
     if (crop.width < W) console.warn(`! ${slug}: source crop is only ${crop.width}px wide (< ${W}px) — upscaled`)
     const buf = await sharp(data, { raw: info }).extract(crop).resize(W, H, { kernel: 'lanczos3' }).raw().toBuffer()
     panels.push(Float32Array.from(buf, (v) => v / 255))

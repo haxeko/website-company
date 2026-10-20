@@ -3,10 +3,14 @@
   "sourceDir": "assets-src",
   "outputDir": "public/assets/slides",
   "publicPath": "assets/slides",
-  "order": ["smart-home", "construction", "interior"],
+  "order": [
+    "smart-home",
+    "construction",
+    "interior"
+  ],
   "geometry": {
     "$comment": "Panel aspect = width/height of one panel's own share of the panorama. seam = overlap with each neighbour, as a fraction of that width; every image is cropped to aspect × (1 + seam) so its edges line up exactly with its neighbours.",
-    "landscapeAspect": 1.5,
+    "landscapeAspect": 1.4,
     "portraitAspect": 0.8,
     "seam": 0.22
   },
@@ -15,27 +19,75 @@
     "strength": 0.9,
     "reach": 2.4
   },
-  "landscapeWidths": [960, 1440, 1920, 2560, 3200],
-  "portraitWidths": [640, 960, 1280],
-  "quality": { "avif": 70, "webp": 90, "ambient": 72 },
+  "landscapeWidths": [
+    960,
+    1440,
+    1920,
+    2560,
+    3000
+  ],
+  "portraitWidths": [
+    640,
+    960,
+    1280
+  ],
+  "quality": {
+    "avif": 70,
+    "webp": 90,
+    "ambient": 72
+  },
+  "strips": {
+    "$comment": "A strip is one continuous wide image that several panels are cut from, side by side, so the seams between those panels are pixel-identical. centerX = centre of slot 0 (fraction of the strip width); pitch = one panel's own width (fraction of the strip width, landscape only — portrait panels use the full strip height); focusY = vertical crop position.",
+    "concept": {
+      "source": "panorama-construction-interior.jpg",
+      "landscape": {
+        "centerX": 0.5,
+        "pitch": 0.31,
+        "focusY": 0.35
+      },
+      "portrait": {
+        "centerX": 0.53,
+        "focusY": 0.5
+      }
+    }
+  },
   "images": {
     "smart-home": {
       "source": "smart-home.jpg",
-      "focus": [0.5, 0.5],
+      "focus": [
+        0.5,
+        0.5
+      ],
       "portraitFocusX": 0.6,
-      "grade": { "exposure": 0.94, "contrast": 0.32, "saturation": 0.9, "greens": 0.8, "warmth": 0.012 }
+      "grade": {
+        "exposure": 0.94,
+        "contrast": 0.32,
+        "saturation": 0.9,
+        "greens": 0.8,
+        "warmth": 0.012
+      }
     },
     "construction": {
-      "source": "construction.jpg",
-      "focus": [0.5, 0.45],
-      "portraitFocusX": 0.6,
-      "grade": { "exposure": 1.02, "contrast": 0.2, "saturation": 0.86, "greens": 0.45, "warmth": 0.02 }
+      "strip": "concept",
+      "slot": 0,
+      "grade": {
+        "exposure": 0.97,
+        "contrast": 0.08,
+        "saturation": 0.95,
+        "greens": 0.9,
+        "warmth": 0
+      }
     },
     "interior": {
-      "source": "interior.jpg",
-      "focus": [0.42, 0.5],
-      "portraitFocusX": 0.27,
-      "grade": { "exposure": 0.8, "contrast": 0.24, "saturation": 0.95, "greens": 0.8, "warmth": 0.04 }
+      "strip": "concept",
+      "slot": 1,
+      "grade": {
+        "exposure": 0.97,
+        "contrast": 0.08,
+        "saturation": 0.95,
+        "greens": 0.9,
+        "warmth": 0
+      }
     }
   }
 }
