@@ -223,10 +223,10 @@
 
 .hc-copy {
   position: absolute;
-  top: 21vh;
+  top: 22vh;
   left: max(var(--gutter), 7.5vw);
   z-index: 3;
-  width: min(46vw, 780px);
+  width: min(40vw, 720px);
   pointer-events: none;
 }
 
@@ -235,10 +235,10 @@
   align-items: center;
   gap: 18px;
   margin: 0;
-  color: rgb(244 240 233 / 0.78);
-  font-size: 10.5px;
+  color: rgb(244 240 233 / 0.72);
+  font-size: 10px;
   font-weight: 500;
-  letter-spacing: 0.3em;
+  letter-spacing: 0.32em;
   text-transform: uppercase;
 }
 
@@ -247,28 +247,29 @@
 }
 
 .hc-copy__index i {
-  width: 52px;
+  width: 40px;
   height: 1px;
-  background: rgb(244 240 233 / 0.45);
+  background: rgb(244 240 233 / 0.4);
 }
 
 .hc-copy__kicker {
-  margin: clamp(22px, 5vh, 52px) 0 0;
-  color: rgb(244 240 233 / 0.8);
-  font-size: 11.5px;
+  margin: clamp(18px, 4vh, 40px) 0 0;
+  color: rgb(244 240 233 / 0.74);
+  font-size: 11px;
   font-weight: 500;
-  letter-spacing: 0.34em;
+  letter-spacing: 0.3em;
   text-transform: uppercase;
 }
 
 .hc-copy__headline {
-  margin: clamp(12px, 2.2vh, 24px) 0 0;
+  margin: clamp(10px, 1.8vh, 18px) 0 0;
   color: var(--c-text);
   font-family: var(--font-serif);
-  font-size: clamp(40px, 4.9vw, 104px);
-  font-weight: 500;
-  letter-spacing: -0.01em;
-  line-height: 1.02;
+  /* 38px at 1280, 43px at 1440, 56px from 1870 up: a display size, not a poster size */
+  font-size: clamp(30px, 3vw, 56px);
+  font-weight: 400;
+  letter-spacing: -0.005em;
+  line-height: 1.1;
   text-wrap: balance;
 }
 
@@ -278,29 +279,29 @@
 }
 
 .hc-copy__headline em {
-  margin-top: 0.06em;
+  margin-top: 0.04em;
   color: var(--c-accent);
   font-style: italic;
   font-weight: 400;
 }
 
 .hc-copy__description {
-  max-width: 33em;
-  margin: clamp(16px, 3vh, 32px) 0 0;
-  color: rgb(244 240 233 / 0.76);
-  font-size: clamp(13px, 0.95vw, 16px);
-  line-height: 1.7;
+  max-width: 30em;
+  margin: clamp(14px, 2.6vh, 26px) 0 0;
+  color: rgb(244 240 233 / 0.7);
+  font-size: clamp(13px, 0.9vw, 15px);
+  line-height: 1.75;
 }
 
 .hc-copy__cta {
   display: inline-flex;
   align-items: center;
-  gap: 16px;
-  margin-top: clamp(18px, 3.4vh, 36px);
+  gap: 14px;
+  margin-top: clamp(16px, 3vh, 30px);
   color: var(--c-text);
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 600;
-  letter-spacing: 0.28em;
+  letter-spacing: 0.26em;
   text-decoration: none;
   text-transform: uppercase;
   pointer-events: auto;
@@ -309,9 +310,9 @@
 .hc-copy__cta-icon {
   display: grid;
   place-items: center;
-  width: 42px;
-  height: 42px;
-  border: 1px solid rgb(244 240 233 / 0.45);
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgb(244 240 233 / 0.4);
   border-radius: 50%;
   transition:
     background-color 0.5s var(--ease-out),
@@ -320,8 +321,8 @@
 }
 
 .hc-copy__cta-icon svg {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   fill: none;
   stroke: currentColor;
   stroke-width: 1.4;
@@ -357,9 +358,9 @@
 .hc-controls__btn {
   display: grid;
   place-items: center;
-  width: 48px;
-  height: 48px;
-  border: 1px solid rgb(244 240 233 / 0.38);
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgb(244 240 233 / 0.34);
   border-radius: 50%;
   background: rgb(16 17 19 / 0.25);
   color: var(--c-text);
@@ -372,8 +373,8 @@
 }
 
 .hc-controls__btn svg {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   fill: none;
   stroke: currentColor;
   stroke-width: 1.2;
@@ -462,23 +463,23 @@
 
 .hc-nav__index {
   color: rgb(200 170 120 / 0.7);
-  font-size: 10.5px;
+  font-size: 10px;
   letter-spacing: 0.12em;
 }
 
 .hc-nav__title {
   font-family: var(--font-serif);
-  font-size: clamp(17px, 1.3vw, 22px);
+  font-size: clamp(15px, 1.1vw, 19px);
   font-weight: 500;
   line-height: 1.1;
 }
 
 .hc-nav__subtitle {
   grid-column: 2;
-  margin-top: 7px;
+  margin-top: 6px;
   color: rgb(244 240 233 / 0.45);
-  font-size: 9.5px;
-  letter-spacing: 0.26em;
+  font-size: 9px;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
 }
 
@@ -506,8 +507,8 @@
   gap: 12px;
   margin: 0 0 4px;
   color: rgb(244 240 233 / 0.45);
-  font-size: 9.5px;
-  letter-spacing: 0.24em;
+  font-size: 9px;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
   white-space: nowrap;
 }
@@ -576,21 +577,21 @@
 
 .hc[data-layout='portrait'] .hc-copy__kicker {
   margin-top: 12px;
-  font-size: 10px;
+  font-size: 9.5px;
   letter-spacing: 0.26em;
 }
 
 .hc[data-layout='portrait'] .hc-copy__headline {
-  margin-top: 8px;
-  font-size: clamp(28px, 8.4vw, 44px);
+  margin-top: 6px;
+  font-size: clamp(24px, 7vw, 34px);
 }
 
 .hc[data-layout='portrait'] .hc-copy__description {
   display: -webkit-box;
   margin-top: 10px;
   overflow: hidden;
-  font-size: 13px;
-  line-height: 1.55;
+  font-size: 12.5px;
+  line-height: 1.6;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
 }
@@ -600,8 +601,8 @@
 }
 
 .hc[data-layout='portrait'] .hc-copy__cta-icon {
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
 }
 
 .hc[data-layout='portrait'] .hc-controls {
@@ -633,7 +634,7 @@
 }
 
 .hc[data-layout='portrait'] .hc-nav__title {
-  font-size: 15px;
+  font-size: 14px;
 }
 
 .hc[data-layout='portrait'] .hc-nav__subtitle,
@@ -661,7 +662,7 @@
   }
 
   .hc-copy__headline {
-    font-size: clamp(26px, 4.4vw, 40px);
+    font-size: clamp(22px, 3.4vw, 32px);
   }
 
   .hc-nav__item {

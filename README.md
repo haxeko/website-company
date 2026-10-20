@@ -4,7 +4,7 @@ Website cao cấp cho thương hiệu **VILLA NEST** — *Design · Build · Liv
 ảnh, liền mạch**: bức tường với màn hình điều khiển trung tâm của hệ thống **Smart Home** → công trình đang
 **xây dựng** với giáo chống, ván khuôn → **nội thất** hoàn thiện, nối tiếp nhau như những bức tường cong của một căn
 phòng — cuối ảnh này ăn khớp với đầu ảnh kia — và xoay để chuyển cảnh khi bấm, kéo hay vuốt. Song ngữ Việt / Anh
-(mặc định tiếng Việt), có âm thanh nền bật/tắt và link riêng cho từng lĩnh vực.
+(mặc định tiếng Việt), có tiếng gió nhẹ khi chuyển cảnh (tắt được) và link riêng cho từng lĩnh vực.
 
 ![VILLA NEST — desktop](docs/screenshot-desktop.jpg)
 
@@ -18,12 +18,14 @@ phòng — cuối ảnh này ăn khớp với đầu ảnh kia — và xoay đ�
   kéo về cùng một tông nên đường nối gần như biến mất.
 - **Mở màn ~2 giây**: màn hình tối → máy quay lia nhẹ qua bức toàn cảnh, công trình hiện ra từ bóng tối và lấy nét →
   header, tiêu đề, thanh điều hướng hiện lên lần lượt.
-- **Giao diện biên tập**: header có logo, slogan *DESIGN · BUILD · LIVE*, nút âm thanh và nút chọn ngôn ngữ (cờ VI/EN);
+- **Giao diện biên tập**: header có chữ VILLA NEST, slogan *DESIGN · BUILD · LIVE*, nút âm thanh và nút chọn ngôn ngữ (cờ VI/EN);
   mỗi lĩnh vực có tiêu đề serif lớn với dòng nghiêng màu vàng, mô tả và nút "Khám phá"; chữ đổi theo hiệu ứng khi
   chuyển cảnh; thanh điều hướng 01 · 02 · 03 kèm phụ đề; nút mũi tên dọc với bộ đếm; gợi ý "Click · Vuốt · Phím mũi tên".
 - **Song ngữ**: tiếng Việt mặc định, chọn tiếng Anh bằng cờ (trình duyệt nhớ lựa chọn), hoặc mở `?lang=en`.
-- **Âm thanh nền**: được tổng hợp ngay trong trình duyệt bằng Web Audio (không cần file nhạc, chạy offline) — mỗi
-  không gian một hợp âm, chuyển cảnh có tiếng "vút" nhẹ. Mặc định tắt (trình duyệt không cho tự phát âm thanh).
+- **Âm thanh chuyển cảnh**: không có nhạc nền; mỗi lần chuyển cảnh có một tiếng "xẹt" nhẹ như gió thổi, âm lượng
+  nhỏ, lướt theo hướng chuyển (trái → phải hoặc ngược lại). Tổng hợp ngay trong trình duyệt bằng Web Audio (không cần
+  file âm thanh, chạy offline). Mặc định bật, kêu từ lần bấm / chạm đầu tiên (trình duyệt không cho phát âm thanh
+  trước đó); nút âm thanh trên header tắt / bật lại và trình duyệt nhớ lựa chọn.
 - **Link riêng từng lĩnh vực**: `/#smart-home`, `/#construction`, `/#interior` — địa chỉ tự cập nhật khi chuyển cảnh.
 - **Chiều sâu điện ảnh**: ảnh hai bên nghiêng ±12°, nhoè và tối dần ra mép màn hình; mép trên/dưới tan vào bóng tối;
   phản chiếu trên sàn bóng, ánh sáng môi trường đổi màu theo ảnh ở giữa, vignette và film grain.
@@ -102,8 +104,8 @@ static server nào); mở trực tiếp `dist/index.html` bằng `file://` sẽ 
 └── src/
     ├── App.tsx                 Ghép Header, Loader, HeroCarousel; âm thanh; link #lĩnh-vực
     ├── config/animation.ts     ★ Toàn bộ thông số hiệu ứng / chuyển động / bố cục
-    ├── assets/brand/           ★ Đặt logo công ty ở đây (logo.svg / logo.png / logo.webp)
-    ├── audio/AmbientSound.ts   Âm thanh nền tổng hợp bằng Web Audio
+    ├── assets/brand/           (tuỳ chọn) logo công ty: logo.svg / logo.png / logo.webp
+    ├── audio/TransitionSound.ts Tiếng gió khi chuyển cảnh, tổng hợp bằng Web Audio
     ├── i18n/                   Ngôn ngữ: strings.ts (chữ giao diện VI/EN), LanguageProvider
     ├── data/
     │   ├── slides.ts           ★ Nội dung song ngữ của 3 lĩnh vực (tiêu đề, mô tả, nút, link)
@@ -154,9 +156,8 @@ chữ phụ `#A6A6A6`, điểm nhấn `#C8AA78`.
 
 ## Logo công ty
 
-Logo nằm ở `src/assets/brand/logo.webp` (nền trong suốt, cao 240 px). Muốn đổi logo: thay file này (hoặc đặt
-`logo.svg` / `logo.png` vào cùng thư mục) rồi build lại. Biểu tượng trên tab trình duyệt (`public/favicon.png`) và
-icon khi lưu ra màn hình điện thoại (`public/apple-touch-icon.png`) dùng phần chữ V của logo.
+Hiện header dùng chữ "VILLA NEST · Architecture & Construction". Nếu sau này muốn dùng logo dạng ảnh, đặt file (nền
+trong suốt) vào `src/assets/brand/` với tên `logo.svg`, `logo.png` hoặc `logo.webp` rồi build lại.
 
 ## Nội dung & ngôn ngữ
 
@@ -220,9 +221,9 @@ Kiểm thử tự động bằng Playwright (Chromium) trên bản build:
 
 ## Bản quyền ảnh
 
-Ảnh minh hoạ lấy từ Unsplash, dùng theo [Unsplash License](https://unsplash.com/license) (miễn phí cho mục đích
-thương mại). Thay bằng ảnh dự án thật của VILLA NEST trước khi ra mắt chính thức.
+Thay bằng ảnh dự án thật của VILLA NEST trước khi ra mắt chính thức.
 
-- Construction — [Arthur BAUDRY](https://unsplash.com/photos/modern-house-exterior-glows-with-lights-4vioYQ9Nn9Y)
-- Smart Home — [HUUM](https://unsplash.com/photos/a-hand-holding-a-black-device-NohN3BIkAZM)
-- Interior — [Lumbardh Plluzhina](https://unsplash.com/photos/a-modern-living-room-with-a-large-window-7NvBEeHDY7M)
+- Construction, Interior — ảnh concept của VILLA NEST (`assets-src/panorama-construction-interior.jpg`).
+- Smart Home — nền tường đá travertine từ ảnh của [HUUM](https://unsplash.com/photos/smart-thermostat-on-stone-wall-eJAWSL_0L98)
+  ([Unsplash License](https://unsplash.com/license), miễn phí cho mục đích thương mại; thiết bị gốc đã được xoá),
+  ánh sáng buổi tối và màn hình điều khiển trung tâm (giao diện VILLA NEST) được dựng thêm.

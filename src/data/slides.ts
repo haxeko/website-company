@@ -75,7 +75,7 @@ export const slides: Slide[] = [
         description:
           'Chiếu sáng, khí hậu, rèm và an ninh hội tụ trong một màn hình điều khiển trung tâm — tinh gọn, trực quan, vận hành trong im lặng.',
         cta: 'Khám phá giải pháp',
-        alt: 'Bức tường gỗ óc chó với màn hình điều khiển trung tâm của hệ thống nhà thông minh',
+        alt: 'Màn hình điều khiển trung tâm của hệ thống nhà thông minh gắn trên tường đá travertine, buổi tối',
       },
       en: {
         title: 'Smart Home',
@@ -86,11 +86,14 @@ export const slides: Slide[] = [
         description:
           'Lighting, climate, shading and security come together in one central control panel — calm, intuitive, quietly at work.',
         cta: 'Explore solutions',
-        alt: 'A walnut wall with the central control panel of a smart-home system',
+        alt: 'The central control screen of a smart-home system on a travertine wall, in the evening',
       },
     },
     image: imageSet('smart-home'),
-    credit: { author: 'HUUM', url: 'https://unsplash.com/photos/a-hand-holding-a-black-device-NohN3BIkAZM' },
+    credit: {
+      author: 'HUUM (stone wall) + VILLA NEST (control screen)',
+      url: 'https://unsplash.com/photos/smart-thermostat-on-stone-wall-eJAWSL_0L98',
+    },
   },
   {
     id: 'construction',
