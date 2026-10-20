@@ -180,57 +180,82 @@
 /* ── Curtains ─────────────────────────────────────────────────────────── */
 
 /*
- * Sheer linen, driven by useCurtainMotor: --sh-curtain = how far it is drawn (0–1),
- * --sh-sway / --sh-flutter = how the hem swings (motor inertia / the fan's wind), hung
- * from the track at the top. Only rendered while drawn.
+ * Sheer linen across the screen (CurtainBand), driven by useCurtainMotor: --sh-curtain = how
+ * far it is drawn (0–1), --sh-sway / --sh-flutter = how the hem swings (motor inertia / the
+ * fan's wind), hung from the track at the top. It lies in the carousel's overlay: in front of
+ * the room and its edge vignette, so it reaches the very edge of the screen, and under the
+ * scrim that keeps the text legible. Only rendered while drawn.
  *
- * Large screens (.sh-curtain, inside the slide): one panel from the far left of the room,
- * drawn up to just before the control panel (--sh-curtain-end), which stays free.
- * Phones (.sh-band, across the screen): a pair from both screen edges, hanging below the
+ * Large screens: one panel from the far left edge up to --sh-curtain-end, just before the
+ * control panel, which stays free. Phones: a pair from both screen edges, hanging below the
  * enlarged control panel; they open again by themselves when it closes.
- * (display, not visibility: a copy of the slide hidden behind the ring must stay hidden.)
  */
-.sh-curtain,
 .sh-band {
-  --sh-curtain: 0;
-  --sh-sway: 0deg;
-  --sh-flutter: 0deg;
-  /* Fabric past the stack edge, out of view: the swinging hem never opens a gap there. */
-  --sh-overhang: calc(var(--hc-h) * 0.13);
-
   display: none;
   position: absolute;
-  pointer-events: none;
-}
-
-.sh-curtain {
-  inset: 0;
-  z-index: 4;
-}
-
-.hc[data-curtain][data-layout='landscape'] .sh-curtain {
-  display: block;
-}
-
-.sh-band {
   top: calc(var(--hc-cy) - var(--hc-h) / 2);
   right: 0;
   left: 0;
-  z-index: 2;
   height: var(--hc-h);
-  -webkit-mask-image: var(--hc-mask-y);
-  mask-image: var(--hc-mask-y);
+  pointer-events: none;
 }
 
-.hc[data-curtain][data-home-view][data-layout='portrait'] .sh-band {
+.hc[data-curtain] .sh-band {
   display: block;
 }
 
-.sh-fabric {
+.sh-drapes {
+  --sh-curtain: 0;
+  --sh-sway: 0deg;
+  --sh-flutter: 0deg;
+  /* Fabric past the screen edge, out of view: the swinging hem never opens a gap there. */
+  --sh-overhang: calc(var(--hc-h) * 0.13);
+  /* How far each panel reaches: phones, a pair meeting in the middle… */
+  --sh-reach: calc(2% + var(--sh-curtain) * 49%);
+
+  position: absolute;
+  inset: 0;
+}
+
+/* …large screens, one panel from a narrow stack at the left up to the control panel. */
+.hc[data-layout='landscape'] .sh-drapes {
+  --sh-reach: calc(3% + var(--sh-curtain) * (var(--sh-curtain-end) - 3%));
+}
+
+.hc[data-layout='landscape'] .sh-drapes > [data-side='right'] {
+  display: none;
+}
+
+.sh-fabric,
+.sh-hem {
   position: absolute;
   top: 0;
   bottom: 0;
+  /* Hung from the track: the hem swings on when the motor starts / stops and billows downwind (left → right). */
+  transform: skewX(calc(var(--sh-sway) + var(--sh-flutter)));
+  transform-origin: 50% 0;
+  /* Top and bottom dissolve into the room like the panorama (on each panel, so the blur below still sees the room). */
+  -webkit-mask-image: var(--hc-mask-y);
+  mask-image: var(--hc-mask-y);
+  /* Only with Smart Home in the centre: they fade out as the room turns away. */
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.35s ease,
+    visibility 0s 0.35s;
+}
+
+.hc[data-home-view] :is(.sh-fabric, .sh-hem) {
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity 0.6s ease 0.25s,
+    visibility 0s 0.25s;
+}
+
+.sh-fabric {
   left: calc(-1 * var(--sh-overhang));
+  width: calc(var(--sh-overhang) + var(--sh-reach));
   background:
     /* Weave */
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.32 0 0 0 0 0.26 0 0 0 0 0.2 0 0 0 0.3 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
@@ -263,35 +288,39 @@
     auto,
     auto,
     auto;
-  transform: skewX(calc(var(--sh-sway) + var(--sh-flutter)));
-  transform-origin: 50% 0;
 }
 
-/* Large screens: from a narrow stack at the far left up to the end point. */
-.sh-curtain .sh-fabric {
-  width: calc(var(--sh-overhang) + 3% + var(--sh-curtain) * (var(--sh-curtain-end, 45%) - 3%));
+/* Shadow the leading edge casts on the wall. */
+.sh-hem {
+  left: var(--sh-reach);
+  width: calc(var(--hc-w) * 0.025);
+  background: linear-gradient(to right, rgb(0 0 0 / 0.3), transparent);
 }
 
-/* Phones: a pair from both screen edges, meeting in the middle. */
-.sh-band .sh-fabric {
-  width: calc(var(--sh-overhang) + 2% + var(--sh-curtain) * 49%);
-}
-
-.sh-band .sh-fabric[data-side='right'] {
-  right: calc(-1 * var(--sh-overhang));
-  left: auto;
-  /* Mirrored, so the folds and hem face the middle; it swings mirrored, but the wind still blows it to the right. */
+/* The right-hand panel of a pair: mirrored, so its folds and hem face the middle; it swings
+   mirrored, but the wind still blows it to the right. */
+.sh-drapes > [data-side='right'] {
   scale: -1 1;
   transform: skewX(calc(var(--sh-sway) - var(--sh-flutter)));
 }
 
-/* Through sheer fabric the stone behind looks soft, not just dimmed. */
-.hc[data-layout='landscape']:not([data-quality='low']) .hc-slide__frame .sh-fabric {
+.sh-fabric[data-side='right'] {
+  right: calc(-1 * var(--sh-overhang));
+  left: auto;
+}
+
+.sh-hem[data-side='right'] {
+  right: var(--sh-reach);
+  left: auto;
+}
+
+/* Through sheer fabric the room behind looks soft, not just dimmed. */
+.hc[data-layout='landscape']:not([data-quality='low']) .sh-band > .sh-drapes .sh-fabric {
   -webkit-backdrop-filter: blur(3px);
   backdrop-filter: blur(3px);
 }
 
-/* Evening: the fabric is as dim as the wall until the lights come on. */
+/* Evening: the fabric is as dim as the room until the lights come on. */
 .sh-fabric::before {
   content: '';
   position: absolute;
@@ -300,22 +329,43 @@
   opacity: calc(0.3 * (1 - var(--sh-light)));
 }
 
-/* Shadow the leading edge casts on the wall. */
-.sh-fabric::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 100%;
-  width: calc(var(--hc-w) * 0.025);
-  background: linear-gradient(to right, rgb(0 0 0 / 0.3), transparent);
-}
-
 .sh-fabric__lit {
   position: absolute;
   inset: 0;
   background: linear-gradient(180deg, rgb(var(--sh-light-rgb) / 0.34), rgb(var(--sh-light-rgb) / 0.08) 55%, transparent);
   opacity: var(--sh-light);
+}
+
+/* Glossy floor: the curtains are reflected like the room (see .hc-slide__reflection). */
+.sh-band__reflection {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: 0;
+  height: var(--hc-reflection-h);
+  overflow: hidden;
+  opacity: var(--hc-reflection-opacity);
+  -webkit-mask-image: var(--hc-mask-reflection);
+  mask-image: var(--hc-mask-reflection);
+}
+
+.sh-band__mirror {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: var(--hc-h);
+  transform: scaleY(-1);
+}
+
+.sh-band__mirror :is(.sh-fabric, .sh-hem) {
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
+/* Like the room's, skipped on phones and in low-power mode. */
+.hc:is([data-quality='low'], [data-layout='portrait']) .sh-band__reflection {
+  display: none;
 }
 
 /* ── Screen ───────────────────────────────────────────────────────────── */
@@ -879,6 +929,15 @@
   visibility: hidden;
 }
 
+/* While the enlarged panel is open the room is the picture: the text steps back. */
+.hc-copy {
+  transition: opacity 0.5s ease;
+}
+
+.hc[data-sheet] .hc-copy {
+  opacity: 0;
+}
+
 .sh-sheet {
   position: fixed;
   inset: 0;
@@ -903,8 +962,6 @@
   bottom: max(16px, env(safe-area-inset-bottom, 0px));
   left: 50%;
   width: min(92vw, 440px);
-  /* Narrower on short screens (phone on its side), so the whole panel stays in view. */
-  width: min(92vw, 440px, (100svh - 84px) / 1.24);
   opacity: 0;
   translate: -50% 28px;
   transition:
@@ -943,7 +1000,6 @@
 
 .sh-sheet__screen {
   position: relative;
-  aspect-ratio: 1 / 1.24;
   padding: 7px;
   border-radius: 18px;
   background: linear-gradient(160deg, #3a332a, #121214 40%, #0a0a0b);
@@ -953,155 +1009,186 @@
 }
 
 .sh-screen--sheet {
-  top: 7px;
-  left: 7px;
-  width: calc(100% - 14px);
-  height: calc(100% - 14px);
   border-radius: 12px;
 }
 
-/* Upright: the clock above, the readings in a row, the cards in a 2 × 2 grid, sized for touch. */
-@media (orientation: portrait), (min-height: 521px) {
+/*
+ * Upright phones: a compact remote at the foot of the screen (its height follows the content)
+ * — the clock and readings in one row, the cards in a 2 × 2 grid with the icon beside the
+ * name — so most of the room stays in view above it and the curtains can be seen drawing.
+ */
+@media not all and (orientation: landscape) and (max-height: 520px) {
+  .sh-screen--sheet {
+    position: relative;
+    container-type: inline-size;
+  }
+
   .sh-screen--sheet .sh-screen__inner {
+    position: relative;
     gap: 3cqw;
-    padding: 4.6cqw;
+    padding: 4cqw;
   }
 
   .sh-screen--sheet .sh-top {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 3.4cqw;
+    align-items: center;
+    gap: 3cqw;
   }
 
   .sh-screen--sheet .sh-top__time {
-    font-size: 11cqw;
+    font-size: 8.4cqw;
   }
 
+  /* (The phone shows the date already.) */
   .sh-screen--sheet .sh-top__date {
-    margin-top: 1.8cqw;
-    font-size: 2.5cqw;
-    letter-spacing: 0.14em;
+    display: none;
   }
 
   .sh-screen--sheet .sh-readings {
-    justify-content: space-between;
-    gap: 3cqw;
-    padding-top: 3cqw;
-    border-top: 1px solid rgb(244 240 233 / 0.1);
-    text-align: left;
+    gap: 3.4cqw;
+  }
+
+  /* The smallest phones: the readings take the whole row (the phone shows the time anyway). */
+  @container (max-width: 300px) {
+    .sh-screen--sheet .sh-top__time {
+      display: none;
+    }
+
+    .sh-screen--sheet .sh-readings {
+      flex: 1;
+      justify-content: space-between;
+    }
+  }
+
+  .sh-screen--sheet .sh-reading {
+    gap: 0.8cqw;
   }
 
   .sh-screen--sheet .sh-reading__label {
-    font-size: 2.5cqw;
+    font-size: max(7.5px, 2.2cqw);
     letter-spacing: 0.08em;
   }
 
   .sh-screen--sheet .sh-reading__value {
-    justify-content: flex-start;
-    font-size: 5.4cqw;
+    font-size: 4.6cqw;
   }
 
   .sh-screen--sheet .sh-reading__value small {
-    font-size: 2.3cqw;
+    font-size: max(7px, 2.1cqw);
   }
 
   .sh-screen--sheet .sh-reading__value i {
-    width: 1.8cqw;
-    height: 1.8cqw;
+    width: 1.6cqw;
+    height: 1.6cqw;
   }
 
   .sh-screen--sheet .sh-cards {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-rows: repeat(2, minmax(0, 1fr));
     gap: 2.4cqw;
   }
 
+  /* The icon (or the air-con display) beside the name, the controls across the card below. */
   .sh-screen--sheet .sh-card {
-    padding: 3.2cqw;
-    border-radius: 3.4cqw;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-content: space-between;
+    align-items: center;
+    column-gap: 2.6cqw;
+    padding: 3cqw 3cqw 2.6cqw;
+    border-radius: 3.2cqw;
+  }
+
+  .sh-screen--sheet .sh-card > :is(.sh-slider, .sh-ac__nudge) {
+    grid-column: 1 / -1;
   }
 
   .sh-screen--sheet .sh-card__icon {
-    width: 7cqw;
-    height: 7cqw;
+    width: 6.4cqw;
+    height: 6.4cqw;
   }
 
   .sh-screen--sheet .sh-card__text {
-    margin: 1.8cqw 0 1.2cqw;
+    margin: 0;
   }
 
   .sh-screen--sheet .sh-card__text b {
-    font-size: 4.2cqw;
+    /* clear of the switch */
+    padding-right: 9cqw;
+    font-size: 3.9cqw;
+    white-space: nowrap;
+  }
+
+  .sh-screen--sheet .sh-card[data-kind='ac'] .sh-card__text b {
+    padding-right: 0;
   }
 
   .sh-screen--sheet .sh-card__text small {
-    margin-top: 1cqw;
-    font-size: 2.6cqw;
-    letter-spacing: 0.1em;
+    margin-top: 0.6cqw;
+    font-size: max(7px, 2.3cqw);
+    letter-spacing: 0.08em;
   }
 
   .sh-screen--sheet .sh-card__switch {
-    top: 3.2cqw;
-    right: 3.2cqw;
-    width: 8.4cqw;
-    height: 4.8cqw;
+    top: 3cqw;
+    right: 3cqw;
+    width: 7.6cqw;
+    height: 4.4cqw;
     border-radius: 4cqw;
   }
 
   .sh-screen--sheet .sh-card__switch::after {
-    top: 0.6cqw;
-    left: 0.6cqw;
-    width: 3.6cqw;
-    height: 3.6cqw;
+    top: 0.5cqw;
+    left: 0.5cqw;
+    width: 3.4cqw;
+    height: 3.4cqw;
   }
 
   .sh-screen--sheet .sh-card[data-on] .sh-card__switch::after {
-    translate: 3.6cqw 0;
+    translate: 3.2cqw 0;
   }
 
   .sh-screen--sheet .sh-slider {
-    --thumb: 5.2cqw;
+    --thumb: 5cqw;
 
     height: 6.4cqw;
-    margin-top: 1.6cqw;
+    margin-top: 0.4cqw;
   }
 
-  .sh-screen--sheet .sh-slider--cct + .sh-slider--level {
-    margin-top: 0.6cqw;
+  .sh-screen--sheet .sh-card > .sh-card__text + :is(.sh-slider, .sh-ac__nudge) {
+    margin-top: 2cqw;
   }
 
   .sh-screen--sheet .sh-slider::-webkit-slider-runnable-track {
-    height: 1.3cqw;
+    height: 1.2cqw;
   }
 
   .sh-screen--sheet .sh-slider::-webkit-slider-thumb {
-    margin-top: calc((1.3cqw - var(--thumb)) / 2);
+    margin-top: calc((1.2cqw - var(--thumb)) / 2);
   }
 
   .sh-screen--sheet .sh-slider::-moz-range-track,
   .sh-screen--sheet .sh-slider::-moz-range-progress {
-    height: 1.3cqw;
+    height: 1.2cqw;
   }
 
   .sh-screen--sheet .sh-seg__digit {
-    width: 5.4cqw;
-    height: 9cqw;
+    width: 3.4cqw;
+    height: 5.6cqw;
   }
 
   .sh-screen--sheet .sh-ac__unit {
-    font-size: 3cqw;
+    margin-top: 0;
+    font-size: 2.2cqw;
   }
 
   .sh-screen--sheet .sh-ac__nudge {
-    gap: 2cqw;
-    margin-top: 0.4cqw;
+    gap: 2.4cqw;
   }
 
   .sh-screen--sheet .sh-ac__nudge button {
-    width: 7.6cqw;
-    height: 7.6cqw;
+    width: 7.4cqw;
+    height: 7.4cqw;
     border-width: 1px;
-    font-size: 4.4cqw;
+    font-size: 4.2cqw;
   }
 }
 
@@ -1133,6 +1220,13 @@
 
   .sh-sheet__screen {
     aspect-ratio: 1.66;
+  }
+
+  .sh-screen--sheet {
+    top: 7px;
+    left: 7px;
+    width: calc(100% - 14px);
+    height: calc(100% - 14px);
   }
 
   .sh-screen--sheet :is(.sh-top__date, .sh-reading__label, .sh-card__text small) {

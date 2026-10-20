@@ -2,7 +2,6 @@ import type { CSSProperties } from 'react'
 import type { PanelRect } from '../../data/slides'
 import { useI18n } from '../../i18n/context'
 import { ControlScreen, type ControlScreenProps } from './ControlScreen'
-import { curtainEnd } from './geometry'
 
 interface HomeWallProps extends Omit<ControlScreenProps, 'variant'> {
   /** Where the dark glass of the photographed panel is, per layout. */
@@ -25,7 +24,7 @@ const rectVars = (r: PanelRect, prefix: 'l' | 'p') => ({
 /**
  * Everything that lives on the Smart Home wall, inside the slide (so it turns, dims and
  * fades with it): the room's darkness and the pool of light from the wall-washers, the live
- * control screen set into the stone, the invitation above it and the curtain.
+ * control screen set into the stone and the invitation above it.
  */
 export function HomeWall({ rect, ...screen }: HomeWallProps) {
   const { t } = useI18n()
@@ -43,28 +42,6 @@ export function HomeWall({ rect, ...screen }: HomeWallProps) {
           <path d="M6 9l6 6 6-6" />
         </svg>
       </p>
-      <Curtain end={curtainEnd(rect)} />
-    </div>
-  )
-}
-
-/**
- * Sheer curtain panels. `end` (large screens, inside the slide): one panel from the far
- * left, drawn up to `end`. Without it (phones, across the screen): a pair meeting in the
- * middle. Driven by `--sh-curtain`, `--sh-sway` and `--sh-flutter` (useCurtainMotor).
- */
-export function Curtain({ end, className = 'sh-curtain' }: { end?: string; className?: string }) {
-  const style = end ? ({ '--sh-curtain-end': end } as CSSProperties) : undefined
-  return (
-    <div className={className} style={style} data-curtain-el data-pair={end ? undefined : true} aria-hidden="true">
-      <div className="sh-fabric" data-side="left">
-        <i className="sh-fabric__lit" />
-      </div>
-      {!end && (
-        <div className="sh-fabric" data-side="right">
-          <i className="sh-fabric__lit" />
-        </div>
-      )}
     </div>
   )
 }

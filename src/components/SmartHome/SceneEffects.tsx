@@ -5,8 +5,8 @@ interface SceneEffectsProps {
   /** Snow density: 0 = air-con off, up to 1 at the coldest set point. */
   snow: number
   /**
-   * Fan strength: 0 = off, up to 1. It blows leaves across and drives falling snow to the
-   * right — faster the stronger it is.
+   * Fan strength: 0 = off, up to 1. It blows leaves across — or, while the air-con runs, drives
+   * the falling snow to the right instead — faster the stronger it is.
    */
   wind: number
   /** Only while the Smart Home space is in the centre. */
@@ -122,8 +122,8 @@ function drawLeaf(ctx: CanvasRenderingContext2D, leaf: Leaf, alpha: number) {
 
 /**
  * Weather in the room, drawn on one canvas over the panorama: snowflakes while the air-con
- * runs (denser the colder it is set), leaves blowing across and snow driven sideways while
- * the fan blows (faster the stronger it is). Nothing runs while every effect is off; reduced-motion
+ * runs (denser the colder it is set); while the fan blows, leaves across the room — or, with
+ * the air-con on, the snow driven sideways — faster the stronger it is. Nothing runs while every effect is off; reduced-motion
  * visitors only see the control screen change.
  */
 export function SceneEffects({ snow, wind, visible }: SceneEffectsProps) {
@@ -136,7 +136,7 @@ export function SceneEffects({ snow, wind, visible }: SceneEffectsProps) {
     target.current = {
       snow: visible ? snow : 0,
       wind: visible ? wind : 0,
-      leaves: visible && wind > 0,
+      leaves: visible && wind > 0 && snow === 0,
     }
     wake.current()
   }, [snow, wind, visible])
@@ -153,8 +153,8 @@ export function SceneEffects({ snow, wind, visible }: SceneEffectsProps) {
     let dpr = 1
     let flakes: Flake[] = []
     let leaves: Leaf[] = []
-    // Eased copies of the targets: density, and fan strength.
-    const level = { snow: 0, wind: 0 }
+    // Eased copies of the targets: density, fan strength, and how visible the leaves are.
+    const level = { snow: 0, wind: 0, leaves: 1 }
     let raf = 0
     let last = 0
 
@@ -178,6 +178,8 @@ export function SceneEffects({ snow, wind, visible }: SceneEffectsProps) {
       const goal = target.current
       level.snow = approach(level.snow, goal.snow, 1.8, dt)
       level.wind = approach(level.wind, goal.wind, 1.4, dt)
+      // Air-con switched on: the leaves give way to the snow and fade out (fan switched off: they drop).
+      level.leaves = approach(level.leaves, goal.snow > 0 ? 0 : 1, 4, dt)
       const breeze = clamp01(level.wind * 3)
 
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
@@ -210,6 +212,10 @@ export function SceneEffects({ snow, wind, visible }: SceneEffectsProps) {
           if (goal.leaves) spawnLeaf(leaf, w, h, w * 0.9)
           else continue
         }
+        if (!goal.leaves && level.leaves < 0.02) {
+          leaf.alive = false
+          continue
+        }
         if (!goal.leaves) leaf.vy = Math.min(leaf.vy + 320 * dt, 280)
         leaf.x += leaf.vx * Math.max(speed, 0.3) * dt
         leaf.y += (leaf.vy + Math.sin(t * (1.2 + speed) + leaf.phase) * (28 + 30 * level.wind)) * dt
@@ -223,7 +229,7 @@ export function SceneEffects({ snow, wind, visible }: SceneEffectsProps) {
           }
         }
         leavesAlive = true
-        drawLeaf(ctx, leaf, 0.92)
+        drawLeaf(ctx, leaf, 0.92 * level.leaves)
       }
       ctx.globalAlpha = 1
 

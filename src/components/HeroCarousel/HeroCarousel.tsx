@@ -15,7 +15,7 @@ import { useI18n } from '../../i18n/context'
 import { getQualityHint } from '../../utils/device'
 import {
   ControlScreen,
-  Curtain,
+  CurtainBand,
   curtainEnd,
   HomeSheet,
   HomeWall,
@@ -87,6 +87,7 @@ export function HeroCarousel({
   useLightAtmosphere(rootRef, home)
   useCurtainMotor(rootRef, home.curtain.on ? home.curtain.level / 100 : 0, windStrength(home))
   const homeIndex = slides.findIndex((slide) => slide.screen)
+  const homeSlide = slides[homeIndex]
   const homeInView = ready && active === homeIndex
   const [sheetOpen, setSheetOpen] = useState(false)
   // Phones: the curtains are only drawn while the enlarged panel is open, and open again by
@@ -254,12 +255,7 @@ export function HeroCarousel({
               <div className="hc-slide__reflection" aria-hidden="true">
                 <div className="hc-slide__mirror">
                   <SlideImage slide={slide} alt="" />
-                  {slide.screen && (
-                    <>
-                      <div className="sh-dark" />
-                      <Curtain end={curtainEnd(slide.screen)} />
-                    </>
-                  )}
+                  {slide.screen && <div className="sh-dark" />}
                 </div>
               </div>
             </div>
@@ -269,13 +265,14 @@ export function HeroCarousel({
 
       <div className="hc-overlay" aria-hidden="true">
         <div className="hc-vignette" />
+        {/* In front of the room right to the screen edges, under the scrim that keeps the text legible. */}
+        {homeSlide?.screen && <CurtainBand end={curtainEnd(homeSlide.screen)} />}
         <div className="hc-scrim" />
         <div className="hc-grain" />
       </div>
 
       {homeIndex >= 0 && (
         <>
-          <Curtain className="sh-band" />
           <SceneEffects snow={snowDensity(home)} wind={windStrength(home)} visible={homeInView} />
           <HomeSheet open={sheetOpen && homeInView} onClose={closeSheet}>
             <ControlScreen

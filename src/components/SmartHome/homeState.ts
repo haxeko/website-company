@@ -18,8 +18,9 @@ export interface HomeState {
   ac: { on: boolean; temp: number }
 }
 
-/** Level of a device switched on for the first time. */
+/** Level of a device switched on for the first time; the curtains close all the way. */
 export const DEFAULT_LEVEL = 69
+const DEFAULT_CURTAIN = 100
 export const MIN_TEMP = 16
 export const MAX_TEMP = 30
 export const MIN_CCT = 2700
@@ -27,10 +28,12 @@ export const MAX_CCT = 6500
 const DEFAULT_TEMP = 24
 const DEFAULT_CCT = 3000
 const STORAGE_KEY = 'villa-nest-home'
+/** Saved by an older version (curtains then started at 69 %): its curtain level is not used. */
+const STORAGE_VERSION = 2
 
 const isNumber = (n: unknown): n is number => typeof n === 'number' && Number.isFinite(n)
 const clamp = (n: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, n))
-const clampLevel = (n: unknown) => (isNumber(n) ? clamp(Math.round(n), 1, 100) : DEFAULT_LEVEL)
+const clampLevel = (n: unknown, fallback = DEFAULT_LEVEL) => (isNumber(n) ? clamp(Math.round(n), 1, 100) : fallback)
 const clampTemp = (n: unknown) => (isNumber(n) ? clamp(Math.round(n), MIN_TEMP, MAX_TEMP) : DEFAULT_TEMP)
 const clampCct = (n: unknown) => (isNumber(n) ? clamp(Math.round(n / 100) * 100, MIN_CCT, MAX_CCT) : DEFAULT_CCT)
 
@@ -42,10 +45,11 @@ function initialState(): HomeState {
   } catch {
     // Private mode or an unreadable value: start from the defaults.
   }
+  const current = saved.v === STORAGE_VERSION
   return {
     lights: { on: false, level: clampLevel(saved.lights), cct: clampCct(saved.cct) },
     fan: { on: false, level: clampLevel(saved.fan) },
-    curtain: { on: false, level: clampLevel(saved.curtain) },
+    curtain: { on: false, level: current ? clampLevel(saved.curtain, DEFAULT_CURTAIN) : DEFAULT_CURTAIN },
     ac: { on: false, temp: clampTemp(saved.temp) },
   }
 }
@@ -59,7 +63,14 @@ export function useHomeState() {
     try {
       window.localStorage.setItem(
         STORAGE_KEY,
-        JSON.stringify({ lights: lights.level, cct: lights.cct, fan: fan.level, curtain: curtain.level, temp: ac.temp }),
+        JSON.stringify({
+          v: STORAGE_VERSION,
+          lights: lights.level,
+          cct: lights.cct,
+          fan: fan.level,
+          curtain: curtain.level,
+          temp: ac.temp,
+        }),
       )
     } catch {
       // Not remembered this time.
