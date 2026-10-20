@@ -1,6 +1,19 @@
 import { useEffect, useState, type CSSProperties, type ReactNode } from 'react'
 import { useI18n } from '../../i18n/context'
-import { MAX_TEMP, MIN_TEMP, type Appliance, type Device, type Dimmable, type HomeState } from './homeState'
+import {
+  co2Quality,
+  MAX_CCT,
+  MAX_TEMP,
+  MIN_CCT,
+  MIN_TEMP,
+  pm25Quality,
+  useClimate,
+  type AirQuality,
+  type Appliance,
+  type Device,
+  type Dimmable,
+  type HomeState,
+} from './homeState'
 import { SevenSegment } from './SevenSegment'
 import './SmartHome.css'
 
@@ -8,6 +21,7 @@ export interface ControlScreenProps {
   home: HomeState
   onToggle: (key: Appliance) => void
   onSetLevel: (key: Dimmable, level: number) => void
+  onSetCct: (kelvin: number) => void
   onNudgeTemp: (delta: number) => void
   /** `wall`: on the photographed panel (placed by the surrounding HomeWall); `sheet`: the enlarged copy. */
   variant: 'wall' | 'sheet'
@@ -39,12 +53,14 @@ interface LevelCardProps {
   status: string
   sliderLabel: string
   icon: ReactNode
+  /** Extra control above the level slider (the lights' colour temperature). */
+  extra?: ReactNode
   onToggle: (key: Appliance) => void
   onSetLevel: (key: Dimmable, level: number) => void
 }
 
 /** Lights, fan, curtains: a tap on the card switches on / off, the slider sets the level. */
-function LevelCard({ kind, device, label, status, sliderLabel, icon, onToggle, onSetLevel }: LevelCardProps) {
+function LevelCard({ kind, device, label, status, sliderLabel, icon, extra, onToggle, onSetLevel }: LevelCardProps) {
   const style = {
     '--sh-level': device.level / 100,
     '--sh-pos': (device.level - 1) / 99,
@@ -64,9 +80,10 @@ function LevelCard({ kind, device, label, status, sliderLabel, icon, onToggle, o
         <b>{label}</b>
         <small>{status}</small>
       </div>
+      {extra}
       <input
         type="range"
-        className="sh-slider"
+        className="sh-slider sh-slider--level"
         min={1}
         max={100}
         step={1}
@@ -83,18 +100,42 @@ function LevelCard({ kind, device, label, status, sliderLabel, icon, onToggle, o
  * The live screen of the wall panel in the Smart Home photo: a working (demo) control
  * screen for the lights, air-con, fan and curtains.
  */
-export function ControlScreen({ home, onToggle, onSetLevel, onNudgeTemp, variant, onExpand }: ControlScreenProps) {
+function Reading({ label, value, unit, quality, qualityText }: {
+  label: string
+  value: string
+  unit: string
+  quality?: AirQuality
+  qualityText?: string
+}) {
+  return (
+    <div className="sh-reading" data-quality={quality}>
+      <span className="sh-reading__label">{label}</span>
+      <span className="sh-reading__value">
+        {value}
+        <small>{unit}</small>
+        {quality && <i aria-label={qualityText} title={qualityText} />}
+      </span>
+    </div>
+  )
+}
+
+export function ControlScreen({
+  home,
+  onToggle,
+  onSetLevel,
+  onSetCct,
+  onNudgeTemp,
+  variant,
+  onExpand,
+}: ControlScreenProps) {
   const { lang, t } = useI18n()
   const now = useNow(15_000)
   const locale = lang === 'vi' ? 'vi-VN' : 'en-GB'
-  const hour = now.getHours()
-  const greeting = hour < 11 ? t.morning : hour < 18 ? t.afternoon : t.evening
+  const climate = useClimate()
   const time = now.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })
   const date = now.toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'long' })
 
   const { lights, fan, curtain, ac } = home
-  const active = [lights.on, fan.on, curtain.on, ac.on].filter(Boolean).length
-  const summary = active === 0 ? t.allOff : active === 1 ? t.oneDeviceOn : t.devicesOn.replace('{n}', String(active))
   const level = (device: Device) => (device.on ? `${device.level}%` : t.off)
   // Stronger fan, faster blades.
   const fanSpin = { animationDuration: `${(1.9 - 1.5 * (fan.level / 100)).toFixed(2)}s` }
@@ -113,9 +154,22 @@ export function ControlScreen({ home, onToggle, onSetLevel, onNudgeTemp, variant
             <p className="sh-top__time">{time}</p>
             <p className="sh-top__date">{date}</p>
           </div>
-          <div className="sh-top__right">
-            <p className="sh-top__hello">{greeting}</p>
-            <p className="sh-top__summary">{summary}</p>
+          <div className="sh-readings">
+            <Reading label={t.roomTemp} value={climate.temp.toFixed(1)} unit="°C" />
+            <Reading
+              label={t.pm25}
+              value={String(Math.round(climate.pm25))}
+              unit="µg/m³"
+              quality={pm25Quality(climate.pm25)}
+              qualityText={t[pm25Quality(climate.pm25)]}
+            />
+            <Reading
+              label={t.co2}
+              value={String(Math.round(climate.co2 / 5) * 5)}
+              unit="ppm"
+              quality={co2Quality(climate.co2)}
+              qualityText={t[co2Quality(climate.co2)]}
+            />
           </div>
         </header>
 
@@ -124,10 +178,23 @@ export function ControlScreen({ home, onToggle, onSetLevel, onNudgeTemp, variant
             kind="lights"
             device={lights}
             label={t.lights}
-            status={level(lights)}
+            status={lights.on ? `${lights.level}% · ${lights.cct}K` : t.off}
             sliderLabel={t.brightness}
             onToggle={onToggle}
             onSetLevel={onSetLevel}
+            extra={
+              <input
+                type="range"
+                className="sh-slider sh-slider--cct"
+                min={MIN_CCT}
+                max={MAX_CCT}
+                step={100}
+                value={lights.cct}
+                aria-label={t.cct}
+                aria-valuetext={`${lights.cct} K`}
+                onChange={(e) => onSetCct(Number(e.currentTarget.value))}
+              />
+            }
             icon={
               <path d="M18 34h12M19.5 39h9M24 7a12 12 0 0 0-7 21.7c1 .8 1.5 1.9 1.5 3.1V34h11v-2.2c0-1.2.6-2.3 1.5-3.1A12 12 0 0 0 24 7Z" />
             }

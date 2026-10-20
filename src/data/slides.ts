@@ -39,6 +39,12 @@ export interface PanelRect {
   /** Corner radius, in % of the rectangle's own width and height. */
   radiusX: number
   radiusY: number
+  /** The panel is turned with the wall about its left edge: angle in degrees… */
+  tilt: number
+  /** …seen from this distance, as a multiple of the slide image's width. */
+  perspective: number
+  /** Where the panel's frame begins, in % of the slide width (the curtain stops just before it). */
+  frameLeft: number
 }
 
 export interface Slide {
@@ -84,7 +90,15 @@ function placeOnPanel(id: MediaId, layout: 'landscape' | 'portrait'): PanelRect 
     sourceSize?: number[]
     focus: number[]
     portraitFocusX?: number
-    screen?: { x: number; y: number; width: number; height: number; radius: number }
+    screen?: {
+      x: number
+      y: number
+      width: number
+      height: number
+      radius: number
+      bezel?: number
+      tilt?: { angle: number; perspective: number }
+    }
   }
   if (!cfg.screen || !cfg.sourceSize) return undefined
   const [width, height] = cfg.sourceSize
@@ -99,7 +113,7 @@ function placeOnPanel(id: MediaId, layout: 'landscape' | 'portrait'): PanelRect 
     const h = Math.round(width / aspect)
     crop = { left: 0, top: Math.round((height - h) * fy), width, height: h }
   }
-  const { x, y, width: sw, height: sh, radius } = cfg.screen
+  const { x, y, width: sw, height: sh, radius, bezel = 0, tilt } = cfg.screen
   return {
     left: ((x - crop.left) / crop.width) * 100,
     top: ((y - crop.top) / crop.height) * 100,
@@ -107,6 +121,9 @@ function placeOnPanel(id: MediaId, layout: 'landscape' | 'portrait'): PanelRect 
     height: (sh / crop.height) * 100,
     radiusX: (radius / sw) * 100,
     radiusY: (radius / sh) * 100,
+    tilt: tilt?.angle ?? 0,
+    perspective: tilt ? tilt.perspective / crop.width : 0,
+    frameLeft: ((x - bezel - crop.left) / crop.width) * 100,
   }
 }
 

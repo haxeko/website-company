@@ -1,6 +1,7 @@
 export { ControlScreen } from './ControlScreen'
 export { HomeSheet } from './HomeSheet'
+export { curtainEnd } from './geometry'
 export { Curtain, HomeWall } from './HomeWall'
 export { SceneEffects } from './SceneEffects'
 export { snowDensity, useHomeState, windStrength } from './homeState'
-export { useHomeAtmosphere } from './useHomeAtmosphere'
+export { useCurtainMotor, useLightAtmosphere } from './useHomeAtmosphere'

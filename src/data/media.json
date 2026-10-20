@@ -71,12 +71,17 @@
         "warmth": 0.004
       },
       "screen": {
-        "$comment": "Where the live control screen (src/components/SmartHome) sits on the wall, in source-image pixels: the photo only has dark glass there.",
+        "$comment": "Where the live control screen (src/components/SmartHome) sits on the wall, in source-image pixels, before tilting: the photo only has dark glass there. tilt = the panel turned with the wall about the screen's left edge (degrees), perspective = viewing distance in source px — the photo was composited with this projection and the CSS transform of the screen repeats it.",
         "x": 3239,
         "y": 1691,
         "width": 2122,
         "height": 1278,
-        "radius": 14
+        "radius": 14,
+        "bezel": 64,
+        "tilt": {
+          "angle": 10,
+          "perspective": 9110
+        }
       }
     },
     "construction": {

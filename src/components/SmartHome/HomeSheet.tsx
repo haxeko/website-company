@@ -1,4 +1,5 @@
 import { useEffect, useRef, type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 import { useI18n } from '../../i18n/context'
 
 interface HomeSheetProps {
@@ -10,7 +11,7 @@ interface HomeSheetProps {
 /**
  * Phones: the wall panel is too small to tap precisely, so a tap opens this enlarged copy
  * at the bottom of the screen. The room stays visible above it, so the lights, snow and
- * leaves can still be seen reacting.
+ * leaves can still be seen reacting. Rendered into <body>, above the site header.
  */
 export function HomeSheet({ open, onClose, children }: HomeSheetProps) {
   const { t } = useI18n()
@@ -26,7 +27,7 @@ export function HomeSheet({ open, onClose, children }: HomeSheetProps) {
     return () => window.removeEventListener('keydown', onKey)
   }, [open, onClose])
 
-  return (
+  return createPortal(
     <div className="sh-sheet" data-open={open || undefined} inert={!open}>
       <div className="sh-sheet__backdrop" onClick={onClose} />
       <div className="sh-sheet__panel" role="dialog" aria-modal="true" aria-label={t.homePanel}>
@@ -38,6 +39,7 @@ export function HomeSheet({ open, onClose, children }: HomeSheetProps) {
         </button>
         <div className="sh-sheet__screen">{children}</div>
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }

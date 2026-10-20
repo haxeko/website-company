@@ -6,9 +6,10 @@
  */
 
 .hc {
-  /* Animated by useSmoothVar: 0 = lights off / curtains open, 1 = full brightness / fully drawn. */
+  /* Written by useLightAtmosphere: lamps off at first, so the room starts dim. */
   --sh-light: 0;
-  --sh-curtain: 0;
+  --sh-dark: 0.36;
+  --sh-light-rgb: 255 186 116;
 }
 
 /* ── The wall: everything placed on the photographed panel ─────────────── */
@@ -19,6 +20,7 @@
   --sh-w: var(--sh-l-w);
   --sh-h: var(--sh-l-h);
   --sh-r: var(--sh-l-r);
+  --sh-tf: var(--sh-l-tf);
   --sh-cx: calc(var(--sh-x) + var(--sh-w) / 2);
 
   position: absolute;
@@ -32,6 +34,7 @@
   --sh-w: var(--sh-p-w);
   --sh-h: var(--sh-p-h);
   --sh-r: var(--sh-p-r);
+  --sh-tf: var(--sh-p-tf);
 }
 
 /*
@@ -44,14 +47,25 @@
   filter: var(--sh-img-filter, none);
 }
 
-/* …and a pool of warm light falls from the wall-washers above the panel. */
+/* …a pool of light falls from the wall-washers above the panel, in the lamps' colour… */
 .sh-warm {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(40% 60% at var(--sh-cx) 6%, rgb(255 196 130 / 0.32), transparent 72%),
-    radial-gradient(70% 90% at 52% 30%, rgb(255 176 104 / 0.1), transparent 75%);
+    radial-gradient(40% 60% at var(--sh-cx) 6%, rgb(var(--sh-light-rgb) / 0.34), transparent 72%),
+    radial-gradient(70% 90% at 52% 30%, rgb(var(--sh-light-rgb) / 0.12), transparent 75%);
   opacity: var(--sh-light);
+}
+
+/* …and with the lamps off the room sinks into the evening (less so towards the open
+   right-hand side, so the seam with the construction view stays soft). */
+.sh-dark {
+  position: absolute;
+  inset: 0;
+  background: rgb(6 6 8);
+  opacity: var(--sh-dark);
+  -webkit-mask-image: linear-gradient(to right, #000 0 68%, rgb(0 0 0 / 0.45) 100%);
+  mask-image: linear-gradient(to right, #000 0 68%, rgb(0 0 0 / 0.45) 100%);
 }
 
 /* Room-scale glow behind the panorama while Smart Home is in view. */
@@ -69,7 +83,7 @@
 .sh-room i {
   position: absolute;
   inset: 0;
-  background: radial-gradient(60% 55% at 50% 40%, rgb(255 176 100 / 0.16), transparent 70%);
+  background: radial-gradient(60% 55% at 50% 40%, rgb(var(--sh-light-rgb) / 0.16), transparent 70%);
   opacity: var(--sh-light);
 }
 
@@ -166,34 +180,57 @@
 /* ── Curtains ─────────────────────────────────────────────────────────── */
 
 /*
- * Two sheer linen panels drawn in from the sides; `--sh-curtain` is how far (1 = they meet
- * in the middle). On larger screens they hang in front of the control screen, which stays
- * faintly visible through the fabric (and usable: the curtains let clicks through). On
- * phones they hang behind it, so the screen is never covered.
+ * Sheer linen, driven by useCurtainMotor: --sh-curtain = how far it is drawn (0–1),
+ * --sh-sway / --sh-flutter = how the hem swings (motor inertia / the fan's wind), hung
+ * from the track at the top. Only rendered while drawn.
+ *
+ * Large screens (.sh-curtain, inside the slide): one panel from the far left of the room,
+ * drawn up to just before the control panel (--sh-curtain-end), which stays free.
+ * Phones (.sh-band, across the screen): a pair from both screen edges, hanging below the
+ * enlarged control panel; they open again by themselves when it closes.
+ * (display, not visibility: a copy of the slide hidden behind the ring must stay hidden.)
  */
-.sh-curtain {
+.sh-curtain,
+.sh-band {
+  --sh-curtain: 0;
+  --sh-sway: 0deg;
+  --sh-flutter: 0deg;
+  /* Fabric past the stack edge, out of view: the swinging hem never opens a gap there. */
+  --sh-overhang: calc(var(--hc-h) * 0.13);
+
   display: none;
   position: absolute;
-  inset: 0;
-  z-index: 4;
   pointer-events: none;
 }
 
-/* (display, not visibility: a copy of the slide hidden behind the ring must stay hidden.) */
-.hc[data-curtain] .sh-curtain {
+.sh-curtain {
+  inset: 0;
+  z-index: 4;
+}
+
+.hc[data-curtain][data-layout='landscape'] .sh-curtain {
   display: block;
 }
 
-.hc[data-layout='portrait'] .sh-curtain {
-  z-index: 1;
+.sh-band {
+  top: calc(var(--hc-cy) - var(--hc-h) / 2);
+  right: 0;
+  left: 0;
+  z-index: 2;
+  height: var(--hc-h);
+  -webkit-mask-image: var(--hc-mask-y);
+  mask-image: var(--hc-mask-y);
 }
 
-.sh-curtain__panel {
+.hc[data-curtain][data-home-view][data-layout='portrait'] .sh-band {
+  display: block;
+}
+
+.sh-fabric {
   position: absolute;
   top: 0;
   bottom: 0;
-  left: 0;
-  width: calc(var(--sh-curtain) * 51%);
+  left: calc(-1 * var(--sh-overhang));
   background:
     /* Weave */
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.32 0 0 0 0 0.26 0 0 0 0 0.2 0 0 0 0.3 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
@@ -201,7 +238,7 @@
     linear-gradient(to left, rgb(44 32 20 / 0.3), rgb(250 244 232 / 0.1) 1.2%, transparent 4%),
     /* Light from above, falling off towards the floor */
     linear-gradient(180deg, rgb(255 244 228 / 0.1), transparent 32%, rgb(20 14 8 / 0.24)),
-    /* Fine folds */
+    /* Fine folds — they stay the same in number, so they bunch up as the curtain opens */
     repeating-linear-gradient(
       90deg,
       rgb(255 249 238 / 0.16) 0%,
@@ -219,41 +256,52 @@
       rgb(255 246 230 / 0.08) 23%,
       transparent 29%
     ),
-    rgb(206 192 172 / 0.6);
+    rgb(206 192 172 / 0.66);
   background-size:
     140px 140px,
     auto,
     auto,
     auto,
     auto;
+  transform: skewX(calc(var(--sh-sway) + var(--sh-flutter)));
   transform-origin: 50% 0;
-  animation: sh-sway 7s ease-in-out infinite alternate;
 }
 
-.sh-curtain__panel[data-side='right'] {
-  right: 0;
+/* Large screens: from a narrow stack at the far left up to the end point. */
+.sh-curtain .sh-fabric {
+  width: calc(var(--sh-overhang) + 3% + var(--sh-curtain) * (var(--sh-curtain-end, 45%) - 3%));
+}
+
+/* Phones: a pair from both screen edges, meeting in the middle. */
+.sh-band .sh-fabric {
+  width: calc(var(--sh-overhang) + 2% + var(--sh-curtain) * 49%);
+}
+
+.sh-band .sh-fabric[data-side='right'] {
+  right: calc(-1 * var(--sh-overhang));
   left: auto;
-  /* Mirrored, so the folds and hem face the middle. */
+  /* Mirrored, so the folds and hem face the middle; it swings mirrored, but the wind still blows it to the right. */
   scale: -1 1;
+  transform: skewX(calc(var(--sh-sway) - var(--sh-flutter)));
 }
 
-/* Through sheer fabric the room — and the control screen — show softly. */
-.hc[data-layout='landscape']:not([data-quality='low']) .hc-slide__frame .sh-curtain__panel {
+/* Through sheer fabric the stone behind looks soft, not just dimmed. */
+.hc[data-layout='landscape']:not([data-quality='low']) .hc-slide__frame .sh-fabric {
   -webkit-backdrop-filter: blur(3px);
   backdrop-filter: blur(3px);
 }
 
 /* Evening: the fabric is as dim as the wall until the lights come on. */
-.sh-curtain__panel::before {
+.sh-fabric::before {
   content: '';
   position: absolute;
   inset: 0;
   background: rgb(12 10 8);
-  opacity: calc(0.28 * (1 - var(--sh-light)));
+  opacity: calc(0.3 * (1 - var(--sh-light)));
 }
 
 /* Shadow the leading edge casts on the wall. */
-.sh-curtain__panel::after {
+.sh-fabric::after {
   content: '';
   position: absolute;
   top: 0;
@@ -263,37 +311,11 @@
   background: linear-gradient(to right, rgb(0 0 0 / 0.3), transparent);
 }
 
-.sh-curtain__lit {
+.sh-fabric__lit {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgb(255 206 150 / 0.34), rgb(255 190 130 / 0.08) 55%, transparent);
+  background: linear-gradient(180deg, rgb(var(--sh-light-rgb) / 0.34), rgb(var(--sh-light-rgb) / 0.08) 55%, transparent);
   opacity: var(--sh-light);
-}
-
-/* The fan makes the fabric move. */
-.hc[data-wind] .sh-curtain__panel {
-  animation-name: sh-billow;
-  animation-duration: 2.2s;
-}
-
-@keyframes sh-sway {
-  from {
-    transform: skewX(-0.35deg);
-  }
-
-  to {
-    transform: skewX(0.35deg);
-  }
-}
-
-@keyframes sh-billow {
-  from {
-    transform: skewX(-1.3deg);
-  }
-
-  to {
-    transform: skewX(0.6deg);
-  }
 }
 
 /* ── Screen ───────────────────────────────────────────────────────────── */
@@ -320,6 +342,9 @@
   height: var(--sh-h);
   border-radius: var(--sh-r);
   pointer-events: auto;
+  /* Set into the wall: turned with it, about the left edge, as in the photo. */
+  transform: var(--sh-tf, none);
+  transform-origin: 0 50%;
 }
 
 /* Glass: a faint sheen from the ceiling light, above the interface. */
@@ -336,7 +361,8 @@
   position: absolute;
   inset: 0;
   display: grid;
-  grid-template-rows: auto 1fr;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
   gap: 3.4cqw;
   padding: 4cqw 4.4cqw 4.2cqw;
 }
@@ -388,23 +414,63 @@
   text-transform: uppercase;
 }
 
-.sh-top__right {
+/* Room readings: temperature, fine dust, CO₂ (dot = air quality). */
+.sh-readings {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  gap: 3.2cqw;
   text-align: right;
 }
 
-.sh-top__hello {
-  margin: 0;
-  font-family: var(--font-serif);
-  font-size: 4.2cqw;
-  line-height: 1;
+.sh-reading {
+  display: grid;
+  gap: 0.9cqw;
 }
 
-.sh-top__summary {
-  margin: 1.2cqw 0 0;
-  color: rgb(200 170 120 / 0.85);
-  font-size: 1.5cqw;
-  letter-spacing: 0.2em;
+.sh-reading__label {
+  color: var(--c-text-2);
+  font-size: 1.35cqw;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.sh-reading__value {
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 0.5cqw;
+  font-size: 3.6cqw;
+  font-weight: 300;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.sh-reading__value small {
+  color: var(--c-text-2);
+  font-size: 1.4cqw;
+  font-weight: 400;
+}
+
+.sh-reading__value i {
+  align-self: center;
+  width: 1.2cqw;
+  height: 1.2cqw;
+  margin-left: 0.4cqw;
+  border-radius: 50%;
+  background: #7fd18b;
+  box-shadow: 0 0 0.8cqw rgb(127 209 139 / 0.8);
+}
+
+.sh-reading[data-quality='fair'] .sh-reading__value i {
+  background: #e8c35e;
+  box-shadow: 0 0 0.8cqw rgb(232 195 94 / 0.8);
+}
+
+.sh-reading[data-quality='poor'] .sh-reading__value i {
+  background: #e56b5d;
+  box-shadow: 0 0 0.8cqw rgb(229 107 93 / 0.8);
 }
 
 /* ── Cards ────────────────────────────────────────────────────────────── */
@@ -491,7 +557,12 @@
     filter 0.8s ease;
 }
 
+/* Name and state under the icon, the controls at the foot of the card. */
 .sh-card__text {
+  margin: 1.6cqw 0 1.4cqw;
+}
+
+.sh-card > .sh-card__text + :is(.sh-slider, .sh-ac__nudge) {
   margin-top: auto;
 }
 
@@ -565,6 +636,33 @@
   cursor: pointer;
   appearance: none;
   -webkit-appearance: none;
+}
+
+/* Colour temperature (lights), just above the brightness: warm amber → neutral → cool daylight, no fill. */
+.sh-slider--cct {
+  --fill-end: 0%;
+  --track: linear-gradient(to right, #ffae5e, #ffe7c4 42%, #f4f6ff 62%, #bcd3ff);
+}
+
+.sh-slider--cct + .sh-slider--level {
+  margin-top: 0.8cqw;
+}
+
+/* (doubled class: outranks the generic track rule further down) */
+.sh-slider.sh-slider--cct::-webkit-slider-runnable-track {
+  background: var(--track);
+}
+
+.sh-slider.sh-slider--cct::-moz-range-track {
+  background: var(--track);
+}
+
+.sh-slider.sh-slider--cct::-moz-range-progress {
+  background: transparent;
+}
+
+.sh-card:not([data-on]) .sh-slider--cct {
+  opacity: 0.45;
 }
 
 .sh-card:not([data-on]) .sh-slider {
@@ -805,6 +903,8 @@
   bottom: max(16px, env(safe-area-inset-bottom, 0px));
   left: 50%;
   width: min(92vw, 440px);
+  /* Narrower on short screens (phone on its side), so the whole panel stays in view. */
+  width: min(92vw, 440px, (100svh - 84px) / 1.24);
   opacity: 0;
   translate: -50% 28px;
   transition:
@@ -843,7 +943,7 @@
 
 .sh-sheet__screen {
   position: relative;
-  aspect-ratio: 1 / 1.08;
+  aspect-ratio: 1 / 1.24;
   padding: 7px;
   border-radius: 18px;
   background: linear-gradient(160deg, #3a332a, #121214 40%, #0a0a0b);
@@ -860,115 +960,184 @@
   border-radius: 12px;
 }
 
-.sh-screen--sheet .sh-screen__inner {
-  gap: 3.4cqw;
-  padding: 5cqw;
+/* Upright: the clock above, the readings in a row, the cards in a 2 × 2 grid, sized for touch. */
+@media (orientation: portrait), (min-height: 521px) {
+  .sh-screen--sheet .sh-screen__inner {
+    gap: 3cqw;
+    padding: 4.6cqw;
+  }
+
+  .sh-screen--sheet .sh-top {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 3.4cqw;
+  }
+
+  .sh-screen--sheet .sh-top__time {
+    font-size: 11cqw;
+  }
+
+  .sh-screen--sheet .sh-top__date {
+    margin-top: 1.8cqw;
+    font-size: 2.5cqw;
+    letter-spacing: 0.14em;
+  }
+
+  .sh-screen--sheet .sh-readings {
+    justify-content: space-between;
+    gap: 3cqw;
+    padding-top: 3cqw;
+    border-top: 1px solid rgb(244 240 233 / 0.1);
+    text-align: left;
+  }
+
+  .sh-screen--sheet .sh-reading__label {
+    font-size: 2.5cqw;
+    letter-spacing: 0.08em;
+  }
+
+  .sh-screen--sheet .sh-reading__value {
+    justify-content: flex-start;
+    font-size: 5.4cqw;
+  }
+
+  .sh-screen--sheet .sh-reading__value small {
+    font-size: 2.3cqw;
+  }
+
+  .sh-screen--sheet .sh-reading__value i {
+    width: 1.8cqw;
+    height: 1.8cqw;
+  }
+
+  .sh-screen--sheet .sh-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+    gap: 2.4cqw;
+  }
+
+  .sh-screen--sheet .sh-card {
+    padding: 3.2cqw;
+    border-radius: 3.4cqw;
+  }
+
+  .sh-screen--sheet .sh-card__icon {
+    width: 7cqw;
+    height: 7cqw;
+  }
+
+  .sh-screen--sheet .sh-card__text {
+    margin: 1.8cqw 0 1.2cqw;
+  }
+
+  .sh-screen--sheet .sh-card__text b {
+    font-size: 4.2cqw;
+  }
+
+  .sh-screen--sheet .sh-card__text small {
+    margin-top: 1cqw;
+    font-size: 2.6cqw;
+    letter-spacing: 0.1em;
+  }
+
+  .sh-screen--sheet .sh-card__switch {
+    top: 3.2cqw;
+    right: 3.2cqw;
+    width: 8.4cqw;
+    height: 4.8cqw;
+    border-radius: 4cqw;
+  }
+
+  .sh-screen--sheet .sh-card__switch::after {
+    top: 0.6cqw;
+    left: 0.6cqw;
+    width: 3.6cqw;
+    height: 3.6cqw;
+  }
+
+  .sh-screen--sheet .sh-card[data-on] .sh-card__switch::after {
+    translate: 3.6cqw 0;
+  }
+
+  .sh-screen--sheet .sh-slider {
+    --thumb: 5.2cqw;
+
+    height: 6.4cqw;
+    margin-top: 1.6cqw;
+  }
+
+  .sh-screen--sheet .sh-slider--cct + .sh-slider--level {
+    margin-top: 0.6cqw;
+  }
+
+  .sh-screen--sheet .sh-slider::-webkit-slider-runnable-track {
+    height: 1.3cqw;
+  }
+
+  .sh-screen--sheet .sh-slider::-webkit-slider-thumb {
+    margin-top: calc((1.3cqw - var(--thumb)) / 2);
+  }
+
+  .sh-screen--sheet .sh-slider::-moz-range-track,
+  .sh-screen--sheet .sh-slider::-moz-range-progress {
+    height: 1.3cqw;
+  }
+
+  .sh-screen--sheet .sh-seg__digit {
+    width: 5.4cqw;
+    height: 9cqw;
+  }
+
+  .sh-screen--sheet .sh-ac__unit {
+    font-size: 3cqw;
+  }
+
+  .sh-screen--sheet .sh-ac__nudge {
+    gap: 2cqw;
+    margin-top: 0.4cqw;
+  }
+
+  .sh-screen--sheet .sh-ac__nudge button {
+    width: 7.6cqw;
+    height: 7.6cqw;
+    border-width: 1px;
+    font-size: 4.4cqw;
+  }
 }
 
-.sh-screen--sheet .sh-top__time {
-  font-size: 12cqw;
-}
+/* Phone on its side: the wide layout of the wall screen, as large as the height allows. */
+@media (orientation: landscape) and (max-height: 520px) {
+  .sh-sheet__backdrop {
+    background: rgb(10 10 12 / 0.6);
+  }
 
-.sh-screen--sheet .sh-top__date {
-  margin-top: 2cqw;
-  font-size: 2.6cqw;
-  letter-spacing: 0.14em;
-}
+  .sh-sheet__panel {
+    top: 50%;
+    bottom: auto;
+    width: min(76vw, 760px, (100svh - 24px) * 1.66);
+    translate: -50% calc(-50% + 28px);
+  }
 
-.sh-screen--sheet .sh-top__hello {
-  font-size: 6cqw;
-}
+  .sh-sheet[data-open] .sh-sheet__panel {
+    translate: -50% -50%;
+  }
 
-.sh-screen--sheet .sh-top__summary {
-  margin-top: 1.6cqw;
-  font-size: 2.4cqw;
-  letter-spacing: 0.12em;
-}
+  /* Beside the lower corner: clear of the header, under the right thumb. */
+  .sh-sheet__close {
+    position: absolute;
+    bottom: 0;
+    left: 100%;
+    width: max-content;
+    margin: 0 0 0 12px;
+  }
 
-.sh-screen--sheet .sh-cards {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  grid-template-rows: repeat(2, minmax(0, 1fr));
-  gap: 2.4cqw;
-}
+  .sh-sheet__screen {
+    aspect-ratio: 1.66;
+  }
 
-.sh-screen--sheet .sh-card {
-  padding: 3.4cqw;
-  border-radius: 3.4cqw;
-}
-
-.sh-screen--sheet .sh-card__icon {
-  width: 8cqw;
-  height: 8cqw;
-}
-
-.sh-screen--sheet .sh-card__text b {
-  font-size: 4.4cqw;
-}
-
-.sh-screen--sheet .sh-card__text small {
-  margin-top: 1cqw;
-  font-size: 2.7cqw;
-  letter-spacing: 0.1em;
-}
-
-.sh-screen--sheet .sh-card__switch {
-  top: 3.4cqw;
-  right: 3.4cqw;
-  width: 8.4cqw;
-  height: 4.8cqw;
-  border-radius: 4cqw;
-}
-
-.sh-screen--sheet .sh-card__switch::after {
-  top: 0.6cqw;
-  left: 0.6cqw;
-  width: 3.6cqw;
-  height: 3.6cqw;
-}
-
-.sh-screen--sheet .sh-card[data-on] .sh-card__switch::after {
-  translate: 3.6cqw 0;
-}
-
-.sh-screen--sheet .sh-slider {
-  --thumb: 5.2cqw;
-
-  height: 6.4cqw;
-  margin-top: 1.6cqw;
-}
-
-.sh-screen--sheet .sh-slider::-webkit-slider-runnable-track {
-  height: 1.3cqw;
-}
-
-.sh-screen--sheet .sh-slider::-webkit-slider-thumb {
-  margin-top: calc((1.3cqw - var(--thumb)) / 2);
-}
-
-.sh-screen--sheet .sh-slider::-moz-range-track,
-.sh-screen--sheet .sh-slider::-moz-range-progress {
-  height: 1.3cqw;
-}
-
-.sh-screen--sheet .sh-seg__digit {
-  width: 5.4cqw;
-  height: 9cqw;
-}
-
-.sh-screen--sheet .sh-ac__unit {
-  font-size: 3cqw;
-}
-
-.sh-screen--sheet .sh-ac__nudge {
-  gap: 2cqw;
-  margin-top: 0.4cqw;
-}
-
-.sh-screen--sheet .sh-ac__nudge button {
-  width: 7.6cqw;
-  height: 7.6cqw;
-  border-width: 1px;
-  font-size: 4.4cqw;
+  .sh-screen--sheet :is(.sh-top__date, .sh-reading__label, .sh-card__text small) {
+    font-size: max(7px, 1.6cqw);
+  }
 }
 
 /* ── Particles (snow, leaves) ─────────────────────────────────────────── */
@@ -985,8 +1154,7 @@
 @media (prefers-reduced-motion: reduce) {
   .sh-card[data-on] .sh-fan,
   .hc-slide[data-position='center'] .sh-invite,
-  .hc-slide[data-position='center'] .sh-invite__dot::after,
-  .sh-curtain__panel {
+  .hc-slide[data-position='center'] .sh-invite__dot::after {
     animation: none;
   }
 

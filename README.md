@@ -24,22 +24,31 @@ phòng — cuối ảnh này ăn khớp với đầu ảnh kia — và xoay đ�
   mỗi lĩnh vực có tiêu đề serif lớn với dòng nghiêng màu vàng, mô tả và nút "Khám phá"; chữ đổi theo hiệu ứng khi
   chuyển cảnh; thanh điều hướng 01 · 02 · 03 kèm phụ đề; nút mũi tên dọc với bộ đếm; gợi ý "Click · Vuốt · Phím mũi tên".
 - **Song ngữ**: tiếng Việt mặc định, chọn tiếng Anh bằng cờ (trình duyệt nhớ lựa chọn), hoặc mở `?lang=en`.
-- **Bảng điều khiển nhà thông minh bấm được** (cảnh Smart Home): màn hình trên tường là giao diện thật (giờ chạy theo
-  đồng hồ máy), phía trên có dòng **"Chạm để trải nghiệm"** nhấp nhô mời bấm. Bốn thẻ **Đèn**, **Máy lạnh**, **Quạt**,
-  **Rèm cửa**: chạm vào thẻ để bật / tắt nhanh; đèn, quạt, rèm có **thanh kéo** chỉnh mức 1–100 % (kéo thanh cũng tự
-  bật thiết bị). Lần đầu bật ở mức **69 %**; tắt rồi bật lại thì về đúng mức trước khi tắt — các mức và nhiệt độ được
-  trình duyệt nhớ cả cho lần truy cập sau (mỗi lần mở trang mọi thiết bị đều đang tắt).
-  - **Đèn**: bức tường sáng dần lên / tối dần đi (~2 giây) trong ánh sáng ấm, độ sáng theo thanh kéo.
+- **Bảng điều khiển nhà thông minh bấm được** (cảnh Smart Home): bảng điều khiển được **lắp âm vào tường đá**, hơi
+  nghiêng theo mặt tường (10°, vẫn dễ bấm) — màn hình là giao diện thật, nghiêng đúng phối cảnh của ảnh. Phía trên có
+  dòng **"Chạm để trải nghiệm"** nhấp nhô mời bấm. Đầu màn hình là giờ (theo đồng hồ máy), ngày và ba chỉ số phòng:
+  **Nhiệt độ**, **Bụi mịn PM2.5** và **CO₂**, kèm chấm màu chất lượng không khí (xanh tốt · vàng trung bình · đỏ kém) —
+  số liệu mô phỏng: bật máy lạnh thì phòng mát dần về nhiệt độ cài đặt và bụi mịn giảm, tắt thì ấm dần trở lại.
+  Bốn thẻ **Đèn**, **Máy lạnh**, **Quạt**, **Rèm cửa**: chạm vào thẻ để bật / tắt nhanh; đèn, quạt, rèm có **thanh kéo**
+  chỉnh mức 1–100 % (kéo thanh cũng tự bật thiết bị). Lần đầu bật ở mức **69 %**; tắt rồi bật lại thì về đúng mức trước
+  khi tắt — các mức, màu đèn và nhiệt độ được trình duyệt nhớ cả cho lần truy cập sau (mỗi lần mở trang mọi thiết bị
+  đều đang tắt).
+  - **Đèn**: căn phòng sáng lên / tối đi nhanh (~0,8 giây), tắt đèn phòng tối hẳn, bật đèn tường sáng rõ. Thanh **nhiệt
+    độ màu** (2700–6500 K, từ vàng ấm đến trắng ban ngày) nằm ngay trên thanh độ sáng; thẻ hiện ví dụ `69% · 3000K`.
   - **Máy lạnh**: nhiệt độ hiện bằng số 7 thanh, nút − / + chỉnh 16–30 °C; bông tuyết mờ nhẹ rơi khắp màn hình —
     **càng lạnh tuyết càng dày**.
-  - **Quạt**: lá cây bay ngang màn hình; nếu máy lạnh đang bật thì không có lá mà bông tuyết bị gió thổi sang phải —
-    **quạt càng mạnh, lá và tuyết bay càng nhanh** (cánh quạt trên thẻ cũng quay nhanh hơn). Tắt quạt thì lá rơi xuống.
-  - **Rèm cửa**: hai tấm rèm voan kéo vào từ hai bên (chạy chậm như rèm motor), mức trên thanh là độ đóng. Trên máy
-    tính rèm che cả bảng điều khiển nhưng vẫn **thấy bảng mờ mờ** qua lớp vải và vẫn bấm xuyên qua được; trên điện
-    thoại rèm nằm phía sau, **không che bảng điều khiển**.
+  - **Quạt**: lá cây bay ngang màn hình (kể cả khi máy lạnh đang bật — khi đó tuyết cũng bị gió thổi sang phải),
+    **quạt càng mạnh, lá và tuyết bay càng nhanh**, rèm đang kéo thì **bay phấp phới theo gió**; cánh quạt trên thẻ quay
+    nhanh hơn. Tắt quạt thì lá rơi xuống.
+  - **Rèm cửa**: rèm voan chạy như rèm motor thật — khởi động và dừng êm, tốc độ đều (~4 giây từ mở hẳn đến đóng hẳn),
+    gấu rèm còn đung đưa theo quán tính khi dừng; mức trên thanh là độ đóng. Trên máy tính một tấm rèm kéo từ **mép
+    ngoài cùng bên trái** vào tới **sát cạnh trái bảng điều khiển** (bảng luôn để trống, kể cả khi gió thổi). Trên điện
+    thoại hai tấm rèm kéo vào từ **sát mép trái và mép phải** màn hình, nằm **dưới bảng điều khiển phóng to**; chạm ra
+    ngoài (hoặc nút "Đóng") để thoát bảng thì **rèm tự kéo ra**.
   Tuyết / lá chỉ chạy khi Smart Home đang ở giữa (canvas, dừng hẳn khi tắt hết). Trên điện thoại màn hình trên tường
-  quá nhỏ để bấm, nên chạm vào nó sẽ mở bảng điều khiển phóng to ở cuối màn hình. Người dùng bật "giảm chuyển động"
-  chỉ thấy bảng đổi trạng thái, ánh sáng và rèm, không có tuyết / lá.
+  quá nhỏ để bấm, nên chạm vào nó sẽ mở bảng điều khiển phóng to ở cuối màn hình (xoay ngang điện thoại thì bảng phóng to
+  dùng bố cục 4 thẻ một hàng như trên tường). Người dùng bật "giảm chuyển động" chỉ thấy bảng đổi trạng thái, ánh sáng
+  và rèm, không có tuyết / lá.
 - **Âm thanh chuyển cảnh**: không có nhạc nền; mỗi lần chuyển cảnh có một tiếng "xẹt" nhẹ như gió thổi, âm lượng
   nhỏ, lướt theo hướng chuyển (trái → phải hoặc ngược lại). Tổng hợp ngay trong trình duyệt bằng Web Audio (không cần
   file âm thanh, chạy offline). Mặc định bật, kêu từ lần bấm / chạm đầu tiên (trình duyệt không cho phát âm thanh
@@ -192,9 +201,11 @@ trong suốt) vào `src/assets/brand/` với tên `logo.svg`, `logo.png` hoặc 
 
 ## Thay ảnh
 
-> Ảnh Smart Home chỉ có mặt kính tối ở chỗ màn hình; vị trí màn hình (pixel trên ảnh gốc) nằm ở
-> `images.smart-home.screen` trong `src/data/media.json`, website tự quy đổi theo cách cắt ảnh ngang / dọc. Nếu thay
-> ảnh này, cập nhật lại `sourceSize` và `screen` (hoặc xoá `screen` để không hiện bảng điều khiển).
+> Ảnh Smart Home chỉ có mặt kính tối ở chỗ màn hình; vị trí màn hình (pixel trên ảnh gốc, trước khi nghiêng) nằm ở
+> `images.smart-home.screen` trong `src/data/media.json` — `bezel` là bề rộng viền khung (rèm dừng trước viền này),
+> `tilt` là góc nghiêng của bảng và khoảng nhìn của phép chiếu đã dùng khi ghép ảnh (màn hình trên web nghiêng đúng
+> như vậy). Website tự quy đổi theo cách cắt ảnh ngang / dọc. Nếu thay ảnh này, cập nhật lại `sourceSize` và `screen`
+> (bỏ `tilt` nếu bảng trong ảnh mới nhìn thẳng; xoá `screen` để không hiện bảng điều khiển).
 
 1. Đặt ảnh gốc chất lượng cao vào `assets-src/`. Có hai loại nguồn:
    - **Ảnh riêng** cho một lĩnh vực (`images.<id>.source`), ví dụ `smart-home.jpg`;

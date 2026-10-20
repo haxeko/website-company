@@ -16,12 +16,14 @@ import { getQualityHint } from '../../utils/device'
 import {
   ControlScreen,
   Curtain,
+  curtainEnd,
   HomeSheet,
   HomeWall,
   SceneEffects,
   snowDensity,
-  useHomeAtmosphere,
+  useCurtainMotor,
   useHomeState,
+  useLightAtmosphere,
   windStrength,
 } from '../SmartHome'
 import { CarouselEngine } from './CarouselEngine'
@@ -81,12 +83,18 @@ export function HeroCarousel({
   const engineRef = useRef<CarouselEngine | null>(null)
   const [active, setActive] = useState(initialIndex)
   const [ready, setReady] = useState(false)
-  const { home, toggle, setLevel, nudgeTemp } = useHomeState()
-  useHomeAtmosphere(rootRef, home)
+  const { home, toggle, switchOff, setLevel, setCct, nudgeTemp } = useHomeState()
+  useLightAtmosphere(rootRef, home)
+  useCurtainMotor(rootRef, home.curtain.on ? home.curtain.level / 100 : 0, windStrength(home))
   const homeIndex = slides.findIndex((slide) => slide.screen)
   const homeInView = ready && active === homeIndex
   const [sheetOpen, setSheetOpen] = useState(false)
-  const closeSheet = useCallback(() => setSheetOpen(false), [])
+  // Phones: the curtains are only drawn while the enlarged panel is open, and open again by
+  // themselves when it closes, so the room is never left covered.
+  const closeSheet = useCallback(() => {
+    setSheetOpen(false)
+    switchOff('curtain')
+  }, [switchOff])
   const openSheet = useCallback(() => setSheetOpen(true), [])
   // With only three images each one is placed twice around the ring (panel k shows image
   // k % n): the panorama continues past both screen edges even while it rotates.
@@ -101,7 +109,7 @@ export function HeroCarousel({
 
   const handleActive = useEffectEvent((index: number) => {
     setActive(index)
-    setSheetOpen(false)
+    if (sheetOpen) closeSheet()
     onActiveChange?.(index)
   })
   const handleProgress = useEffectEvent((ratio: number) => onLoadProgress?.(ratio))
@@ -186,6 +194,7 @@ export function HeroCarousel({
       ref={rootRef}
       className="hc"
       data-wind={home.fan.on || undefined}
+      data-home-view={homeInView || undefined}
       data-sheet={(sheetOpen && homeInView) || undefined}
       aria-roledescription="carousel"
       aria-label={t.carousel}
@@ -236,6 +245,7 @@ export function HeroCarousel({
                     home={home}
                     onToggle={toggle}
                     onSetLevel={setLevel}
+                    onSetCct={setCct}
                     onNudgeTemp={nudgeTemp}
                     onExpand={openSheet}
                   />
@@ -244,7 +254,12 @@ export function HeroCarousel({
               <div className="hc-slide__reflection" aria-hidden="true">
                 <div className="hc-slide__mirror">
                   <SlideImage slide={slide} alt="" />
-                  {slide.screen && <Curtain />}
+                  {slide.screen && (
+                    <>
+                      <div className="sh-dark" />
+                      <Curtain end={curtainEnd(slide.screen)} />
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -260,6 +275,7 @@ export function HeroCarousel({
 
       {homeIndex >= 0 && (
         <>
+          <Curtain className="sh-band" />
           <SceneEffects snow={snowDensity(home)} wind={windStrength(home)} visible={homeInView} />
           <HomeSheet open={sheetOpen && homeInView} onClose={closeSheet}>
             <ControlScreen
@@ -267,6 +283,7 @@ export function HeroCarousel({
               home={home}
               onToggle={toggle}
               onSetLevel={setLevel}
+              onSetCct={setCct}
               onNudgeTemp={nudgeTemp}
             />
           </HomeSheet>

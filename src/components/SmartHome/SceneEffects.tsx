@@ -5,8 +5,8 @@ interface SceneEffectsProps {
   /** Snow density: 0 = air-con off, up to 1 at the coldest set point. */
   snow: number
   /**
-   * Fan strength: 0 = off, up to 1. It blows leaves across — or, with snow falling, drives
-   * the snow to the right — faster the stronger it is.
+   * Fan strength: 0 = off, up to 1. It blows leaves across and drives falling snow to the
+   * right — faster the stronger it is.
    */
   wind: number
   /** Only while the Smart Home space is in the centre. */
@@ -122,8 +122,8 @@ function drawLeaf(ctx: CanvasRenderingContext2D, leaf: Leaf, alpha: number) {
 
 /**
  * Weather in the room, drawn on one canvas over the panorama: snowflakes while the air-con
- * runs (denser the colder it is set), leaves — or snow driven sideways — while the fan blows
- * (faster the stronger it is). Nothing runs while every effect is off; reduced-motion
+ * runs (denser the colder it is set), leaves blowing across and snow driven sideways while
+ * the fan blows (faster the stronger it is). Nothing runs while every effect is off; reduced-motion
  * visitors only see the control screen change.
  */
 export function SceneEffects({ snow, wind, visible }: SceneEffectsProps) {
@@ -136,7 +136,7 @@ export function SceneEffects({ snow, wind, visible }: SceneEffectsProps) {
     target.current = {
       snow: visible ? snow : 0,
       wind: visible ? wind : 0,
-      leaves: visible && wind > 0 && snow <= 0,
+      leaves: visible && wind > 0,
     }
     wake.current()
   }, [snow, wind, visible])
