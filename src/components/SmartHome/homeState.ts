@@ -107,7 +107,7 @@ export function useHomeState() {
 }
 
 /** Snow for the air-con: the colder the set point, the thicker it falls (0 when off). */
-export const snowDensity = ({ ac }: HomeState) =>
+export const snowDensity = ({ ac }: Pick<HomeState, 'ac'>) =>
   ac.on ? 0.18 + (0.82 * (MAX_TEMP - ac.temp)) / (MAX_TEMP - MIN_TEMP) : 0
 
 /** Wind from the fan, 0–1 (0 when off). */

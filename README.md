@@ -12,6 +12,8 @@ phòng — cuối ảnh này ăn khớp với đầu ảnh kia — và xoay đ�
 
 ![Smart Home — đèn, máy lạnh, quạt và rèm đang bật](docs/screenshot-smart-home.jpg)
 
+![Trang Smart Home — /smart-home/](docs/screenshot-smart-home-page.jpg)
+
 ## Điểm nổi bật
 
 - **Ba ảnh hòa làm một**: các tấm ảnh được "bản lề" vào nhau trên một đa giác nhìn từ bên trong (tường cong), nên
@@ -50,6 +52,18 @@ phòng — cuối ảnh này ăn khớp với đầu ảnh kia — và xoay đ�
   quá nhỏ để bấm, nên chạm vào nó sẽ mở bảng điều khiển phóng to **gọn ở cuối màn hình** (giờ và chỉ số một hàng, bốn
   thẻ 2 × 2), để vẫn thấy gần hết căn phòng và rèm kéo vào; xoay ngang điện thoại thì bảng dùng bố cục 4 thẻ một hàng như
   trên tường. Người dùng bật "giảm chuyển động" chỉ thấy bảng đổi trạng thái, ánh sáng và rèm, không có tuyết / lá.
+- **Trang Smart Home riêng** (`/smart-home/`, mở bằng nút **"Khám phá giải pháp"** ở cảnh Smart Home): dải chuẩn kết nối
+  (Matter, Zigbee, Thread, Wi-Fi, Home Assistant, HomeKit), tiêu đề *"Chạm nhẹ, cả ngôi nhà chuyển động."*, ảnh tường
+  đá với bảng điều khiển lớn gắn tường và căn biệt thự sáng đèn phía sau, bốn chủ đề **Kịch bản sống · An ninh thông
+  minh · Tiết kiệm năng lượng · Hệ mở** và các phần giới thiệu bên dưới (cuộn xuống). Màn hình trên bảng là giao diện
+  thật, được "dán" vào mặt kính trong ảnh bằng phép chiếu phối cảnh (`matrix3d`), nên luôn nét và bấm được:
+  - **Đèn** (thanh độ sáng) — tắt đèn căn phòng tối đi; **Rèm cửa** — rèm voan kéo ngang vách kính bên phải;
+    **Điều hòa** (thanh nhiệt độ 16–30 °C) — tuyết rơi nhẹ; **Chế độ về nhà**, **Chế độ ngủ**, **An ninh** (bật / tắt).
+  - **"Xem kịch bản sống"** chạy một ngày trên bảng: 18:00 *Về nhà* → 20:30 *Thư giãn* → 23:00 *Ngủ ngon* (giờ trên
+    bảng, ánh sáng, rèm, điều hòa đổi theo), rồi căn phòng sáng lại như cũ. Các kịch bản ở phần *Kịch bản sống* bên dưới
+    cũng chạy được — trang tự cuộn lên để xem.
+  - Bốn chủ đề và menu bên trái của bảng dẫn tới phần tương ứng; logo và cuối trang dẫn về trang chủ. Song ngữ, nút âm
+    thanh dùng chung với trang chủ. Trên điện thoại chữ nằm trên, ảnh bảng điều khiển bên dưới.
 - **Âm thanh chuyển cảnh**: không có nhạc nền; mỗi lần chuyển cảnh có một tiếng "xẹt" nhẹ như gió thổi, âm lượng
   nhỏ, lướt theo hướng chuyển (trái → phải hoặc ngược lại). Tổng hợp ngay trong trình duyệt bằng Web Audio (không cần
   file âm thanh, chạy offline). Mặc định bật, kêu từ lần bấm / chạm đầu tiên (trình duyệt không cho phát âm thanh
@@ -125,6 +139,7 @@ static server nào); mở trực tiếp `dist/index.html` bằng `file://` sẽ 
 
 ```
 ├── assets-src/                 Ảnh gốc độ phân giải cao (đầu vào của npm run images)
+├── smart-home/index.html       Trang Smart Home (trang thứ hai của bản build → /smart-home/)
 ├── deploy/
 │   ├── nginx.conf              Cấu hình Nginx mẫu
 │   ├── install-pi.sh           Script cài lên Raspberry Pi / Debian / Ubuntu (sao lưu, không đụng site khác)
@@ -132,6 +147,7 @@ static server nào); mở trực tiếp `dist/index.html` bằng `file://` sẽ 
 ├── docs/                       Ảnh chụp màn hình, hướng dẫn Raspberry Pi
 ├── public/
 │   ├── assets/slides/          Tấm toàn cảnh đã tối ưu: AVIF/WebP ngang, dọc, ambient (sinh tự động)
+│   ├── assets/pages/           Ảnh của trang Smart Home: ngang + bản cắt cho điện thoại (sinh tự động)
 │   └── favicon.svg
 ├── scripts/optimize-images.mjs Pipeline ảnh: chỉnh màu, cắt tấm, hòa mép, resize, mã hoá AVIF/WebP
 └── src/
@@ -154,6 +170,8 @@ static server nào); mở trực tiếp `dist/index.html` bằng `file://` sẽ 
     │   ├── SmartHome/          Bảng điều khiển (ControlScreen), tường: ánh sáng, lời mời (HomeWall), rèm (Curtains), tuyết / lá (SceneEffects)
     │   ├── Header/             Logo, slogan, nút âm thanh, chọn ngôn ngữ
     │   └── Loader/             Vạch tiến trình tối giản khi ảnh đang tải
+    ├── pages/smart-home/       Trang Smart Home: content.ts (chữ VI/EN) · HeroVisual (ảnh + màn hình phối cảnh)
+    │                           · ScenePanel (giao diện bảng) · Sections (phần bên dưới) · usePageHome (trạng thái, kịch bản)
     ├── styles/                 tokens.css (màu, font, khoảng cách) · global.css
     └── utils/device.ts         Nhận diện chế độ chất lượng & media query
 ```
@@ -198,7 +216,10 @@ trong suốt) vào `src/assets/brand/` với tên `logo.svg`, `logo.png` hoặc 
 - Chữ của từng lĩnh vực (tiêu đề, dòng nghiêng, mô tả, nút, link của nút) nằm trong `src/data/slides.ts`, mỗi lĩnh vực
   có bản `vi` và `en`.
 - Chữ giao diện (slogan, nút âm thanh, gợi ý thao tác…) nằm trong `src/i18n/strings.ts`.
-- Nút "Khám phá" hiện trỏ tới link riêng của lĩnh vực đó (`#construction`…); thay `ctaHref` bằng trang dự án thật khi có.
+- Nút "Khám phá" của Smart Home mở trang `smart-home/`; của Construction và Interior hiện trỏ tới link riêng của lĩnh
+  vực đó (`#construction`…) — thay `ctaHref` bằng trang dự án thật khi có.
+- Chữ của trang Smart Home (dải chuẩn, tiêu đề, bảng điều khiển, kịch bản, các phần bên dưới) nằm trong
+  `src/pages/smart-home/content.ts`, bản `vi` và `en`.
 
 ## Thay ảnh
 
@@ -224,6 +245,12 @@ trong suốt) vào `src/assets/brand/` với tên `logo.svg`, `logo.png` hoặc 
    Muốn xem nhanh đường nối trước: `PANORAMA_PREVIEW=preview.jpg node scripts/optimize-images.mjs` sẽ ghép ba ảnh
    thành một tấm `preview.jpg` rồi dừng.
 4. Cập nhật mô tả `alt`, nhãn và thông tin tác giả trong `src/data/slides.ts`.
+
+**Ảnh trang Smart Home** — `assets-src/smart-home-page.jpg`, cấu hình ở `pages.smart-home` trong `src/data/media.json`:
+`landscapeWidths` (bản ngang), `portrait.crop` (khung cắt quanh bảng điều khiển cho điện thoại), `panel` (4 góc mặt kính
+của bảng, theo thứ tự trên-trái, trên-phải, dưới-phải, dưới-trái — màn hình sống được chiếu đúng vào đó) và `window`
+(mép trái/phải vách kính mà rèm kéo qua), tất cả tính bằng pixel trên ảnh gốc. Thay ảnh thì đo lại các điểm này rồi chạy
+`npm run images`.
 
 ## Điều khiển
 
@@ -264,6 +291,8 @@ Kiểm thử tự động bằng Playwright (Chromium) trên bản build:
 Thay bằng ảnh dự án thật của VILLA NEST trước khi ra mắt chính thức.
 
 - Construction, Interior — ảnh concept của VILLA NEST (`assets-src/panorama-construction-interior.jpg`).
+- Trang Smart Home — ảnh từ bản thiết kế VILLA NEST cung cấp (`assets-src/smart-home-page.jpg`: đã xoá chữ, phóng to
+  ×4 bằng Real-ESRGAN; giao diện trên bảng là HTML thật).
 - Smart Home — nền tường đá travertine từ ảnh của [HUUM](https://unsplash.com/photos/smart-thermostat-on-stone-wall-eJAWSL_0L98)
   ([Unsplash License](https://unsplash.com/license), miễn phí cho mục đích thương mại; thiết bị gốc đã được xoá),
   ánh sáng buổi tối và màn hình điều khiển trung tâm (giao diện VILLA NEST) được dựng thêm.

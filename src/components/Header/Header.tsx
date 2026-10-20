@@ -17,8 +17,10 @@ const logoUrl = Object.values(logoFiles)[0]
 interface HeaderProps {
   soundOn: boolean
   onToggleSound: () => void
-  /** The logo brings the carousel back to its first view instead of reloading the page. */
-  onLogoClick: () => void
+  /** On the home page the logo brings the carousel back to its first view instead of reloading… */
+  onLogoClick?: () => void
+  /** …on other pages it is a plain link home. */
+  homeHref?: string
 }
 
 function FlagVN() {
@@ -56,17 +58,18 @@ function FlagUK() {
 
 const FLAGS: Record<Lang, () => React.JSX.Element> = { vi: FlagVN, en: FlagUK }
 
-export function Header({ soundOn, onToggleSound, onLogoClick }: HeaderProps) {
+export function Header({ soundOn, onToggleSound, onLogoClick, homeHref = './' }: HeaderProps) {
   const { lang, t, setLang } = useI18n()
 
   const handleLogo = (event: MouseEvent<HTMLAnchorElement>) => {
+    if (!onLogoClick) return
     event.preventDefault()
     onLogoClick()
   }
 
   return (
     <header className="site-header">
-      <a className="site-header__logo" href="./" onClick={handleLogo} aria-label={t.home}>
+      <a className="site-header__logo" href={homeHref} onClick={handleLogo} aria-label={t.home}>
         {logoUrl ? (
           <img src={logoUrl} alt="VILLA NEST — Architecture & Construction" />
         ) : (

@@ -9,6 +9,11 @@
  *   <slug>-portrait-<w>.avif / .webp   portrait panels (phones / portrait screens)
  *   <slug>-ambient.webp                tiny, heavily blurred colour wash used as scene light
  *
+ * and the photos of the stand-alone pages (media.json → pages) into `public/assets/pages/`:
+ *
+ *   <page>-<w>.avif / .webp            the landscape view
+ *   <page>-portrait-<w>.avif / .webp   the crop around the wall panel, for phones
+ *
  * The three photos are treated as ONE panorama (in the ring order of media.json):
  *   1. every photo gets the same subtle "cinematic" grade,
  *   2. each is cropped to exactly aspect × (1 + seam), so the strips that overlap a
@@ -330,6 +335,34 @@ for (const layout of layouts) {
         .webp({ quality: media.quality.ambient })
         .toFile(join(outputDir, `${slug}-ambient.webp`))
       report[slug].push(`${slug}-ambient.webp ${ambient.width}×${ambient.height} ${(ambient.size / 1024).toFixed(1)} KB`)
+    }
+  }
+}
+
+/* ── Stand-alone pages: no grade, no seams, just resized and encoded ───────── */
+
+const pages = media.pages ?? {}
+const pagesDir = join(root, pages.outputDir ?? 'public/assets/pages')
+await mkdir(pagesDir, { recursive: true })
+for (const file of await readdir(pagesDir)) {
+  if (/\.(avif|webp)$/.test(file)) await rm(join(pagesDir, file))
+}
+
+for (const [slug, page] of Object.entries(pages)) {
+  if (typeof page !== 'object' || !page.source) continue
+  const source = join(sourceDir, page.source)
+  const views = [[slug, null, page.landscapeWidths]]
+  if (page.portrait) views.push([`${slug}-portrait`, page.portrait.crop, page.portrait.widths])
+  report[slug] = []
+  for (const [name, crop, widths] of views) {
+    for (const w of widths) {
+      for (const [format, encode] of Object.entries(encoders)) {
+        let pipeline = sharp(source)
+        if (crop) pipeline = pipeline.extract({ left: crop[0], top: crop[1], width: crop[2], height: crop[3] })
+        pipeline = pipeline.resize({ width: w, kernel: 'lanczos3', withoutEnlargement: true }).sharpen({ sigma: 0.5, m1: 0.5, m2: 1 })
+        const info = await encode(pipeline).toFile(join(pagesDir, `${name}-${w}.${format}`))
+        report[slug].push(`${name}-${w}.${format} ${info.width}×${info.height} ${(info.size / 1024).toFixed(0)} KB`)
+      }
     }
   }
 }

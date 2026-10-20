@@ -106,5 +106,61 @@
         "warmth": 0
       }
     }
+  },
+  "pages": {
+    "$comment": "Photos of the stand-alone pages (smart-home/…), encoded as they are (no grade, no seams): the full landscape view and a crop around the wall panel for phones. All positions in source-image pixels. panel = corners of the screen glass (top-left, top-right, bottom-right, bottom-left), where the live control screen is laid over the photo; window = left and right edge of the glass façade the curtain draws across.",
+    "outputDir": "public/assets/pages",
+    "publicPath": "assets/pages",
+    "smart-home": {
+      "source": "smart-home-page.jpg",
+      "credit": "Concept image provided by VILLA NEST (text removed, upscaled ×4 with Real-ESRGAN)",
+      "sourceSize": [
+        4800,
+        1705
+      ],
+      "landscapeWidths": [
+        1280,
+        1920,
+        2560,
+        3200,
+        4000
+      ],
+      "portrait": {
+        "crop": [
+          1880,
+          0,
+          2000,
+          1705
+        ],
+        "widths": [
+          640,
+          960,
+          1280,
+          1600
+        ]
+      },
+      "panel": [
+        [
+          2346,
+          261.5
+        ],
+        [
+          3391.5,
+          422.5
+        ],
+        [
+          3394.5,
+          1347.5
+        ],
+        [
+          2347,
+          1393.5
+        ]
+      ],
+      "window": [
+        3508,
+        4800
+      ]
+    }
   }
 }

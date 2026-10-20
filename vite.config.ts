@@ -1,3 +1,4 @@
+import { resolve } from 'node:path'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 
@@ -6,6 +7,15 @@ export default defineConfig({
   // Relative asset URLs: the build works at a domain root or in any sub-folder.
   base: './',
   plugins: [react()],
+  build: {
+    rolldownOptions: {
+      // The home page and the stand-alone pages (each folder becomes its own URL: /smart-home/).
+      input: {
+        main: resolve(import.meta.dirname, 'index.html'),
+        'smart-home': resolve(import.meta.dirname, 'smart-home/index.html'),
+      },
+    },
+  },
   server: {
     host: true,
   },

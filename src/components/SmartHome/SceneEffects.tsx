@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { REDUCED_MOTION_QUERY } from '../../utils/device'
+import './SceneEffects.css'
 
 interface SceneEffectsProps {
   /** Snow density: 0 = air-con off, up to 1 at the coldest set point. */
@@ -56,10 +57,10 @@ function makeFlake(w: number, h: number, anywhere: boolean, gate = Math.random()
     x: rand(-20, w + 20),
     y: anywhere ? rand(-20, h) : rand(-60, -10),
     r: 0.8 + depth * 2.2,
-    vy: 16 + depth * 34,
+    vy: 13 + depth * 27,
     depth,
     phase: rand(0, Math.PI * 2),
-    sway: rand(6, 18),
+    sway: rand(5, 14),
     alpha: 0.22 + depth * 0.45,
     gate,
   }
@@ -165,7 +166,7 @@ export function SceneEffects({ snow, wind, visible }: SceneEffectsProps) {
       canvas.width = Math.round(w * dpr)
       canvas.height = Math.round(h * dpr)
       // Enough flakes for the coldest setting; warmer settings show only part of them.
-      const count = Math.round(Math.min(280, Math.max(90, (w * h) / 6500)))
+      const count = Math.round(Math.min(196, Math.max(63, (w * h) / 9300)))
       flakes = Array.from({ length: count }, (_, i) => makeFlake(w, h, true, (i + Math.random()) / count))
       const leafCount = w < 700 ? 9 : 18
       leaves = Array.from({ length: leafCount }, () => ({ alive: false }) as Leaf)
@@ -187,7 +188,7 @@ export function SceneEffects({ snow, wind, visible }: SceneEffectsProps) {
 
       if (level.snow > 0.004) {
         for (const f of flakes) {
-          const gust = (160 + f.depth * 240) * level.wind * 1.6
+          const gust = (205 + f.depth * 307) * level.wind
           f.x += (gust + Math.sin(t * 0.8 + f.phase) * f.sway * (1 - breeze)) * dt
           f.y += f.vy * (1 - 0.35 * breeze) * dt
           if (f.y > h + 12) Object.assign(f, makeFlake(w, h, false, f.gate))

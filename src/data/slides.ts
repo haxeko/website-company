@@ -136,7 +136,8 @@ function screenOf(id: MediaId): Slide['screen'] {
 export const slides: Slide[] = [
   {
     id: 'smart-home',
-    ctaHref: '#smart-home',
+    // Its own page (smart-home/index.html).
+    ctaHref: 'smart-home/',
     copy: {
       vi: {
         title: 'Smart Home',

@@ -1,4 +1,5 @@
 import { Fragment, type CSSProperties } from 'react'
+import './linen.css'
 
 const SIDES = ['left', 'right'] as const
 
@@ -8,7 +9,7 @@ function Drapes() {
     <div className="sh-drapes" data-curtain-el>
       {SIDES.map((side) => (
         <Fragment key={side}>
-          <div className="sh-fabric" data-side={side}>
+          <div className="sh-fabric sh-linen" data-side={side}>
             <i className="sh-fabric__lit" />
           </div>
           <i className="sh-hem" data-side={side} />
