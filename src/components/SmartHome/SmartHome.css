@@ -21,7 +21,8 @@
   --sh-h: var(--sh-l-h);
   --sh-r: var(--sh-l-r);
   --sh-tf: var(--sh-l-tf);
-  --sh-cx: calc(var(--sh-x) + var(--sh-w) / 2);
+  /* (the middle of the screen as seen, turned with the wall) */
+  --sh-cx: var(--sh-l-cx);
 
   position: absolute;
   inset: 0;
@@ -35,6 +36,7 @@
   --sh-h: var(--sh-p-h);
   --sh-r: var(--sh-p-r);
   --sh-tf: var(--sh-p-tf);
+  --sh-cx: var(--sh-p-cx);
 }
 
 /*

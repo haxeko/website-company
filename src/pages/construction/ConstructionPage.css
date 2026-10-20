@@ -1,0 +1,720 @@
+/*
+ * Construction page: the villa as photograph and as drawing, the laser line between them,
+ * the drawing's annotations, the frame's callouts, the progress and handover cards. The
+ * page's layout — strip, text, themes, phone stack — is shared (../shared/page.css).
+ */
+
+.cp .cp-icon {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.cp .cp-icon .is-filled {
+  fill: currentColor;
+  stroke: none;
+}
+
+/* ── The view ─────────────────────────────────────────────────────────── */
+
+.cp-visual {
+  background: #0e0f11;
+  container-type: size;
+}
+
+/* The photo's own box, as object-fit: cover would place it: everything inside is laid out
+   in the photo's proportions, so the drawing, its marks and the callouts stay on it. */
+.cp-box {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: max(100cqw, calc(100cqh * var(--cp-aspect)));
+  aspect-ratio: var(--cp-aspect);
+  translate: -50% -50%;
+}
+
+.cp-photo,
+.cp-ink,
+.cp-photo img,
+.cp-ink img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.cp-photo img {
+  transition: filter 1.4s var(--ease-in-out);
+}
+
+/* Handover: the villa's lamps lit a little brighter, warmer. */
+.cp-visual[data-phase='3'] .cp-photo img {
+  filter: brightness(1.08) saturate(1.06);
+}
+
+.cp-glow {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(14% 18% at 30% 52%, rgb(255 196 130 / 0.34), transparent 70%),
+    radial-gradient(12% 14% at 33% 24%, rgb(255 196 130 / 0.26), transparent 70%),
+    radial-gradient(30% 30% at 32% 74%, rgb(255 186 116 / 0.16), transparent 75%);
+  mix-blend-mode: soft-light;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1.4s var(--ease-in-out);
+}
+
+.cp-visual[data-phase='3'] .cp-glow {
+  opacity: 1;
+}
+
+/* The drawing: to the left of the line only. */
+.cp-drawing {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  clip-path: inset(0 calc((1 - var(--line)) * 100%) 0 0);
+  pointer-events: none;
+}
+
+/* Charcoal paper with a faint construction grid. */
+.cp-paper {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(rgb(232 220 200 / 0.045) 1px, transparent 1px) 0 0 / 100% 6.25%,
+    linear-gradient(90deg, rgb(232 220 200 / 0.045) 1px, transparent 1px) 0 0 / 2.4% 100%,
+    radial-gradient(70% 90% at 45% 45%, #17181b, #0d0e10 80%);
+}
+
+/* Light lines on black, added to the paper (screen); the ink calms down behind the text. */
+.cp-ink {
+  mix-blend-mode: screen;
+  opacity: 0.92;
+  -webkit-mask-image: linear-gradient(90deg, rgb(0 0 0 / 0.18), rgb(0 0 0 / 0.5) 16%, #000 36%);
+  mask-image: linear-gradient(90deg, rgb(0 0 0 / 0.18), rgb(0 0 0 / 0.5) 16%, #000 36%);
+}
+
+/* Levels, grid axes and the dimension chain, in the drawing's gold. */
+.cp-marks {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.cp-mark {
+  fill: none;
+  stroke: rgb(226 196 140 / 0.75);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+.cp-mark--axis {
+  stroke: rgb(226 196 140 / 0.3);
+}
+
+/* Design: the drawing's marks are drawn while you watch. */
+.cp-visual[data-phase='0'] .cp-mark {
+  animation: cp-draw 1.8s 0.3s var(--ease-out) both;
+}
+
+@keyframes cp-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+
+.cp-label {
+  position: absolute;
+  translate: -50% -50%;
+  color: rgb(232 207 159 / 0.92);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.cp-label--axis {
+  font-family: var(--font-serif);
+  font-size: clamp(11px, 0.9vw, 15px);
+  letter-spacing: 0;
+}
+
+.cp-label--level {
+  translate: 0 calc(-100% - 6px);
+  color: rgb(244 240 233 / 0.62);
+  text-transform: uppercase;
+}
+
+.cp-label--level b {
+  margin-right: 0.5em;
+  color: rgb(232 207 159 / 0.95);
+  font-weight: 500;
+}
+
+.cp-label--dim {
+  translate: -50% calc(-100% - 5px);
+}
+
+.cp-visual[data-phase='0'] .cp-label {
+  animation: cp-fade 0.9s 1.2s ease both;
+}
+
+@keyframes cp-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+/* Keeps the text legible over the left of the view, drawing or photo (under the line). */
+.cp-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgb(10 10 12 / 0.86), rgb(10 10 12 / 0.64) 24%, rgb(10 10 12 / 0.22) 42%, transparent 55%);
+  pointer-events: none;
+}
+
+/* ── Structure callouts, on the photographed frame ────────────────────── */
+
+.cp-callout {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+
+.cp-visual[data-phase='1'] .cp-callout {
+  opacity: 1;
+  transition: opacity 0.7s calc(0.9s + var(--i) * 0.18s) ease;
+}
+
+.cp-callout__dot {
+  position: absolute;
+  width: 11px;
+  height: 11px;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: var(--gold-2);
+  box-shadow: 0 0 0 4px rgb(232 207 159 / 0.22);
+}
+
+.cp-callout__dot::after {
+  content: '';
+  position: absolute;
+  inset: -9px;
+  border: 1px solid rgb(232 207 159 / 0.6);
+  border-radius: 50%;
+  animation: cp-ping 2.4s ease-out infinite;
+}
+
+@keyframes cp-ping {
+  from {
+    opacity: 1;
+    scale: 0.5;
+  }
+
+  to {
+    opacity: 0;
+    scale: 1.6;
+  }
+}
+
+/* (the leader: from the dot up to the label) */
+.cp-callout::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 42px;
+  height: 1px;
+  background: rgb(232 207 159 / 0.7);
+  rotate: -42deg;
+  transform-origin: 0 50%;
+}
+
+.cp-callout__label {
+  position: absolute;
+  bottom: 28px;
+  left: 30px;
+  display: grid;
+  gap: 3px;
+  padding: 8px 12px;
+  border: 1px solid rgb(232 210 166 / 0.3);
+  border-radius: 10px;
+  background: rgb(14 14 16 / 0.62);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  white-space: nowrap;
+}
+
+.cp-callout__label b {
+  color: var(--c-text);
+  font-family: var(--font-serif);
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.cp-callout__label small {
+  color: var(--gold);
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* ── The laser line ───────────────────────────────────────────────────── */
+
+.cp-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--line) * 100%);
+  z-index: 2;
+  width: 44px;
+  margin-left: -22px;
+  cursor: ew-resize;
+  touch-action: none;
+  /* Gone once all is built. */
+  opacity: clamp(0, calc(var(--line) * 30), 1);
+}
+
+.cp-line__beam {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  margin-left: -1px;
+  background: linear-gradient(to bottom, transparent, #ffe7c2 9%, #ffe7c2 91%, transparent);
+  box-shadow:
+    0 0 10px rgb(255 214 150 / 0.75),
+    0 0 34px rgb(255 196 120 / 0.35);
+}
+
+/* A brighter spot runs down the beam, as a laser level's. */
+.cp-line__beam::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -3px;
+  width: 8px;
+  height: 14%;
+  border-radius: 4px;
+  background: linear-gradient(to bottom, transparent, rgb(255 244 224 / 0.95), transparent);
+  filter: blur(2px);
+  animation: cp-scan 3.2s linear infinite;
+}
+
+@keyframes cp-pulse {
+  50% {
+    box-shadow:
+      0 0 0 12px rgb(255 214 150 / 0.16),
+      0 10px 30px rgb(0 0 0 / 0.45);
+  }
+}
+
+@keyframes cp-scan {
+  from {
+    translate: 0 -100%;
+  }
+
+  to {
+    translate: 0 720%;
+  }
+}
+
+.cp-line__handle {
+  position: absolute;
+  top: 58%;
+  left: 50%;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  translate: -50% -50%;
+  border: 1px solid rgb(255 231 194 / 0.7);
+  border-radius: 50%;
+  background: rgb(16 16 18 / 0.55);
+  box-shadow:
+    0 0 0 6px rgb(255 214 150 / 0.08),
+    0 10px 30px rgb(0 0 0 / 0.45);
+  color: #ffe7c2;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  transition:
+    scale 0.3s var(--ease-out),
+    background-color 0.3s ease;
+}
+
+.cp-line__handle svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.cp-line:hover .cp-line__handle,
+.cp-visual[data-dragging] .cp-line__handle {
+  scale: 1.08;
+  background: rgb(40 34 26 / 0.7);
+}
+
+.cp-line__handle:focus-visible {
+  outline: 1px solid var(--c-accent);
+  outline-offset: 5px;
+}
+
+/* "Drag the line…": beside the handle for a moment. */
+.cp-line__hint {
+  position: absolute;
+  top: 58%;
+  left: calc(50% + 38px);
+  width: max-content;
+  max-width: 240px;
+  padding: 9px 14px;
+  border: 1px solid rgb(232 210 166 / 0.32);
+  border-radius: 12px;
+  background: rgb(14 14 16 / 0.72);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  color: var(--gold-2);
+  font-family: var(--font-serif);
+  font-size: 16px;
+  line-height: 1.3;
+  opacity: 0;
+  translate: 8px -50%;
+  pointer-events: none;
+  transition:
+    opacity 0.5s ease,
+    translate 0.6s var(--ease-out);
+}
+
+.cp-line__hint[data-on] {
+  opacity: 1;
+  translate: 0 -50%;
+}
+
+/* Which side is which (on a dark chip: the photo's side can be bright) */
+.cp-tag {
+  position: absolute;
+  top: 9%;
+  padding: 5px calc(11px - 0.28em) 5px 11px;
+  border-radius: 999px;
+  background: rgb(14 14 16 / 0.5);
+  color: rgb(244 240 233 / 0.85);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.cp-tag--drawing {
+  right: calc(50% + 12px);
+  color: var(--gold-2);
+  opacity: clamp(0, calc((var(--line) - 0.08) * 14), 1);
+}
+
+.cp-tag--built {
+  left: calc(50% + 12px);
+  opacity: clamp(0, calc((0.92 - var(--line)) * 14), 1);
+}
+
+/* ── Progress and handover cards (beside the photo; under it on phones) ── */
+
+.cp-card {
+  position: absolute;
+  top: 50%;
+  right: calc(var(--gutter) + 72px);
+  z-index: 4;
+  display: grid;
+  gap: 10px;
+  width: min(340px, 26vw);
+  margin: 0;
+  padding: 20px 22px;
+  border: 1px solid rgb(232 210 166 / 0.26);
+  border-radius: 18px;
+  background: rgb(14 14 16 / 0.72);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 30px 70px rgb(0 0 0 / 0.45);
+  opacity: 0;
+  translate: 16px -50%;
+  pointer-events: none;
+  transition:
+    opacity 0.5s ease,
+    translate 0.7s var(--ease-out);
+}
+
+.cp-card[data-on] {
+  opacity: 1;
+  translate: 0 -50%;
+  transition-delay: 0.5s;
+  pointer-events: auto;
+}
+
+.cp-card__title {
+  margin: 0;
+  color: var(--muted);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+}
+
+.cp-card__project {
+  margin: -4px 0 0;
+  color: rgb(244 240 233 / 0.5);
+  font-size: 11.5px;
+}
+
+.cp-card__value {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin: 4px 0 0;
+}
+
+.cp-card__value b {
+  color: var(--gold-2);
+  font-family: var(--font-serif);
+  font-size: 46px;
+  font-weight: 400;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.cp-card__value span {
+  color: rgb(244 240 233 / 0.7);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.cp-card__bar {
+  display: block;
+  height: 3px;
+  border-radius: 3px;
+  background: linear-gradient(to right, var(--gold) calc(var(--v) * 100%), rgb(244 240 233 / 0.14) calc(var(--v) * 100%));
+}
+
+.cp-card__phases {
+  display: grid;
+  gap: 7px;
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cp-card__phases li {
+  display: grid;
+  grid-template-columns: 14px 1fr auto;
+  align-items: center;
+  column-gap: 10px;
+  color: rgb(244 240 233 / 0.55);
+  font-size: 12.5px;
+}
+
+.cp-card__phases li::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  justify-self: center;
+  border: 1px solid rgb(244 240 233 / 0.4);
+  border-radius: 50%;
+}
+
+.cp-card__phases li[data-state='done'] {
+  color: rgb(244 240 233 / 0.85);
+}
+
+.cp-card__phases li[data-state='done']::before {
+  border-color: #9be0a6;
+  background: #9be0a6;
+}
+
+.cp-card__phases li[data-state='now'] {
+  color: var(--c-text);
+}
+
+.cp-card__phases li[data-state='now']::before {
+  border-color: var(--gold);
+  background: var(--gold);
+  box-shadow: 0 0 10px rgb(210 176 122 / 0.8);
+}
+
+.cp-card__phases small {
+  color: rgb(244 240 233 / 0.45);
+  font-size: 11px;
+}
+
+.cp-card__note {
+  margin: 0;
+  padding-top: 10px;
+  border-top: 1px solid rgb(244 240 233 / 0.08);
+  color: rgb(244 240 233 / 0.6);
+  font-size: 11.5px;
+  line-height: 1.5;
+}
+
+.cp-card__note + .cp-card__note {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.cp-card__key {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 2px 0 4px;
+  color: var(--gold-2);
+  font-family: var(--font-serif);
+  font-size: 22px;
+}
+
+.cp-card__key .cp-icon {
+  width: 28px;
+  height: 28px;
+}
+
+.cp-card__list {
+  display: grid;
+  gap: 9px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cp-card__list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: rgb(244 240 233 / 0.82);
+  font-size: 13px;
+}
+
+.cp-card__list .cp-icon {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  color: #9be0a6;
+  stroke-width: 1.8;
+}
+
+/* Short screens: the cards a little smaller. */
+@media (max-height: 760px) and (orientation: landscape) {
+  .cp-card {
+    gap: 7px;
+    padding: 14px 18px;
+  }
+
+  .cp-card__value b {
+    font-size: 36px;
+  }
+
+  .cp-card__note:last-child {
+    display: none;
+  }
+}
+
+/* ── Phones and portrait tablets ──────────────────────────────────────── */
+
+@media (max-width: 760px), (orientation: portrait) and (max-width: 1024px) {
+  .cp {
+    --pg-visual-aspect: 3070 / 2668;
+  }
+
+  .cp-ink {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .cp-label {
+    font-size: 8px;
+  }
+
+  .cp-label--axis {
+    font-size: 10px;
+  }
+
+  .cp-line__handle {
+    width: 40px;
+    height: 40px;
+  }
+
+  /* (no room beside the handle: it pulses instead) */
+  .cp-line__hint {
+    display: none;
+  }
+
+  .cp-line__handle {
+    animation: cp-pulse 2.4s 1.5s ease-in-out 2;
+  }
+
+  .cp-shade {
+    display: none;
+  }
+
+  .cp-callout__label {
+    padding: 6px 9px;
+  }
+
+  .cp-callout__label b {
+    font-size: 12.5px;
+  }
+
+  .cp-callout__label small {
+    font-size: 7.5px;
+  }
+
+  .cp-callout::before {
+    width: 30px;
+  }
+
+  .cp-callout__label {
+    bottom: 20px;
+    left: 22px;
+  }
+
+  /* The cards under the photo, in the page's flow. */
+  .cp-card {
+    position: relative;
+    top: auto;
+    right: auto;
+    order: 3;
+    display: none;
+    width: auto;
+    margin: 0 var(--gutter);
+    translate: none;
+  }
+
+  .cp-card[data-on] {
+    display: grid;
+    translate: none;
+    animation: pg-story-in 0.7s var(--ease-out) both;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cp-photo img,
+  .cp-glow {
+    transition-duration: 0.2s;
+  }
+
+  .cp-visual[data-phase='0'] .cp-mark,
+  .cp-visual[data-phase='0'] .cp-label,
+  .cp-callout__dot::after,
+  .cp-line__beam::after {
+    animation: none;
+  }
+}

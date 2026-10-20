@@ -1,18 +1,16 @@
-import { useLayoutEffect, useRef, type CSSProperties, type ReactNode, type RefObject } from 'react'
+import { useEffect, useLayoutEffect, useRef, type CSSProperties, type ReactNode, type RefObject } from 'react'
 // (straight from the modules: the carousel's control-screen styles stay out of this page)
 import { snowDensity } from '../../components/SmartHome/homeState'
 import { SceneEffects } from '../../components/SmartHome/SceneEffects'
 import { useCurtainMotor } from '../../components/SmartHome/useHomeAtmosphere'
 import '../../components/SmartHome/linen.css'
 import media from '../../data/media.json'
+import { PORTRAIT_QUERY } from '../shared/useDeck'
 import { coverMapper, quadSize, quadToMatrix3d, type Point, type Quad } from './projection'
 import type { PageHome } from './usePageHome'
 
 const PAGE = media.pages['smart-home']
 const BASE = `../${media.pages.publicPath}/smart-home`
-
-/** Phones and portrait tablets get the crop around the panel. */
-export const PORTRAIT_QUERY = '(max-width: 760px), (orientation: portrait) and (max-width: 1024px)'
 
 interface View {
   natural: Point
@@ -34,6 +32,7 @@ const srcSet = (name: string, widths: number[], format: string) =>
   widths.map((w) => `${BASE}${name}-${w}.${format} ${w}w`).join(', ')
 
 interface HeroVisualProps {
+  visualRef: RefObject<HTMLDivElement | null>
   home: PageHome
   /** Large screens: the copy beside the photo — the photo is framed so the panel stays clear of it. */
   copyRef: RefObject<HTMLElement | null>
@@ -43,6 +42,8 @@ interface HeroVisualProps {
   visible: boolean
   /** Over the photo, at the front (the arrows). */
   overlay?: ReactNode
+  /** Counts the calls to action: each one lights the panel up for a moment. */
+  invite: number
   alt: string
 }
 
@@ -51,12 +52,35 @@ interface HeroVisualProps {
  * screen is mapped onto the photographed glass with a projective transform, the lamps light
  * or darken the room, the curtain draws across the glass façade, the air-con brings snow.
  */
-export function HeroVisual({ home, copyRef, children, visible, overlay, alt }: HeroVisualProps) {
-  const ref = useRef<HTMLDivElement>(null)
+export function HeroVisual({ visualRef: ref, home, copyRef, children, visible, overlay, invite, alt }: HeroVisualProps) {
   const imgRef = useRef<HTMLImageElement>(null)
   const panelRef = useRef<HTMLDivElement>(null)
 
+  const sheenRef = useRef<HTMLDivElement>(null)
+
   useCurtainMotor(ref, home.curtain.on ? home.curtain.level / 100 : 0, 0)
+
+  // "Explore": a glow round the glass and a light passing over it.
+  useEffect(() => {
+    const panel = panelRef.current
+    if (!invite || !panel) return
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const rest = 'inset 0 0 0 1px rgb(255 255 255 / 0.04)'
+    const lit = 'inset 0 0 0 1px rgb(232 207 159 / 0.55), 0 0 2.4cqw rgb(232 207 159 / 0.38)'
+    panel.animate([{ boxShadow: rest }, { boxShadow: lit, offset: 0.3 }, { boxShadow: lit, offset: 0.6 }, { boxShadow: rest }], {
+      duration: reduced ? 900 : 2400,
+      easing: 'ease-in-out',
+    })
+    if (!reduced)
+      sheenRef.current?.animate(
+        [
+          { transform: 'translateX(-110%)', opacity: 0 },
+          { opacity: 1, offset: 0.25 },
+          { transform: 'translateX(110%)', opacity: 0 },
+        ],
+        { duration: 1500, easing: 'cubic-bezier(0.25, 0.6, 0.3, 1)' },
+      )
+  }, [invite])
 
   useLayoutEffect(() => {
     const root = ref.current
@@ -101,12 +125,12 @@ export function HeroVisual({ home, copyRef, children, visible, overlay, alt }: H
       observer.disconnect()
       portrait.removeEventListener('change', place)
     }
-  }, [copyRef])
+  }, [ref, copyRef])
 
   const light = home.lights.on ? home.lights.level / 100 : 0
 
   return (
-    <div ref={ref} className="shp-visual" style={{ '--shp-light': light } as CSSProperties}>
+    <div ref={ref} className="pg-visual shp-visual" style={{ '--shp-light': light } as CSSProperties}>
       <picture>
         <source media={PORTRAIT_QUERY} type="image/avif" srcSet={srcSet('-portrait', PAGE.portrait.widths, 'avif')} sizes="100vw" />
         <source media={PORTRAIT_QUERY} type="image/webp" srcSet={srcSet('-portrait', PAGE.portrait.widths, 'webp')} sizes="100vw" />
@@ -128,6 +152,7 @@ export function HeroVisual({ home, copyRef, children, visible, overlay, alt }: H
       <div className="shp-visual__glow" aria-hidden="true" />
       <div ref={panelRef} className="shp-panel">
         {children}
+        <div ref={sheenRef} className="shp-panel__sheen" aria-hidden="true" />
       </div>
       <div className="shp-visual__shade" aria-hidden="true" />
       <SceneEffects snow={snowDensity(home)} wind={0} visible={visible} />

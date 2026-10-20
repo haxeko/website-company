@@ -9,6 +9,7 @@ import {
   useState,
   type Ref,
 } from 'react'
+import { useApplianceBeep } from '../../audio/useApplianceBeep'
 import { carouselConfig } from '../../config/animation'
 import type { Slide } from '../../data/slides'
 import { useI18n } from '../../i18n/context'
@@ -84,6 +85,9 @@ export function HeroCarousel({
   const [active, setActive] = useState(initialIndex)
   const [ready, setReady] = useState(false)
   const { home, toggle, switchOff, setLevel, setCct, nudgeTemp } = useHomeState()
+  // The air-con and the fan answer every command with a beep, as real units do.
+  useApplianceBeep(home.ac.on, home.ac.temp)
+  useApplianceBeep(home.fan.on, Math.ceil(home.fan.level / 20))
   useLightAtmosphere(rootRef, home)
   useCurtainMotor(rootRef, home.curtain.on ? home.curtain.level / 100 : 0, windStrength(home))
   const homeIndex = slides.findIndex((slide) => slide.screen)

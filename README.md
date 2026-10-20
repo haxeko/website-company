@@ -3,8 +3,10 @@
 Website cao cấp cho thương hiệu **VILLA NEST** — *Design · Build · Live*. Trang chủ là một **bức toàn cảnh 3D điện
 ảnh, liền mạch**: bức tường với màn hình điều khiển trung tâm của hệ thống **Smart Home** → công trình đang
 **xây dựng** với giáo chống, ván khuôn → **nội thất** hoàn thiện, nối tiếp nhau như những bức tường cong của một căn
-phòng — cuối ảnh này ăn khớp với đầu ảnh kia — và xoay để chuyển cảnh khi bấm, kéo hay vuốt. Song ngữ Việt / Anh
-(mặc định tiếng Việt), có tiếng gió nhẹ khi chuyển cảnh (tắt được) và link riêng cho từng lĩnh vực.
+phòng — cuối ảnh này ăn khớp với đầu ảnh kia — và xoay để chuyển cảnh khi bấm, kéo hay vuốt. Mỗi lĩnh vực có **trang
+riêng** cùng một phong cách: [`/smart-home/`](#trang-smart-home), [`/construction/`](#trang-xây-dựng),
+[`/interior/`](#trang-nội-thất). Song ngữ Việt / Anh (mặc định tiếng Việt), âm thanh nhẹ khi chuyển cảnh và tiếng "tít"
+của máy lạnh (tắt được), link riêng cho từng lĩnh vực.
 
 ![VILLA NEST — desktop](docs/screenshot-desktop.jpg)
 
@@ -13,6 +15,12 @@ phòng — cuối ảnh này ăn khớp với đầu ảnh kia — và xoay đ�
 ![Smart Home — đèn, máy lạnh, quạt và rèm đang bật](docs/screenshot-smart-home.jpg)
 
 ![Trang Smart Home — /smart-home/](docs/screenshot-smart-home-page.jpg)
+
+![Trang Xây dựng — /construction/](docs/screenshot-construction.jpg)
+
+![Trang Nội thất — /interior/](docs/screenshot-interior.jpg)
+
+<img src="docs/screenshot-pages-mobile.jpg" width="780" alt="Ba trang trên iPhone: kịch bản dưới ảnh">
 
 ## Điểm nổi bật
 
@@ -26,8 +34,9 @@ phòng — cuối ảnh này ăn khớp với đầu ảnh kia — và xoay đ�
   mỗi lĩnh vực có tiêu đề serif lớn với dòng nghiêng màu vàng, mô tả và nút "Khám phá"; chữ đổi theo hiệu ứng khi
   chuyển cảnh; thanh điều hướng 01 · 02 · 03 kèm phụ đề; nút mũi tên dọc với bộ đếm; gợi ý "Click · Vuốt · Phím mũi tên".
 - **Song ngữ**: tiếng Việt mặc định, chọn tiếng Anh bằng cờ (trình duyệt nhớ lựa chọn), hoặc mở `?lang=en`.
-- **Bảng điều khiển nhà thông minh bấm được** (cảnh Smart Home): bảng điều khiển được **lắp âm vào tường đá**, hơi
-  nghiêng theo mặt tường (10°, vẫn dễ bấm) — màn hình là giao diện thật, nghiêng đúng phối cảnh của ảnh. Phía trên có
+- **Bảng điều khiển nhà thông minh bấm được** (cảnh Smart Home): bảng điều khiển **gắn nổi trên tường đá, nhìn nghiêng**
+  như ở trang Smart Home — bức tường xoay xa dần sang phải, bảng nghiêng theo (34°), thấy rõ **cạnh dày** bên trái và
+  **bóng đổ** xuống tường dưới ánh đèn hắt — màn hình là giao diện thật, nghiêng đúng phối cảnh của ảnh. Phía trên có
   dòng **"Chạm để trải nghiệm"** nhấp nhô mời bấm. Đầu màn hình là giờ (theo đồng hồ máy), ngày và ba chỉ số phòng:
   **Nhiệt độ**, **Bụi mịn PM2.5** và **CO₂**, kèm chấm màu chất lượng không khí (xanh tốt · vàng trung bình · đỏ kém) —
   số liệu mô phỏng: bật máy lạnh thì phòng mát dần về nhiệt độ cài đặt và bụi mịn giảm, tắt thì ấm dần trở lại.
@@ -52,27 +61,59 @@ phòng — cuối ảnh này ăn khớp với đầu ảnh kia — và xoay đ�
   quá nhỏ để bấm, nên chạm vào nó sẽ mở bảng điều khiển phóng to **gọn ở cuối màn hình** (giờ và chỉ số một hàng, bốn
   thẻ 2 × 2), để vẫn thấy gần hết căn phòng và rèm kéo vào; xoay ngang điện thoại thì bảng dùng bố cục 4 thẻ một hàng như
   trên tường. Người dùng bật "giảm chuyển động" chỉ thấy bảng đổi trạng thái, ánh sáng và rèm, không có tuyết / lá.
-- **Trang Smart Home riêng** (`/smart-home/`, mở bằng nút **"Khám phá giải pháp"** ở cảnh Smart Home): header **cố định
-  khi cuộn** (có nền mờ khi đã cuộn xuống), dải chuẩn kết nối với **logo chính thức** của Matter, Zigbee, Thread, Wi-Fi,
-  Home Assistant, HomeKit, ảnh tường đá với bảng điều khiển lớn gắn tường và căn biệt thự sáng đèn phía sau.
-  - **Bốn chủ đề chuyển như trang chủ**: *Kịch bản sống · An ninh thông minh · Tiết kiệm năng lượng · Hệ mở* — bấm thẻ ở
-    hàng dưới, **vuốt / kéo ngang**, **phím mũi tên** hoặc nút ← → bên phải (vòng tròn 01 → 04 → 01). Chữ đổi theo đúng
-    hiệu ứng và cỡ chữ của trang chủ; hàng thẻ dưới cùng giống thanh 01 · 02 · 03 của trang chủ, gợi ý *"Click · Vuốt ·
-    Phím mũi tên"* nằm cùng hàng. Nút của mỗi chủ đề cuộn xuống phần giới thiệu tương ứng bên dưới.
-  - Màn hình trên bảng là giao diện thật, được "dán" vào mặt kính trong ảnh bằng phép chiếu phối cảnh (`matrix3d`),
-    nên luôn nét và bấm được; mỗi chủ đề mở một màn hình của bảng (lướt ngang): **Trang chủ** (Đèn, Rèm cửa, Điều hòa,
-    Chế độ về nhà / ngủ, An ninh — tắt đèn căn phòng tối đi, rèm voan kéo ngang vách kính, điều hòa có tuyết rơi nhẹ),
-    **Kịch bản**, **An ninh** (camera, khóa cửa, cảm biến, bật / tắt báo động), **Năng lượng** (điện năng hôm nay, cả
-    tuần, thiết bị đang dùng — đổi theo đèn / điều hòa) và **Cài đặt** (các chuẩn và nền tảng đang kết nối). Menu bên
-    trái của bảng cũng chuyển chủ đề.
-  - **"Xem kịch bản sống"** chạy một ngày trên bảng: 18:00 *Về nhà* → 20:30 *Thư giãn* → 23:00 *Ngủ ngon* (giờ trên
-    bảng, ánh sáng, rèm, điều hòa đổi theo), rồi căn phòng sáng lại như cũ. Song ngữ, nút âm thanh dùng chung với trang
-    chủ; trên điện thoại chữ nằm trên, ảnh bảng điều khiển bên dưới, bốn thẻ xếp 2 × 2.
-- **Âm thanh chuyển cảnh**: không có nhạc nền; mỗi lần chuyển cảnh có một tiếng "xẹt" nhẹ như gió thổi, âm lượng
-  nhỏ, lướt theo hướng chuyển (trái → phải hoặc ngược lại). Tổng hợp ngay trong trình duyệt bằng Web Audio (không cần
-  file âm thanh, chạy offline). Mặc định bật, kêu từ lần bấm / chạm đầu tiên (trình duyệt không cho phát âm thanh
-  trước đó); nút âm thanh trên header tắt / bật lại và trình duyệt nhớ lựa chọn.
-- **Link riêng từng lĩnh vực**: `/#smart-home`, `/#construction`, `/#interior` — địa chỉ tự cập nhật khi chuyển cảnh.
+- **Ba trang riêng, cùng một khung**: header cố định, một dải biểu tượng dưới header, chữ của chủ đề bên trái (đúng cỡ
+  chữ và hiệu ứng đổi chữ của trang chủ), phần ảnh "sống" bên phải, bốn chủ đề ở hàng dưới cùng với gợi ý *"Click · Vuốt ·
+  Phím mũi tên"*. Trên máy tính mỗi trang **vừa đúng một màn hình** (không có nội dung bên dưới) và chuyển chủ đề bằng
+  **bánh xe chuột / trackpad** (một cử chỉ = một chủ đề), phím ← →, nút ← → bên phải, bấm thẻ ở hàng dưới hoặc kéo
+  ngang. Nút **"Khám phá …"** cùng kiểu với nút "Khám phá dự án" của trang chủ (chữ in hoa + vòng tròn mũi tên). Trên
+  điện thoại: dải biểu tượng 3 × 2, chữ, ảnh, bốn thẻ 2 × 2; chuyển chủ đề bằng **vuốt ngang** hoặc mũi tên; bấm nút
+  **"Xem …"** thì trang **trôi xuống** ảnh và mở **kịch bản** ngay bên dưới (từng bước, bước đang chạy có vạch thời gian),
+  ngoài ra không còn nội dung nào khác. Cả khối kịch bản luôn nằm trọn trong màn hình; trên máy nhỏ kịch bản gọn lại
+  (tên các bước một hàng, lời của bước đang chạy ở dưới).
+- <a id="trang-smart-home"></a>**Trang Smart Home** (`/smart-home/`, nút **"Khám phá giải pháp"** ở trang chủ): logo chính
+  thức của Matter, Zigbee, Thread, Wi-Fi, Home Assistant, HomeKit; ảnh tường đá với bảng điều khiển lớn gắn tường và căn
+  biệt thự sáng đèn phía sau.
+  - Bốn chủ đề *Kịch bản sống · An ninh thông minh · Tiết kiệm năng lượng · Hệ mở*, mỗi chủ đề mở một màn hình của bảng
+    (lướt ngang). Màn hình được "dán" vào mặt kính trong ảnh bằng phép chiếu phối cảnh (`matrix3d`), luôn nét và bấm được:
+    **Trang chủ** (Đèn, Rèm cửa, Điều hòa, Chế độ về nhà / ngủ, An ninh — tắt đèn căn phòng tối đi, rèm voan kéo ngang
+    vách kính, điều hòa có tuyết rơi nhẹ), **Kịch bản**, **An ninh** (**hai camera trực tiếp**: sân trong ban đêm và cổng
+    chính quay hồng ngoại có khung nhận diện *Xe · 97%*, đồng hồ chạy từng giây; báo động, khóa cửa, cảm biến khói),
+    **Năng lượng** (đổi theo đèn / điều hòa) và **Cài đặt** (các chuẩn đang kết nối). Menu bên trái của bảng cũng chuyển
+    chủ đề.
+  - **"Khám phá …"**: bảng điều khiển sáng lên (viền vàng, một vệt sáng lướt qua mặt kính) và hiện lời mời chạm thử.
+  - **"Xem kịch bản sống"**: 18:00 *Về nhà* → 20:30 *Thư giãn* → 23:00 *Ngủ ngon* (giờ trên bảng, ánh sáng, rèm, điều
+    hòa đổi theo — máy lạnh kêu "tít" mỗi lần nhận lệnh), rồi căn phòng sáng lại như cũ.
+- <a id="trang-xây-dựng"></a>**Trang Xây dựng** (`/construction/`, nút **"Khám phá dự án"** ở cảnh Construction) —
+  *"Từ bản vẽ đến công trình"*: cùng một căn biệt thự vừa là **ảnh thật** vừa là **bản vẽ kiến trúc** (nét sáng trên giấy
+  than chì có lưới, cao độ +7.20 / +3.60 / ±0.00, trục A–E, chuỗi kích thước). Một **tia laser** dọc chia đôi: bên trái là
+  bản vẽ, bên phải là công trình — **kéo tia laser** (hoặc phím ← → khi chọn tay nắm) để so sánh, phần trăm "đã xây" chạy
+  theo.
+  - Bốn chủ đề là bốn giai đoạn: **Thiết kế & BIM** (các nét ghi chú tự vẽ ra) · **Kết cấu** (chú thích trên khung bê tông
+    thật: cột 400 × 400, dầm 300 × 600, sàn 150 mm, giàn chống) · **Tiến độ minh bạch** (thẻ công trường: % hoàn thành,
+    tuần, bốn hạng mục, nhật ký hôm nay — đổi theo tia laser) · **Bàn giao** (cả ngôi nhà hoàn thiện, đèn ấm lên, thẻ
+    bảo hành).
+  - **"Khám phá …"**: tia laser quét một lượt từ bản vẽ sang công trình rồi về chỗ; **"Xem quá trình xây dựng"** đi qua
+    bốn giai đoạn, tia laser chạy theo.
+- <a id="trang-nội-thất"></a>**Trang Nội thất** (`/interior/`, nút **"Khám phá dự án"** ở cảnh Interior) — *"Chất liệu &
+  ánh sáng"*: dải dưới header là **sáu mẫu vật liệu thật** cắt từ chính căn phòng (travertine, gỗ óc chó, marble, bouclé,
+  len dệt tay, đồng thau).
+  - **Không gian** (căn phòng nhích nhẹ theo chuột cho có chiều sâu; "Khám phá" đưa máy quay chậm rãi vào phòng) ·
+    **Vật liệu** (các điểm sáng trên tường đá, vách gỗ, đảo bếp, sofa, thảm, đèn thả — chạm để mở thẻ vật liệu) ·
+    **Ánh sáng** (công tắc *Sáng 07:00 · Chiều 17:30 · Tối 21:00*: ba ảnh ánh sáng chuyển mềm sang nhau — buổi tối có
+    đèn hắt trần, đèn thả, dải đèn tủ bếp) · **May đo** (nét kích thước tự vẽ: sofa 4 200, bàn trà 1 400 × 900, bàn ăn
+    2 800, trần 3 200).
+  - **"Xem một ngày trong nhà"**: sáng → hoàng hôn → tối trên chính căn phòng.
+  Chữ, số liệu (tiêu chuẩn, bảo hành, vật liệu, kích thước) trên hai trang này là **nội dung minh họa** — sửa lại theo
+  dự án thật trong `content.ts` của từng trang.
+- **Âm thanh nhẹ nhàng**: không có nhạc nền. Mỗi lần chuyển cảnh / chủ đề là một **hơi gió rất khẽ** (dải tần thấp, không
+  có tiếng rít, lên xuống mềm, lướt theo hướng chuyển). **Máy lạnh và quạt kêu "tít" như máy thật** khi nhận lệnh: bật —
+  hai tiếng "tít tít" lên giọng, tắt — một tiếng trầm hơn, đổi nhiệt độ / tốc độ — một tiếng ngắn (kéo thanh nhanh vẫn
+  chỉ một tiếng mỗi nấc); là âm sạch, tròn, có chút vang phòng để nghe như phát ra từ máy trên tường chứ không chói
+  tai. Tổng hợp ngay trong trình duyệt bằng Web Audio (không cần file âm thanh, chạy offline). Mặc định bật, kêu từ lần
+  bấm / chạm đầu tiên (trình duyệt không cho phát âm thanh trước đó); nút âm thanh trên header tắt / bật lại cho cả
+  website và trình duyệt nhớ lựa chọn.
+- **Link riêng từng lĩnh vực**: `/#smart-home`, `/#construction`, `/#interior` (vị trí trên bức toàn cảnh, tự cập nhật
+  khi chuyển cảnh) và các trang `/smart-home/`, `/construction/`, `/interior/`.
 - **Chiều sâu điện ảnh**: ảnh hai bên nghiêng ±12°, nhoè và tối dần ra mép màn hình; mép trên/dưới tan vào bóng tối;
   phản chiếu trên sàn bóng, ánh sáng môi trường đổi màu theo ảnh ở giữa, vignette và film grain.
 - **Vòng xoay vô hạn, không giật**: toàn bộ trạng thái là một số liên tục `progress`; mỗi ảnh có hai bản sao quanh
@@ -143,7 +184,9 @@ static server nào); mở trực tiếp `dist/index.html` bằng `file://` sẽ 
 
 ```
 ├── assets-src/                 Ảnh gốc độ phân giải cao (đầu vào của npm run images)
-├── smart-home/index.html       Trang Smart Home (trang thứ hai của bản build → /smart-home/)
+├── smart-home/index.html       Trang Smart Home (→ /smart-home/)
+├── construction/index.html     Trang Xây dựng (→ /construction/)
+├── interior/index.html         Trang Nội thất (→ /interior/)
 ├── deploy/
 │   ├── nginx.conf              Cấu hình Nginx mẫu
 │   ├── install-pi.sh           Script cài lên Raspberry Pi / Debian / Ubuntu (sao lưu, không đụng site khác)
@@ -151,14 +194,16 @@ static server nào); mở trực tiếp `dist/index.html` bằng `file://` sẽ 
 ├── docs/                       Ảnh chụp màn hình, hướng dẫn Raspberry Pi
 ├── public/
 │   ├── assets/slides/          Tấm toàn cảnh đã tối ưu: AVIF/WebP ngang, dọc, ambient (sinh tự động)
-│   ├── assets/pages/           Ảnh của trang Smart Home: ngang + bản cắt cho điện thoại (sinh tự động)
+│   ├── assets/pages/           Ảnh của ba trang: ngang, bản cắt cho điện thoại, camera, bản vẽ, ánh sáng, mẫu vật liệu (sinh tự động)
 │   └── favicon.svg
 ├── scripts/optimize-images.mjs Pipeline ảnh: chỉnh màu, cắt tấm, hòa mép, resize, mã hoá AVIF/WebP
+├── scripts/art/                Các bước dựng ảnh một lần (Python + OpenCV, xem phần Thay ảnh) — không cần cho build
 └── src/
     ├── App.tsx                 Ghép Header, Loader, HeroCarousel; âm thanh; link #lĩnh-vực
     ├── config/animation.ts     ★ Toàn bộ thông số hiệu ứng / chuyển động / bố cục
     ├── assets/brand/           (tuỳ chọn) logo công ty: logo.svg / logo.png / logo.webp
-    ├── audio/TransitionSound.ts Tiếng gió khi chuyển cảnh, tổng hợp bằng Web Audio
+    ├── audio/sound.ts          Âm thanh của cả website (Web Audio): hơi gió khi chuyển cảnh, tiếng "tít" của máy lạnh / quạt
+    ├── audio/useApplianceBeep.ts  Máy lạnh, quạt kêu khi nhận lệnh (bật, tắt, đổi mức)
     ├── i18n/                   Ngôn ngữ: strings.ts (chữ giao diện VI/EN), LanguageProvider
     ├── data/
     │   ├── slides.ts           ★ Nội dung song ngữ của 3 lĩnh vực (tiêu đề, mô tả, nút, link)
@@ -169,16 +214,19 @@ static server nào); mở trực tiếp `dist/index.html` bằng `file://` sẽ 
     │   │   ├── CarouselEngine.ts   Engine GSAP: progress, kéo/vuốt/phím/wheel, intro, chế độ nhẹ
     │   │   ├── carouselMath.ts     Toán thuần: trạng thái CENTER/LEFT/RIGHT, mask làm mềm cạnh
     │   │   ├── HeroCopy.tsx        Khối chữ: số thứ tự, tiêu đề serif, mô tả, nút "Khám phá"
-    │   │   ├── useLineSwap.ts      Hiệu ứng đổi chữ khi chuyển cảnh (dùng chung với trang Smart Home)
-    │   │   ├── editorial.css       Kiểu chữ, nút mũi tên, thanh 01 · 02 · 03 + gợi ý (dùng chung hai trang)
+    │   │   ├── useLineSwap.ts      Hiệu ứng đổi chữ khi chuyển cảnh (dùng chung với các trang)
+    │   │   ├── editorial.css       Kiểu chữ, nút mũi tên, thanh 01 · 02 · 03 + gợi ý (dùng chung các trang)
     │   │   ├── SlideImage.tsx      <picture> AVIF/WebP, art-direction ngang/dọc
     │   │   └── HeroCarousel.css
     │   ├── SmartHome/          Bảng điều khiển (ControlScreen), tường: ánh sáng, lời mời (HomeWall), rèm (Curtains), tuyết / lá (SceneEffects)
     │   ├── Header/             Logo, slogan, nút âm thanh, chọn ngôn ngữ
     │   └── Loader/             Vạch tiến trình tối giản khi ảnh đang tải
+    ├── pages/shared/           Khung chung của ba trang: Deck.tsx (dải biểu tượng, chữ chủ đề, nút, mũi tên, thanh chủ
+    │                           đề, kịch bản trên điện thoại) · useDeck (chuột, phím, vuốt, bánh xe) · useDemo · page.css
     ├── pages/smart-home/       Trang Smart Home: content.ts (chữ VI/EN) · HeroVisual (ảnh + màn hình phối cảnh)
-    │                           · ScenePanel (các màn hình của bảng) · ThemeCopy (chữ từng chủ đề) · Sections (phần bên
-    │                           dưới) · usePageHome (trạng thái, kịch bản) · icons.tsx (biểu tượng, logo các chuẩn)
+    │                           · ScenePanel (các màn hình của bảng, camera) · usePageHome (trạng thái, kịch bản) · icons.tsx
+    ├── pages/construction/     Trang Xây dựng: content.ts · BuildVisual (ảnh + bản vẽ, tia laser, chú thích, thẻ)
+    ├── pages/interior/         Trang Nội thất: content.ts · RoomVisual (ba ánh sáng, điểm vật liệu, kích thước)
     ├── styles/                 tokens.css (màu, font, khoảng cách) · global.css
     └── utils/device.ts         Nhận diện chế độ chất lượng & media query
 ```
@@ -223,17 +271,16 @@ trong suốt) vào `src/assets/brand/` với tên `logo.svg`, `logo.png` hoặc 
 - Chữ của từng lĩnh vực (tiêu đề, dòng nghiêng, mô tả, nút, link của nút) nằm trong `src/data/slides.ts`, mỗi lĩnh vực
   có bản `vi` và `en`.
 - Chữ giao diện (slogan, nút âm thanh, gợi ý thao tác…) nằm trong `src/i18n/strings.ts`.
-- Nút "Khám phá" của Smart Home mở trang `smart-home/`; của Construction và Interior hiện trỏ tới link riêng của lĩnh
-  vực đó (`#construction`…) — thay `ctaHref` bằng trang dự án thật khi có.
-- Chữ của trang Smart Home (dải chuẩn, tiêu đề, bảng điều khiển, kịch bản, các phần bên dưới) nằm trong
-  `src/pages/smart-home/content.ts`, bản `vi` và `en`.
+- Nút "Khám phá" của mỗi lĩnh vực mở trang riêng của nó: `smart-home/`, `construction/`, `interior/` (`ctaHref`).
+- Chữ của từng trang (dải dưới header, bốn chủ đề, bảng điều khiển, kịch bản, thẻ, vật liệu, kích thước) nằm trong
+  `src/pages/<trang>/content.ts`, bản `vi` và `en`.
 
 ## Thay ảnh
 
-> Ảnh Smart Home chỉ có mặt kính tối ở chỗ màn hình; vị trí màn hình (pixel trên ảnh gốc, trước khi nghiêng) nằm ở
-> `images.smart-home.screen` trong `src/data/media.json` — `bezel` là bề rộng viền khung (rèm dừng trước viền này),
-> `tilt` là góc nghiêng của bảng và khoảng nhìn của phép chiếu đã dùng khi ghép ảnh (màn hình trên web nghiêng đúng
-> như vậy). Website tự quy đổi theo cách cắt ảnh ngang / dọc. Nếu thay ảnh này, cập nhật lại `sourceSize` và `screen`
+> Ảnh Smart Home chỉ có mặt kính tối ở chỗ màn hình; vị trí màn hình (pixel trên ảnh gốc, là hình chữ nhật phẳng
+> trước khi xoay) nằm ở `images.smart-home.screen` trong `src/data/media.json` — `bezel` là từ mép màn hình tới mép
+> ngoài của bảng như nhìn thấy, gồm cả cạnh dày (rèm dừng trước đó), `tilt` là góc xoay của bảng và khoảng nhìn của phép
+> chiếu đã dùng khi ghép ảnh (`scripts/art/smart-home-wall.py`; màn hình trên web xoay đúng như vậy). Website tự quy đổi theo cách cắt ảnh ngang / dọc. Nếu thay ảnh này, cập nhật lại `sourceSize` và `screen`
 > (bỏ `tilt` nếu bảng trong ảnh mới nhìn thẳng; xoá `screen` để không hiện bảng điều khiển).
 
 1. Đặt ảnh gốc chất lượng cao vào `assets-src/`. Có hai loại nguồn:
@@ -253,11 +300,18 @@ trong suốt) vào `src/assets/brand/` với tên `logo.svg`, `logo.png` hoặc 
    thành một tấm `preview.jpg` rồi dừng.
 4. Cập nhật mô tả `alt`, nhãn và thông tin tác giả trong `src/data/slides.ts`.
 
-**Ảnh trang Smart Home** — `assets-src/smart-home-page.jpg`, cấu hình ở `pages.smart-home` trong `src/data/media.json`:
-`landscapeWidths` (bản ngang), `portrait.crop` (khung cắt quanh bảng điều khiển cho điện thoại), `panel` (4 góc mặt kính
-của bảng, theo thứ tự trên-trái, trên-phải, dưới-phải, dưới-trái — màn hình sống được chiếu đúng vào đó) và `window`
-(mép trái/phải vách kính mà rèm kéo qua), tất cả tính bằng pixel trên ảnh gốc. Thay ảnh thì đo lại các điểm này rồi chạy
-`npm run images`.
+**Ảnh các trang** — cấu hình ở `pages` trong `src/data/media.json`, tất cả tính bằng pixel trên ảnh gốc; thay ảnh thì đo
+lại rồi chạy `npm run images`:
+
+- `pages.smart-home` — `assets-src/smart-home-page.jpg`: `landscapeWidths` (bản ngang), `portrait.crop` (khung cắt cho
+  điện thoại), `panel` (4 góc mặt kính của bảng: trên-trái, trên-phải, dưới-phải, dưới-trái — màn hình sống được chiếu
+  đúng vào đó), `window` (mép vách kính mà rèm kéo qua); `extras`: hai khung hình camera (`assets-src/cameras/`).
+- `pages.construction` — cắt từ `panorama-construction-interior.jpg` (`crop`), kèm **bản vẽ** cùng khung hình
+  `assets-src/construction-drawing.png` (tạo bằng `scripts/art/construction-drawing.py`: nét sáng trên nền đen, trang
+  web cộng vào giấy than chì). Vị trí cao độ, trục, chú thích nằm ở đầu `src/pages/construction/BuildVisual.tsx`.
+- `pages.interior` — cắt từ cùng ảnh toàn cảnh, kèm ảnh **buổi sáng** và **buổi tối** (`assets-src/interior/`, dựng lại
+  ánh sáng bằng `scripts/art/interior-light.py`) và sáu **mẫu vật liệu** (`swatch-…`, cắt thẳng từ ảnh). Vị trí các điểm
+  vật liệu và nét kích thước nằm ở đầu `src/pages/interior/RoomVisual.tsx`.
 
 ## Điều khiển
 
@@ -266,6 +320,9 @@ của bảng, theo thứ tự trên-trái, trên-phải, dưới-phải, dưới
 | Chuột       | Click ảnh bên, kéo trái/phải, cuộn bánh xe, nút ← → bên phải, click nhãn 01–03, rê chuột lên ảnh bên |
 | Cảm ứng     | Vuốt trái/phải (vuốt dọc không bị chặn), chạm ảnh bên, chạm nhãn                           |
 | Bàn phím    | ← → chuyển slide; Tab tới nhãn / mũi tên / âm thanh / ngôn ngữ, Enter để chọn              |
+
+Trên ba trang riêng: bánh xe chuột / trackpad, phím ← →, nút ← →, thẻ chủ đề và kéo / vuốt ngang đổi chủ đề; tia laser
+của trang Xây dựng kéo được bằng chuột / ngón tay, hoặc chọn tay nắm (Tab) rồi dùng ← → (Shift + ← → bước lớn, Home / End).
 
 ## Hiệu năng & khả năng tiếp cận
 
@@ -290,6 +347,11 @@ Kiểm thử tự động bằng Playwright (Chromium) trên bản build:
 - Click ảnh bên, kéo chuột, kéo ngắn bật lại, vuốt cảm ứng, vuốt nhanh, vuốt dọc bị bỏ qua, phím ← → (kể cả bấm dồn
   dập qua điểm lặp vòng), bánh xe / trackpad (một cử chỉ = một slide), mũi tên, nhãn, logo, đổi ngôn ngữ VI/EN, bật/tắt âm thanh, link #lĩnh-vực.
 - Kiểm tra từng khung hình 60 fps bằng đồng hồ giả lập: không có ảnh nào nhảy vị trí hay nhấp nháy khi lặp vòng.
+- Ba trang riêng ở 1672×941, 1440×900, 1280×633, 1024×700 và iPhone 14 Pro, VI / EN: vừa một màn hình (chữ không chạm
+  thanh chủ đề), bánh xe (một cử chỉ = một chủ đề), phím, thẻ, vuốt; nút "Xem …" trên điện thoại trôi xuống đúng ảnh +
+  kịch bản (kịch bản nằm trọn trong màn hình, kiểm cả iPhone SE 320×568, Galaxy S8, Pixel 7) và bên dưới không còn gì;
+  camera chạy giờ; kéo tia laser (không đổi chủ đề), phím trên tay nắm; thẻ tiến độ,
+  chú thích kết cấu; điểm vật liệu đều nằm trong khung, thẻ vật liệu, ánh sáng buổi tối, nét kích thước.
 - Không có lỗi console, không có request ra ngoài Internet, không có thanh cuộn ngang; chạy đúng sau Nginx với cấu hình
   trong `deploy/nginx.conf`.
 
@@ -297,7 +359,12 @@ Kiểm thử tự động bằng Playwright (Chromium) trên bản build:
 
 Thay bằng ảnh dự án thật của VILLA NEST trước khi ra mắt chính thức.
 
-- Construction, Interior — ảnh concept của VILLA NEST (`assets-src/panorama-construction-interior.jpg`).
+- Construction, Interior — ảnh concept của VILLA NEST (`assets-src/panorama-construction-interior.jpg`); bản vẽ của
+  trang Xây dựng và ánh sáng sáng / tối của trang Nội thất được dựng từ chính ảnh này.
+- Camera trên bảng điều khiển — ảnh của [Declan Sun](https://unsplash.com/photos/two-arched-doorways-with-bamboo-flanking-a-reflective-pool-IcpcvUN4fh0)
+  và [ubeyonroad](https://unsplash.com/photos/modern-house-with-manicured-hedges-and-gate-4b25Ic2VjiQ) trên Unsplash
+  ([Unsplash License](https://unsplash.com/license)), chỉnh thành khung hình camera (ống kính góc rộng, màu ban đêm /
+  hồng ngoại; đã xoá biển hiệu công ty an ninh cạnh cổng).
 - Trang Smart Home — ảnh từ bản thiết kế VILLA NEST cung cấp (`assets-src/smart-home-page.jpg`: đã xoá chữ, phóng to
   ×4 bằng Real-ESRGAN; giao diện trên bảng là HTML thật).
 - Logo các chuẩn (`src/pages/smart-home/icons.tsx`, một màu): Matter — [SVG Logos](https://github.com/gilbarbara/logos)
@@ -308,4 +375,5 @@ Thay bằng ảnh dự án thật của VILLA NEST trước khi ra mắt chính 
   tra trước khi ra mắt.
 - Smart Home — nền tường đá travertine từ ảnh của [HUUM](https://unsplash.com/photos/smart-thermostat-on-stone-wall-eJAWSL_0L98)
   ([Unsplash License](https://unsplash.com/license), miễn phí cho mục đích thương mại; thiết bị gốc đã được xoá),
-  ánh sáng buổi tối và màn hình điều khiển trung tâm (giao diện VILLA NEST) được dựng thêm.
+  bức tường được xoay nghiêng thêm, ánh sáng buổi tối và bảng điều khiển gắn tường (giao diện VILLA NEST) được dựng
+  thêm.

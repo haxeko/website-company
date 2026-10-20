@@ -1,4 +1,5 @@
 import { useEffect, useState, type ComponentType, type CSSProperties, type ReactNode } from 'react'
+import media from '../../data/media.json'
 import { useI18n } from '../../i18n/context'
 import type { PageCopy, SceneId } from './content'
 import {
@@ -32,8 +33,6 @@ export interface ScenePanelProps {
   /** Which way the screen slides when it changes (1 = to the next). */
   dir: 1 | -1
   onNavigate: (view: PanelView) => void
-  /** The photo, for the camera tiles of the security screen. */
-  photo: string
   /** The clock shows the time of the scene on show while the demo plays. */
   clock?: string
   onToggle: (key: PageDevice) => void
@@ -246,20 +245,69 @@ function HomeView({ home, copy: p, onToggle, onSetLevel, onSetTemp, onScene, onT
   )
 }
 
-function SecurityView({ home, copy: p, photo, onToggleArmed }: ScenePanelProps) {
+/** The two cameras: the courtyard in colour, the front gate in infrared with a car picked out. */
+const CAMS = [
+  { file: 'cam-garden', mode: 'colour' },
+  { file: 'cam-gate', mode: 'ir', box: { left: 3, top: 37, width: 37, height: 19 } },
+] as const
+const CAM_BASE = `../${media.pages.publicPath}`
+const CAM_WIDTHS = Object.fromEntries(media.pages['smart-home'].extras.map(({ name, widths }) => [name, widths]))
+const camSet = (file: string, format: string) => CAM_WIDTHS[file].map((w) => `${CAM_BASE}/${file}-${w}.${format} ${w}w`).join(', ')
+
+/** A camera's own clock, to the second (the scene's time while the demo plays). */
+function CamClock({ clock }: { clock?: string }) {
+  const { lang } = useI18n()
+  const now = useNow(1000)
+  const locale = lang === 'vi' ? 'vi-VN' : 'en-GB'
+  const seconds = String(now.getSeconds()).padStart(2, '0')
+  const time = clock ? `${clock}:${seconds}` : now.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+  return <span className="shp-camera__clock">{time}</span>
+}
+
+function SecurityView({ home, copy: p, clock, onToggleArmed }: ScenePanelProps) {
   return (
     <div className="shp-panel__security">
-      {p.cameras.map((name, i) => (
-        <div key={name} className="shp-camera" style={{ backgroundImage: `url(${photo})` }} data-cam={i}>
-          <span className="shp-camera__live">{p.live}</span>
-          <b>
-            <CameraIcon />
-            {name}
-          </b>
-        </div>
+      {CAMS.map((cam, i) => (
+        <figure key={cam.file} className="shp-camera" data-mode={cam.mode}>
+          <picture>
+            <source type="image/avif" srcSet={camSet(cam.file, 'avif')} sizes="(min-width: 761px) 22vw, 40vw" />
+            <img
+              src={`${CAM_BASE}/${cam.file}-${CAM_WIDTHS[cam.file][0]}.webp`}
+              srcSet={camSet(cam.file, 'webp')}
+              sizes="(min-width: 761px) 22vw, 40vw"
+              alt=""
+              decoding="async"
+            />
+          </picture>
+          {'box' in cam && (
+            <span
+              className="shp-camera__box"
+              style={{ left: `${cam.box.left}%`, top: `${cam.box.top}%`, width: `${cam.box.width}%`, height: `${cam.box.height}%` }}
+            >
+              <i>{p.detected}</i>
+            </span>
+          )}
+          <figcaption>
+            <span className="shp-camera__live">{p.live}</span>
+            <CamClock clock={clock} />
+            <b>
+              <CameraIcon />
+              {p.cameras[i]}
+            </b>
+            <small>
+              CAM 0{i + 1} · {p.cameraModes[i]}
+            </small>
+          </figcaption>
+        </figure>
       ))}
-      <ModeCard kind="security" icon={<ShieldIcon />} title={p.security} note={home.armed ? p.armed : p.disarmed} active={home.armed} onClick={onToggleArmed} />
       <ul className="shp-panel__locks">
+        <li>
+          <button type="button" className="shp-panel__arm" aria-pressed={home.armed} onClick={onToggleArmed}>
+            <ShieldIcon />
+            <span>{p.security}</span>
+            <b>{home.armed ? p.armed : p.disarmed}</b>
+          </button>
+        </li>
         {p.locks.map(([name, state], i) => (
           <li key={name}>
             {i < 2 ? <LockIcon /> : <SensorIcon />}

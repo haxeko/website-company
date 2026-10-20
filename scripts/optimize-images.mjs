@@ -12,7 +12,8 @@
  * and the photos of the stand-alone pages (media.json → pages) into `public/assets/pages/`:
  *
  *   <page>-<w>.avif / .webp            the landscape view
- *   <page>-portrait-<w>.avif / .webp   the crop around the wall panel, for phones
+ *   <page>-portrait-<w>.avif / .webp   the crop for phones
+ *   <extra>-<w>.avif / .webp           a page's other images (camera feeds, drawings, light variants)
  *
  * The three photos are treated as ONE panorama (in the ring order of media.json):
  *   1. every photo gets the same subtle "cinematic" grade,
@@ -351,13 +352,14 @@ for (const file of await readdir(pagesDir)) {
 for (const [slug, page] of Object.entries(pages)) {
   if (typeof page !== 'object' || !page.source) continue
   const source = join(sourceDir, page.source)
-  const views = [[slug, null, page.landscapeWidths]]
-  if (page.portrait) views.push([`${slug}-portrait`, page.portrait.crop, page.portrait.widths])
+  const views = [[slug, source, page.crop ?? null, page.landscapeWidths]]
+  if (page.portrait) views.push([`${slug}-portrait`, source, page.portrait.crop, page.portrait.widths])
+  for (const extra of page.extras ?? []) views.push([extra.name, join(sourceDir, extra.source), extra.crop ?? null, extra.widths])
   report[slug] = []
-  for (const [name, crop, widths] of views) {
+  for (const [name, file, crop, widths] of views) {
     for (const w of widths) {
       for (const [format, encode] of Object.entries(encoders)) {
-        let pipeline = sharp(source)
+        let pipeline = sharp(file)
         if (crop) pipeline = pipeline.extract({ left: crop[0], top: crop[1], width: crop[2], height: crop[3] })
         pipeline = pipeline.resize({ width: w, kernel: 'lanczos3', withoutEnlargement: true }).sharpen({ sigma: 0.5, m1: 0.5, m2: 1 })
         const info = await encode(pipeline).toFile(join(pagesDir, `${name}-${w}.${format}`))

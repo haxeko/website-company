@@ -9,10 +9,13 @@ export default defineConfig({
   plugins: [react()],
   build: {
     rolldownOptions: {
-      // The home page and the stand-alone pages (each folder becomes its own URL: /smart-home/).
+      // The home page and the stand-alone pages (each folder becomes its own URL: /smart-home/,
+      // /construction/, /interior/).
       input: {
         main: resolve(import.meta.dirname, 'index.html'),
         'smart-home': resolve(import.meta.dirname, 'smart-home/index.html'),
+        construction: resolve(import.meta.dirname, 'construction/index.html'),
+        interior: resolve(import.meta.dirname, 'interior/index.html'),
       },
     },
   },

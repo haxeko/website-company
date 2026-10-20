@@ -1,0 +1,472 @@
+/*
+ * Interior page: the living room in three lights, the points on its materials and their card,
+ * the light switch, the made-to-measure dimension lines. The page's layout — strip, text,
+ * themes, phone stack — is shared (../shared/page.css).
+ */
+
+/* The strip: each material's own swatch. */
+.ip-swatch {
+  flex: none;
+  width: clamp(26px, 2.1vw, 38px);
+  height: clamp(26px, 2.1vw, 38px);
+  border-radius: 50%;
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 0.12),
+    0 4px 12px rgb(0 0 0 / 0.4);
+  object-fit: cover;
+}
+
+/* (the brass has no photo: brushed metal, drawn) */
+.ip-swatch--brass {
+  display: block;
+  background:
+    repeating-linear-gradient(100deg, rgb(255 255 255 / 0.07) 0 1px, transparent 1px 3px),
+    linear-gradient(135deg, #7a5a2a, #e2c27e 38%, #a77c3c 62%, #f0d79c 82%, #8a6530);
+}
+
+/* ── The room ─────────────────────────────────────────────────────────── */
+
+.ip-visual {
+  --ip-fx: 0.5;
+  --ip-fy: 0.66;
+
+  background: #0e0f11;
+  container-type: size;
+}
+
+/* The photo's box, as object-fit: cover with object-position fx fy would place it. */
+.ip-box {
+  --bw: max(100cqw, calc(100cqh * var(--ip-aspect)));
+  --bh: calc(var(--bw) / var(--ip-aspect));
+
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--bw);
+  height: var(--bh);
+  translate: calc((100cqw - var(--bw)) * var(--ip-fx) + var(--ip-mx, 0) * -14px)
+    calc((100cqh - var(--bh)) * var(--ip-fy) + var(--ip-my, 0) * -8px);
+  transition: translate 1.2s var(--ease-out);
+}
+
+.ip-room,
+.ip-room img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* The three lights cross-fade. */
+.ip-room {
+  opacity: 0;
+  transition: opacity 1.6s var(--ease-in-out);
+}
+
+.ip-room[data-on] {
+  opacity: 1;
+}
+
+/* Keeps the text legible over the left of the room. */
+.ip-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgb(10 10 12 / 0.82), rgb(10 10 12 / 0.62) 24%, rgb(10 10 12 / 0.2) 44%, transparent 58%);
+  pointer-events: none;
+}
+
+/* ── Materials: the points and their card ─────────────────────────────── */
+
+.ip-points {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.ip-point {
+  position: absolute;
+  width: 34px;
+  height: 34px;
+  translate: -50% -50%;
+  border-radius: 50%;
+  opacity: 0;
+  scale: 0.6;
+  pointer-events: none;
+  transition:
+    opacity 0.5s ease,
+    scale 0.6s var(--ease-out);
+}
+
+.ip-visual[data-facet='1'] .ip-point {
+  opacity: 1;
+  scale: 1;
+  pointer-events: auto;
+  transition-delay: calc(0.6s + var(--i) * 0.09s);
+}
+
+/* A soft gold dot that breathes; the chosen one ringed. */
+.ip-point::before,
+.ip-point::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+}
+
+.ip-point::before {
+  inset: 11px;
+  background: var(--gold-2);
+  box-shadow:
+    0 0 0 4px rgb(232 207 159 / 0.25),
+    0 0 18px rgb(255 214 150 / 0.7);
+}
+
+.ip-point::after {
+  inset: 2px;
+  border: 1px solid rgb(232 207 159 / 0.7);
+  animation: ip-breathe 2.6s ease-in-out infinite;
+}
+
+@keyframes ip-breathe {
+  50% {
+    opacity: 0.25;
+    scale: 1.25;
+  }
+}
+
+.ip-point[aria-pressed='true']::after {
+  inset: -3px;
+  border-width: 1.5px;
+  border-color: #fff4dc;
+  animation: none;
+}
+
+.ip-point__label {
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 50%;
+  padding: 5px 10px;
+  translate: -50% 4px;
+  border-radius: 8px;
+  background: rgb(14 14 16 / 0.7);
+  color: var(--c-text);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.3s ease,
+    translate 0.3s var(--ease-out);
+}
+
+.ip-point:hover .ip-point__label,
+.ip-point:focus-visible .ip-point__label,
+.ip-point[aria-pressed='true'] .ip-point__label {
+  opacity: 1;
+  translate: -50% 0;
+}
+
+/* The chosen material: beside the photo on a computer, under it on phones. */
+.ip-card,
+.ip-moods {
+  position: absolute;
+  right: calc(var(--gutter) + 72px);
+  bottom: 8%;
+  z-index: 4;
+  opacity: 0;
+  translate: 0 14px;
+  pointer-events: none;
+  transition:
+    opacity 0.5s ease,
+    translate 0.7s var(--ease-out);
+}
+
+.ip-card[data-on],
+.ip-moods[data-on] {
+  opacity: 1;
+  translate: 0 0;
+  transition-delay: 0.45s;
+  pointer-events: auto;
+}
+
+.ip-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 18px;
+  width: min(380px, 30vw);
+  margin: 0;
+  padding: 16px 20px 16px 16px;
+  border: 1px solid rgb(232 210 166 / 0.26);
+  border-radius: 18px;
+  background: rgb(14 14 16 / 0.7);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 30px 70px rgb(0 0 0 / 0.45);
+}
+
+.ip-card__swatch {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 0.14),
+    0 10px 24px rgb(0 0 0 / 0.5);
+  object-fit: cover;
+}
+
+.ip-card p {
+  margin: 0;
+}
+
+.ip-card__origin {
+  color: var(--gold);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.ip-card__name {
+  margin-top: 5px !important;
+  font-family: var(--font-serif);
+  font-size: 24px;
+  line-height: 1.1;
+}
+
+.ip-card__note {
+  margin-top: 7px !important;
+  color: rgb(244 240 233 / 0.68);
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+
+.ip-card__count {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  color: rgb(244 240 233 / 0.4);
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+}
+
+/* ── Light: the switch ────────────────────────────────────────────────── */
+
+.ip-moods {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  width: min(400px, 30vw);
+  padding: 5px;
+  border: 1px solid rgb(232 210 166 / 0.26);
+  border-radius: 999px;
+  background: rgb(14 14 16 / 0.62);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 24px 60px rgb(0 0 0 / 0.4);
+}
+
+/* (the lit pill slides to the light chosen) */
+.ip-moods__thumb {
+  position: absolute;
+  top: 5px;
+  bottom: 5px;
+  left: 5px;
+  width: calc((100% - 10px) / 3);
+  border-radius: 999px;
+  background: linear-gradient(100deg, #c7a167, #e6cd9b 46%, #cfae76 72%, #b88f57);
+  box-shadow: 0 6px 20px rgb(200 160 100 / 0.3);
+  translate: calc(var(--ip-mood) * 100%) 0;
+  transition: translate 0.6s var(--ease-out);
+}
+
+.ip-moods button {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto auto;
+  justify-content: center;
+  align-items: center;
+  column-gap: 8px;
+  padding: 9px 6px;
+  border-radius: 999px;
+  color: rgb(244 240 233 / 0.72);
+  transition: color 0.4s ease;
+}
+
+.ip-moods button[aria-checked='true'] {
+  color: #1c1812;
+}
+
+.ip-moods svg {
+  grid-row: span 2;
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ip-moods span {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.ip-moods small {
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+  opacity: 0.75;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Made to measure: the dimension lines ─────────────────────────────── */
+
+.ip-dims {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.ip-dim {
+  fill: none;
+  stroke: rgb(255 236 200 / 0.92);
+  stroke-width: 1.2;
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  filter: drop-shadow(0 0 2px rgb(0 0 0 / 0.8));
+  transition: stroke-dashoffset 0.4s ease;
+}
+
+.ip-visual[data-facet='3'] .ip-dim {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 1.3s calc(0.55s + var(--i) * 0.22s) var(--ease-out);
+}
+
+.ip-dim-label {
+  position: absolute;
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  padding: 5px 10px;
+  translate: -50% calc(-100% - 8px);
+  border-radius: 8px;
+  background: rgb(14 14 16 / 0.62);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.ip-dim-label[data-vertical] {
+  translate: calc(-100% - 10px) -50%;
+}
+
+.ip-visual[data-facet='3'] .ip-dim-label {
+  opacity: 1;
+  transition: opacity 0.6s calc(1.2s + var(--i) * 0.22s) ease;
+}
+
+.ip-dim-label small {
+  color: rgb(244 240 233 / 0.6);
+  font-size: 8.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.ip-dim-label b {
+  color: var(--gold-2);
+  font-family: var(--font-serif);
+  font-size: 16px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Phones and portrait tablets: the whole room, cards under it ──────── */
+
+@media (max-width: 760px), (orientation: portrait) and (max-width: 1024px) {
+  .ip {
+    --pg-visual-aspect: 2850 / 2668;
+  }
+
+  .ip-shade {
+    display: none;
+  }
+
+  .ip-point {
+    width: 30px;
+    height: 30px;
+  }
+
+  .ip-point::before {
+    inset: 10px;
+  }
+
+  .ip-point__label {
+    font-size: 9.5px;
+  }
+
+  .ip-dim-label {
+    padding: 3px 7px;
+  }
+
+  .ip-dim-label small {
+    font-size: 7px;
+  }
+
+  .ip-dim-label b {
+    font-size: 12px;
+  }
+
+  .ip-card,
+  .ip-moods {
+    position: relative;
+    right: auto;
+    bottom: auto;
+    order: 3;
+    display: none;
+    width: auto;
+    margin: 0 var(--gutter);
+    translate: none;
+  }
+
+  .ip-card[data-on] {
+    display: grid;
+    animation: pg-story-in 0.7s var(--ease-out) both;
+  }
+
+  .ip-moods[data-on] {
+    display: grid;
+    animation: pg-story-in 0.7s var(--ease-out) both;
+  }
+
+  .ip-card__swatch {
+    width: 68px;
+    height: 68px;
+  }
+
+  .ip-card__name {
+    font-size: 21px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ip-box {
+    transition: none;
+  }
+
+  .ip-room {
+    transition-duration: 0.3s;
+  }
+
+  .ip-point::after {
+    animation: none;
+  }
+}

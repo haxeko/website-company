@@ -1,163 +1,101 @@
-import { useCallback, useEffect, useRef, useState, type CSSProperties, type PointerEvent, type RefObject } from 'react'
-import { readSoundOn, TransitionSound } from '../../audio/TransitionSound'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { getSound, useSoundOn } from '../../audio/sound'
+import { useApplianceBeep } from '../../audio/useApplianceBeep'
 import { Header } from '../../components/Header'
-import media from '../../data/media.json'
 import { useI18n } from '../../i18n/context'
-import { pageCopy, type SceneId, type SectionId } from './content'
+import { Cta, DeckControls, DeckCopy, DeckNav, DeckStory, PageStrip, PlayButton } from '../shared/Deck'
+import { useDeck } from '../shared/useDeck'
+import { useDemo } from '../shared/useDemo'
+import { revealBelowHeader } from '../shared/reveal'
+import { usePageChrome } from '../shared/usePageChrome'
+import { pageCopy, type SceneId, type ThemeId } from './content'
 import { HeroVisual } from './HeroVisual'
-import { PlayIcon, ProtocolIcon, StopIcon } from './icons'
+import { ProtocolIcon } from './icons'
 import { ScenePanel, type PanelView } from './ScenePanel'
-import { Sections } from './Sections'
-import { ThemeCopy } from './ThemeCopy'
-import { usePageHome, useSceneDemo, type PageDevice } from './usePageHome'
+import { usePageHome, type PageDevice } from './usePageHome'
+import '../shared/page.css'
 import './SmartHomePage.css'
 
-/** The four themes of the hero, in order; each also has a section further down. */
-const THEMES: SectionId[] = ['scenes', 'security', 'energy', 'open']
-/** The panel's screen for each theme… */
+/** The four themes, in order… */
+const THEMES: ThemeId[] = ['scenes', 'security', 'energy', 'open']
+/** …the panel's screen for each… */
 const VIEW_OF: PanelView[] = ['home', 'security', 'energy', 'settings']
 /** …and the theme each screen of its side menu belongs to. */
 const THEME_OF: Record<PanelView, number> = { home: 0, scenes: 0, security: 1, energy: 2, settings: 3 }
-const YEAR = new Date().getFullYear()
-const PHOTO = `../${media.pages.publicPath}/smart-home-1280.webp`
-const pad = (n: number) => String(n).padStart(2, '0')
-/** A horizontal drag this long (px) moves to the next / previous theme. */
-const SWIPE = 48
-
-/** True while `ref` is on screen. */
-function useOnScreen(ref: RefObject<HTMLElement | null>) {
-  const [on, setOn] = useState(true)
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const observer = new IntersectionObserver(([entry]) => setOn(entry.isIntersecting))
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [ref])
-  return on
-}
-
-function Arrow({ direction }: { direction: 'left' | 'right' }) {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d={direction === 'left' ? 'M19 12H5M11 6l-6 6 6 6' : 'M5 12h14M13 6l6 6-6 6'} />
-    </svg>
-  )
-}
+/** The order of the side menu (a new screen slides in from its side). */
+const MENU: PanelView[] = ['home', 'scenes', 'energy', 'security', 'settings']
+/** The living-scene demo: coming home, unwinding, good night. */
+const STEPS: SceneId[] = ['home', 'relax', 'sleep']
+const STEP_MS = 3800
+/** How long the "try it" hint stays after the call to action. */
+const HINT_MS = 3600
 
 /**
  * The Smart Home page (opened from "Explore" on the Smart Home space of the home page): the
- * standards it is built on, then a hero with the wall panel — live, as on the home page —
- * whose four themes change like the home page's spaces (click, swipe, arrow keys), each
- * with its own section further down.
+ * standards it is built on, and the wall panel — live, as on the home page — whose four
+ * themes change like the home page's spaces. On a computer it is one screen; on a phone the
+ * living scene, once played, is told step by step under the photo.
  */
 export function SmartHomePage() {
-  const { lang, t } = useI18n()
+  const { lang } = useI18n()
   const copy = pageCopy[lang]
   const rootRef = useRef<HTMLDivElement>(null)
   const heroRef = useRef<HTMLElement>(null)
   const copyRef = useRef<HTMLDivElement>(null)
-  const heroOnScreen = useOnScreen(heroRef)
-  const soundRef = useRef<TransitionSound | null>(null)
-  const [soundOn, setSoundOn] = useState(readSoundOn)
+  const visualRef = useRef<HTMLDivElement>(null)
+  const { ready, scrolled } = usePageChrome(rootRef, copy.description)
+  const soundOn = useSoundOn()
   const { home, toggle, setLevel, setTemp, toggleArmed, applyScene, reset } = usePageHome()
-  const [active, setActive] = useState(0)
+  // The air-con beeps when it takes a command, from the panel or from a scene.
+  useApplianceBeep(home.ac.on, home.ac.temp)
+
   const [view, setView] = useState<PanelView>('home')
-  const [dir, setDir] = useState<1 | -1>(1)
-  const [scrolled, setScrolled] = useState(false)
-  // The header comes in as on the home page once the page is shown.
-  const [ready, setReady] = useState(false)
-  useEffect(() => {
-    const id = requestAnimationFrame(() => setReady(true))
-    return () => cancelAnimationFrame(id)
+  const [viewDir, setViewDir] = useState<1 | -1>(1)
+  const onThemeChange = useCallback((index: number, direction: 1 | -1) => {
+    setView(VIEW_OF[index])
+    setViewDir(direction)
+    getSound().whoosh(direction)
   }, [])
+  const deck = useDeck(THEMES.length, { heroRef, onChange: onThemeChange })
+  const { active, show, portrait } = deck
 
-  useEffect(() => {
-    const sound = new TransitionSound()
-    soundRef.current = sound
-    return () => {
-      sound.dispose()
-      soundRef.current = null
-    }
-  }, [])
-
-  useEffect(() => {
-    document.querySelector('meta[name="description"]')?.setAttribute('content', copy.description)
-  }, [copy])
-
-  // The header stays in place while the page scrolls; it gets a backdrop once there is
-  // content under it. The page starts below it (its height follows the viewport).
-  useEffect(() => {
-    const header = document.querySelector<HTMLElement>('.site-header')
-    const root = rootRef.current
-    if (!header || !root) return
-    const observer = new ResizeObserver(() => root.style.setProperty('--shp-header-h', `${header.offsetHeight}px`))
-    observer.observe(header)
-    const onScroll = () => setScrolled(window.scrollY > 8)
-    onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => {
-      observer.disconnect()
-      window.removeEventListener('scroll', onScroll)
-    }
-  }, [])
-
-  const whoosh = useCallback((direction: 1 | -1 = 1) => soundRef.current?.play(direction), [])
-  const demo = useSceneDemo(applyScene, reset, whoosh)
-  const { stop: stopDemo } = demo
-
-  /** Theme `index` (wrapping round, like the home page), showing panel screen `screen`. */
-  const show = useCallback(
-    (index: number, screen?: PanelView) => {
-      const next = (index + THEMES.length) % THEMES.length
-      const target = screen ?? VIEW_OF[next]
-      if (next === active && target === view) return
-      const forward = next === active ? 1 : ((next - active + THEMES.length) % THEMES.length <= 2 ? 1 : -1)
-      setDir(forward)
-      setActive(next)
-      setView(target)
-      if (next !== active) whoosh(forward)
+  const onStep = useCallback(
+    (i: number) => {
+      applyScene(STEPS[i])
+      getSound().whoosh()
     },
-    [active, view, whoosh],
+    [applyScene],
   )
+  const onEnd = useCallback(() => {
+    reset()
+    getSound().whoosh(-1)
+  }, [reset])
+  const demo = useDemo(STEPS.length, STEP_MS, onStep, onEnd)
+  const { stop: stopDemo } = demo
+  const playing = demo.step !== null
 
-  // Arrow keys, as on the home page (not while a slider or a field has the focus).
+  // Phones: the story opens under the photo with the first play, for the living scenes.
+  const [storyOpen, setStoryOpen] = useState(false)
+  // "Explore": the panel lights up and a hint says it can be used.
+  const [invite, setInvite] = useState(0)
+  const [hint, setHint] = useState(false)
   useEffect(() => {
-    if (!heroOnScreen) return
-    const onKey = (e: KeyboardEvent) => {
-      if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return
-      if ((e.target as HTMLElement).closest('input, textarea, select, [contenteditable]')) return
-      if (e.key === 'ArrowRight') show(active + 1)
-      else if (e.key === 'ArrowLeft') show(active - 1)
-      else return
-      e.preventDefault()
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [heroOnScreen, active, show])
+    if (!hint) return
+    const id = window.setTimeout(() => setHint(false), HINT_MS)
+    return () => window.clearTimeout(id)
+  }, [hint, invite])
 
-  // Swipe / drag sideways over the hero (not on the panel, the buttons or the links).
-  const drag = useRef<{ id: number; x: number; y: number } | null>(null)
-  const onPointerDown = (e: PointerEvent) => {
-    if (e.button !== 0 || (e.target as HTMLElement).closest('button, a, input, [data-no-drag]')) return
-    drag.current = { id: e.pointerId, x: e.clientX, y: e.clientY }
-    e.currentTarget.setPointerCapture(e.pointerId)
-  }
-  const onPointerUp = (e: PointerEvent) => {
-    const start = drag.current
-    drag.current = null
-    if (!start || start.id !== e.pointerId) return
-    const dx = e.clientX - start.x
-    const dy = e.clientY - start.y
-    if (Math.abs(dx) >= SWIPE && Math.abs(dx) > Math.abs(dy) * 1.2) show(active + (dx < 0 ? 1 : -1))
+  const reveal = () => {
+    if (portrait) revealBelowHeader(visualRef.current)
   }
 
-  const toggleSound = useCallback(() => {
-    const sound = soundRef.current
-    if (!sound) return
-    sound.setOn(!sound.isOn)
-    setSoundOn(sound.isOn)
-  }, [])
+  /** A screen of the panel's side menu: its theme comes with it. */
+  const navigate = (screen: PanelView) => {
+    const theme = THEME_OF[screen]
+    if (theme !== active) show(theme)
+    else setViewDir(MENU.indexOf(screen) >= MENU.indexOf(view) ? 1 : -1)
+    setView(screen)
+  }
 
   // Any change by hand on the panel ends the demo.
   const panelActions = {
@@ -176,144 +114,118 @@ export function SmartHomePage() {
     onScene: (scene: SceneId) => {
       stopDemo()
       applyScene(scene)
-      whoosh()
+      getSound().whoosh()
     },
     onToggleArmed: () => {
       stopDemo()
       toggleArmed()
     },
-    onNavigate: (screen: PanelView) => show(THEME_OF[screen], screen),
-  }
-  /** The living-scene demo plays on the panel's home screen. */
-  const playDemo = () => {
-    show(0, 'home')
-    demo.play()
-  }
-  /** A scene chosen further down the page plays in the hero, so it scrolls back up to it. */
-  const showScene = (scene: SceneId) => {
-    stopDemo()
-    applyScene(scene)
-    whoosh()
-    show(0, 'home')
-    heroRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    onNavigate: navigate,
   }
 
-  const scene = demo.scene ?? home.mode
-  const playing = demo.scene !== null
+  const playDemo = () => {
+    if (active !== 0) show(0)
+    setView('home')
+    setStoryOpen(true)
+    setHint(false)
+    demo.play()
+    reveal()
+  }
+  const explore = () => {
+    navigate(VIEW_OF[active])
+    setInvite((n) => n + 1)
+    if (!playing) setHint(true)
+    reveal()
+  }
+  const chooseStep = (i: number) => {
+    stopDemo()
+    panelActions.onScene(STEPS[i])
+  }
+
+  const scene = demo.step !== null ? copy.scenes[STEPS[demo.step]] : null
+  const chosen = home.mode ? STEPS.indexOf(home.mode) : null
 
   return (
-    <div ref={rootRef} className="app shp" id="top" data-ready={ready} data-scrolled={scrolled || undefined}>
-      <Header soundOn={soundOn} onToggleSound={toggleSound} homeHref="../" />
+    <div ref={rootRef} className="app pg shp" data-ready={ready} data-scrolled={scrolled || undefined}>
+      <Header soundOn={soundOn} onToggleSound={() => getSound().setOn(!soundOn)} homeHref="../" />
       <main>
-        <section
-          ref={heroRef}
-          className="shp-hero"
-          aria-roledescription="carousel"
-          aria-labelledby="shp-title"
-          style={{ '--hc-nav-count': THEMES.length } as CSSProperties}
-        >
-          <ul className="shp-protocols">
-            {copy.protocols.map(({ name, note }, i) => (
-              <li key={name}>
-                <ProtocolIcon index={i} className="shp-protocols__icon" />
-                <span>
-                  <b>{name}</b>
-                  <small>{note}</small>
-                </span>
-              </li>
-            ))}
-          </ul>
+        <section ref={heroRef} className="pg-hero" aria-roledescription="carousel" aria-labelledby="pg-title">
+          <PageStrip
+            label={copy.protocolsLabel}
+            items={copy.protocols.map(({ name, note }, i) => ({ icon: <ProtocolIcon index={i} />, name, note }))}
+          />
 
-          <div className="shp-stage" onPointerDown={onPointerDown} onPointerUp={onPointerUp} onPointerCancel={() => (drag.current = null)}>
+          <div className="pg-stage" {...deck.swipe}>
             <HeroVisual
+              visualRef={visualRef}
               home={home}
               copyRef={copyRef}
-              visible={heroOnScreen}
+              visible={deck.onScreen}
+              invite={invite}
               alt={copy.panel.label}
-              overlay={
-                <div className="hc-controls shp-controls">
-                  <button type="button" className="hc-controls__btn" aria-label={t.prev} onClick={() => show(active - 1)}>
-                    <Arrow direction="left" />
-                  </button>
-                  <p className="hc-controls__count" aria-hidden="true">
-                    <span>{pad(active + 1)}</span>
-                    <i />
-                    <span>{pad(THEMES.length)}</span>
-                  </p>
-                  <button type="button" className="hc-controls__btn" aria-label={t.next} onClick={() => show(active + 1)}>
-                    <Arrow direction="right" />
-                  </button>
-                </div>
-              }
+              overlay={<DeckControls active={active} count={THEMES.length} onPrev={() => show(active - 1)} onNext={() => show(active + 1)} />}
             >
               <ScenePanel
                 home={home}
                 copy={copy.panel}
                 scenes={copy.scenes}
                 view={view}
-                dir={dir}
-                photo={PHOTO}
-                clock={demo.scene ? copy.scenes[demo.scene].time : undefined}
+                dir={viewDir}
+                clock={scene?.time}
                 {...panelActions}
               />
             </HeroVisual>
 
-            <ThemeCopy
-              copy={copy}
-              themes={THEMES}
+            <DeckCopy
+              copyRef={copyRef}
               active={active}
               ready={ready}
-              copyRef={copyRef}
-              extra={
-                <button type="button" className="shp-play" aria-pressed={playing} onClick={playing ? demo.stop : playDemo}>
-                  <span className="shp-play__icon">{playing ? <StopIcon /> : <PlayIcon />}</span>
-                  {playing ? copy.stop : copy.watch}
-                </button>
-              }
-            />
-
-            <p className="shp-toast" role="status" data-on={playing || undefined}>
-              {demo.scene && (
+              titleId="pg-title"
+              titles={THEMES.map((id) => copy.features[id].title)}
+              texts={THEMES.map((id) => copy.themes[id])}
+              actions={(shown) => (
                 <>
-                  <b>
-                    {copy.scenes[demo.scene].time} · {copy.scenes[demo.scene].name}
-                  </b>
-                  {copy.scenes[demo.scene].does}
+                  <Cta label={copy.themes[THEMES[shown]].cta} onClick={explore} />
+                  <PlayButton playing={playing} watch={copy.watch} stop={copy.stop} onPlay={playDemo} onStop={stopDemo} />
                 </>
               )}
+            />
+
+            <p className="pg-toast" role="status" data-on={scene !== null || hint || undefined}>
+              {scene ? (
+                <>
+                  <b>
+                    {scene.time} · {scene.name}
+                  </b>
+                  {scene.does}
+                </>
+              ) : (
+                hint && <b>{copy.tryIt}</b>
+              )}
             </p>
+
+            <DeckStory
+              open={storyOpen && active === 0}
+              title={copy.story.title}
+              steps={STEPS.map((id) => copy.scenes[id])}
+              playing={demo.step}
+              chosen={chosen}
+              stepMs={STEP_MS}
+              onStep={chooseStep}
+              onPlay={playDemo}
+              onStop={stopDemo}
+              replay={copy.story.replay}
+              stop={copy.stop}
+            />
           </div>
 
-          <nav className="hc-nav shp-nav" aria-label={copy.index}>
-            <ul className="hc-nav__list">
-              {THEMES.map((id, i) => (
-                <li key={id}>
-                  <button type="button" className="hc-nav__item" aria-current={i === active ? 'true' : undefined} onClick={() => show(i)}>
-                    <span className="hc-nav__index">{pad(i + 1)}</span>
-                    <span className="hc-nav__title">{copy.features[id].title}</span>
-                    <span className="hc-nav__subtitle">{copy.features[id].note}</span>
-                  </button>
-                </li>
-              ))}
-            </ul>
-            <p className="hc-nav__hint" aria-hidden="true">
-              <span className="hc-nav__mouse" />
-              {t.hint}
-            </p>
-          </nav>
+          <DeckNav label={copy.index} items={THEMES.map((id) => copy.features[id])} active={active} onSelect={show} />
 
           <p className="visually-hidden" aria-live="polite">
             {copy.features[THEMES[active]].title}
           </p>
         </section>
-
-        <Sections copy={copy} scene={scene} armed={home.armed} onScene={showScene} onToggleArmed={toggleArmed} />
       </main>
-
-      <footer className="shp-footer">
-        <span>© {YEAR} VILLA NEST</span>
-        <a href="../">{copy.back}</a>
-      </footer>
     </div>
   )
 }

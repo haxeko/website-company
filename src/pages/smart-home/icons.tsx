@@ -154,24 +154,6 @@ export const WeatherIcon = ({ className }: IconProps) => (
 
 /* ── Page ──────────────────────────────────────────────────────────────── */
 
-export const ArrowIcon = ({ className }: IconProps) => (
-  <Svg className={className}>
-    <path d="M7 17 17 7M9 7h8v8" />
-  </Svg>
-)
-
-export const PlayIcon = ({ className }: IconProps) => (
-  <Svg className={className}>
-    <path className="is-filled" d="M9 7.2v9.6l7.4-4.8z" />
-  </Svg>
-)
-
-export const StopIcon = ({ className }: IconProps) => (
-  <Svg className={className}>
-    <rect className="is-filled" x="8" y="8" width="8" height="8" rx="1" />
-  </Svg>
-)
-
 export const LockIcon = ({ className }: IconProps) => (
   <Svg className={className}>
     <rect x="5" y="10.4" width="14" height="10" rx="2" />
@@ -197,14 +179,6 @@ export const SunIcon = ({ className }: IconProps) => (
   <Svg className={className}>
     <circle cx="12" cy="12" r="4" />
     <path d="M12 2.6v2.2M12 19.2v2.2M21.4 12h-2.2M4.8 12H2.6M18.6 5.4l-1.5 1.5M6.9 17.1l-1.5 1.5M18.6 18.6l-1.5-1.5M6.9 6.9 5.4 5.4" />
-  </Svg>
-)
-
-export const MeterIcon = ({ className }: IconProps) => (
-  <Svg className={className}>
-    <path d="M4 18a8 8 0 1 1 16 0" />
-    <path d="M12 18l4-5.6" />
-    <path d="M4 18h16" />
   </Svg>
 )
 

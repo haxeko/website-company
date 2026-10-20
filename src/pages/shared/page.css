@@ -1,0 +1,624 @@
+/*
+ * The stand-alone pages (Smart Home, Construction, Interior). On a computer each one is a
+ * single screen, as the home page: the header, a strip under it, the theme's text over the
+ * dark left of the photo with the live part on the right, the numbered themes along the
+ * bottom — the wheel, a swipe, the arrows or the keys change the theme. Phones and portrait
+ * tablets stack the text, the photo and the themes, and the page scrolls: under the photo
+ * the "watch" button opens the story it plays.
+ */
+
+@media (max-width: 760px), (orientation: portrait) and (max-width: 1024px) {
+  html.is-page,
+  html.is-page body,
+  html.is-page #root {
+    height: auto;
+    min-height: 100%;
+  }
+
+  html.is-page body {
+    overflow: visible;
+    overscroll-behavior: auto;
+  }
+}
+
+.pg {
+  --gold: #d2b07a;
+  --gold-2: #e8cf9f;
+  --line: rgb(244 240 233 / 0.12);
+  --muted: rgb(244 240 233 / 0.62);
+
+  position: relative;
+  overflow-x: clip;
+}
+
+/* The header stays at the top while the page scrolls; over the content it gets a backdrop. */
+.pg .site-header::before {
+  content: '';
+  position: absolute;
+  inset: 0 calc(-1 * var(--gutter));
+  z-index: -1;
+  border-bottom: 1px solid rgb(244 240 233 / 0.08);
+  background: rgb(14 15 17 / 0.9);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.pg[data-scrolled] .site-header::before {
+  opacity: 1;
+}
+
+/* No carousel intro here: the header comes in at once. */
+.pg .site-header {
+  transition-delay: 0.3s;
+}
+
+.pg[data-ready='true'] .site-header > * {
+  transition-delay: 0.05s;
+  transition-duration: 0.9s;
+}
+
+/* ── Hero ─────────────────────────────────────────────────────────────── */
+
+.pg-hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100svh;
+  padding-top: var(--pg-header-h, 100px);
+}
+
+/* The strip under the header */
+.pg-strip {
+  display: grid;
+  grid-template-columns: repeat(var(--pg-strip-count, 6), auto);
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 var(--gutter);
+  padding: clamp(12px, 2.3vh, 26px) clamp(8px, 1.6vw, 34px);
+  border-bottom: 1px solid var(--line);
+  list-style: none;
+}
+
+.pg-strip li {
+  display: flex;
+  align-items: center;
+  gap: clamp(10px, 1vw, 18px);
+}
+
+.pg-strip li + li {
+  padding-left: clamp(16px, 2.4vw, 44px);
+  border-left: 1px solid rgb(244 240 233 / 0.16);
+}
+
+.pg-strip li > svg {
+  flex: none;
+  width: clamp(24px, 1.95vw, 36px);
+  height: clamp(24px, 1.95vw, 36px);
+}
+
+.pg-strip span {
+  display: grid;
+  gap: 5px;
+}
+
+.pg-strip b {
+  font-family: var(--font-serif);
+  font-size: clamp(14px, 1.05vw, 20px);
+  font-weight: 500;
+  line-height: 1.1;
+}
+
+.pg-strip small {
+  color: var(--muted);
+  font-size: clamp(7.5px, 0.52vw, 10px);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* The photo and the text over it */
+.pg-stage {
+  position: relative;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  min-height: 0;
+  /* Sideways swipes change the theme; the page still scrolls up and down. */
+  touch-action: pan-y pinch-zoom;
+}
+
+/* The page's photo with its live parts (each page styles its own). */
+.pg-visual {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-mask-image: linear-gradient(to bottom, rgb(0 0 0 / 0.6), #000 5%, #000 80%, transparent);
+  mask-image: linear-gradient(to bottom, rgb(0 0 0 / 0.6), #000 5%, #000 80%, transparent);
+}
+
+.pg-visual img {
+  -webkit-user-drag: none;
+}
+
+/* The theme's text: the home page's type (editorial.css), over the dark left of the photo. */
+.pg-copy {
+  position: relative;
+  z-index: 3;
+  width: min(42vw, 760px);
+  padding: clamp(20px, 5vh, 64px) 0 clamp(20px, 5vh, 64px) calc(var(--gutter) + 0.6vw);
+  pointer-events: none;
+}
+
+.pg-copy .hc-copy__headline {
+  white-space: nowrap;
+}
+
+.pg-copy .hc-copy__headline em {
+  white-space: normal;
+}
+
+/* (left out where it would not fit: DeckCopy) */
+.pg-copy[data-tight='1'] .hc-copy__description,
+.pg-copy[data-tight='2'] :is(.hc-copy__description, .hc-copy__kicker) {
+  display: none;
+}
+
+.pg-copy__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px clamp(26px, 2.6vw, 44px);
+  margin-top: clamp(16px, 3vh, 30px);
+  pointer-events: auto;
+}
+
+.pg-copy__actions .hc-copy__cta {
+  margin-top: 0;
+  white-space: nowrap;
+}
+
+.pg-cta .is-filled {
+  fill: currentColor;
+  stroke: none;
+}
+
+.pg-cta[aria-pressed='true'] .hc-copy__cta-icon {
+  border-color: var(--c-accent);
+  background: rgb(210 176 122 / 0.14);
+}
+
+/* What the demo is showing, over the photo (computers; phones have the story). */
+.pg-toast {
+  position: absolute;
+  right: var(--gutter);
+  bottom: 7%;
+  z-index: 5;
+  display: grid;
+  gap: 4px;
+  max-width: min(380px, 34vw);
+  margin: 0;
+  padding: 14px 18px;
+  border: 1px solid rgb(232 210 166 / 0.28);
+  border-radius: 14px;
+  background: rgb(14 14 16 / 0.7);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  color: var(--muted);
+  font-size: 12.5px;
+  line-height: 1.5;
+  opacity: 0;
+  translate: 0 10px;
+  pointer-events: none;
+  transition:
+    opacity 0.4s ease,
+    translate 0.5s var(--ease-out);
+}
+
+.pg-toast[data-on] {
+  opacity: 1;
+  translate: 0 0;
+}
+
+.pg-toast b {
+  color: var(--gold-2);
+  font-family: var(--font-serif);
+  font-size: 19px;
+  font-weight: 500;
+}
+
+/* The arrows and counter, at the right of the photo as on the home page. */
+.pg-controls {
+  position: absolute;
+  top: 50%;
+  right: var(--gutter);
+  z-index: 4;
+  translate: 0 -50%;
+}
+
+/* (here they can sit over the bright side of a photo) */
+.pg-controls .hc-controls__btn {
+  background: rgb(16 17 19 / 0.4);
+}
+
+.pg-controls .hc-controls__count {
+  width: 30px;
+  margin: 0;
+  padding: 11px 0;
+  border-radius: 999px;
+  background: rgb(16 17 19 / 0.4);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  color: rgb(244 240 233 / 0.8);
+}
+
+.pg-controls .hc-controls__count i {
+  height: 22px;
+}
+
+/* The themes along the bottom, with the hint: the home page's navigation (editorial.css). */
+.pg-nav {
+  position: relative;
+  z-index: 3;
+  margin: 0 var(--gutter);
+  padding-bottom: max(3.2vh, calc(env(safe-area-inset-bottom, 0px) + 14px));
+}
+
+/* (four themes and the hint share the row: a little closer than the home page's three) */
+.pg-nav .hc-nav__list {
+  gap: clamp(16px, 2.4vw, 48px);
+}
+
+.pg-nav .hc-nav__subtitle {
+  letter-spacing: 0.18em;
+  line-height: 1.5;
+  text-wrap: balance;
+}
+
+/* The story: phones only (below). */
+.pg-story {
+  display: none;
+}
+
+/* Smaller laptops and tablets on their side: the strip without its notes. */
+@media (max-width: 1240px) {
+  .pg-strip small {
+    display: none;
+  }
+
+  .pg-strip li + li {
+    padding-left: clamp(14px, 2vw, 30px);
+  }
+}
+
+/* Phones held sideways and other short screens. */
+@media (max-height: 560px) and (orientation: landscape) {
+  .pg-strip {
+    display: none;
+  }
+
+  .pg :is(.hc-nav__subtitle, .hc-nav__hint) {
+    display: none;
+  }
+
+  .pg-copy .hc-copy__headline {
+    font-size: clamp(22px, 3.4vw, 32px);
+  }
+
+  .pg-nav .hc-nav__item {
+    padding-top: 10px;
+  }
+}
+
+/* ── Phones and portrait tablets: text, photo, story, themes ──────────── */
+
+@media (max-width: 760px), (orientation: portrait) and (max-width: 1024px) {
+  .pg-hero {
+    height: auto;
+    min-height: 100svh;
+  }
+
+  .pg-strip {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    row-gap: 16px;
+    padding: 18px 0;
+  }
+
+  .pg-strip li,
+  .pg-strip li + li {
+    flex-direction: column;
+    gap: 8px;
+    padding: 0;
+    border: 0;
+    text-align: center;
+  }
+
+  .pg-strip span {
+    justify-items: center;
+  }
+
+  .pg-strip small {
+    font-size: 7.5px;
+    letter-spacing: 0.1em;
+    white-space: normal;
+  }
+
+  .pg-stage {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  /* (the home page's phone sizes) */
+  .pg-copy {
+    width: auto;
+    padding: 26px var(--gutter) 8px;
+  }
+
+  .pg-copy .hc-copy__kicker {
+    margin-top: 12px;
+    font-size: 9.5px;
+    letter-spacing: 0.26em;
+  }
+
+  .pg-copy .hc-copy__headline {
+    margin-top: 6px;
+    font-size: clamp(24px, 7vw, 34px);
+    white-space: normal;
+  }
+
+  .pg-copy .hc-copy__description {
+    margin-top: 10px;
+    font-size: 12.5px;
+    line-height: 1.6;
+  }
+
+  .pg-copy__actions {
+    gap: 14px 28px;
+    margin-top: 16px;
+  }
+
+  .pg .hc-copy__cta-icon {
+    width: 34px;
+    height: 34px;
+  }
+
+  .pg-visual {
+    position: relative;
+    inset: auto;
+    order: 2;
+    aspect-ratio: var(--pg-visual-aspect, 2000 / 1705);
+    margin-top: 18px;
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 8%, #000 86%, transparent);
+    mask-image: linear-gradient(to bottom, transparent, #000 8%, #000 86%, transparent);
+  }
+
+  .pg-toast {
+    display: none;
+  }
+
+  .pg-controls {
+    right: 10px;
+    gap: 8px;
+  }
+
+  .pg-controls .hc-controls__btn {
+    width: 38px;
+    height: 38px;
+  }
+
+  .pg-controls .hc-controls__count {
+    display: none;
+  }
+
+  /* Four themes in a 2 × 2 grid, as the home page's navigation on phones. */
+  .pg-nav {
+    margin-top: 12px;
+  }
+
+  .pg-nav .hc-nav__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 4px 14px;
+  }
+
+  .pg-nav .hc-nav__item {
+    grid-template-columns: 1fr;
+    row-gap: 4px;
+    padding-top: 12px;
+  }
+
+  .pg-nav .hc-nav__title {
+    font-size: 14px;
+  }
+
+  .pg-nav :is(.hc-nav__subtitle, .hc-nav__hint) {
+    display: none;
+  }
+
+  /* The story the demo plays, under the photo. */
+  .pg-story[data-open] {
+    display: grid;
+    order: 3;
+    gap: 14px;
+    margin: 0 var(--gutter);
+    padding: 16px 16px 18px;
+    border: 1px solid rgb(244 240 233 / 0.1);
+    border-radius: 18px;
+    background: radial-gradient(90% 70% at 15% 0%, rgb(210 176 122 / 0.09), transparent 70%), linear-gradient(165deg, #17181b, #0e0f11);
+    box-shadow: 0 30px 60px rgb(0 0 0 / 0.4);
+    animation: pg-story-in 0.7s var(--ease-out) both;
+  }
+}
+
+@keyframes pg-story-in {
+  from {
+    opacity: 0;
+    translate: 0 18px;
+  }
+}
+
+.pg-story__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.pg-story__title {
+  margin: 0;
+  color: var(--muted);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+.pg-story__play {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgb(244 240 233 / 0.4);
+  border-radius: 50%;
+  transition:
+    background-color 0.4s ease,
+    border-color 0.4s ease;
+}
+
+.pg-story__play[aria-pressed='true'] {
+  border-color: var(--gold);
+  background: rgb(210 176 122 / 0.14);
+}
+
+.pg-story__play svg {
+  width: 14px;
+  height: 14px;
+}
+
+.pg-story__play .is-filled {
+  fill: currentColor;
+}
+
+/* The steps side by side, each under a line as the home page's navigation. */
+.pg-story__steps {
+  display: grid;
+  grid-template-columns: repeat(var(--pg-story-count, 3), minmax(0, 1fr));
+  gap: 16px 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* (more than three, or a narrow or short phone: the row holds the times and names, the step on
+   show is told below it) */
+.pg-story__steps[data-count='4'] small {
+  display: none;
+}
+
+.pg-story__does {
+  display: none;
+  margin: 0;
+  color: rgb(244 240 233 / 0.72);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.pg-story__steps[data-count='4'] + .pg-story__does {
+  display: block;
+}
+
+@media (max-width: 360px), (max-height: 620px) {
+  .pg-story__steps small {
+    display: none;
+  }
+
+  .pg-story__does {
+    display: block;
+  }
+}
+
+.pg-story__steps button {
+  position: relative;
+  display: grid;
+  align-content: start;
+  row-gap: 3px;
+  width: 100%;
+  height: 100%;
+  padding-top: 12px;
+  border-top: 1px solid rgb(244 240 233 / 0.16);
+  color: var(--muted);
+  text-align: left;
+  transition: opacity 0.4s ease;
+}
+
+.pg-story__steps li[data-state='next'] button {
+  opacity: 0.6;
+}
+
+/* The line fills while its step plays; a step done or chosen stays drawn. */
+.pg-story__line {
+  position: absolute;
+  top: -1px;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: linear-gradient(to right, var(--gold), var(--gold-2));
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+.pg-story__steps li[data-state='now'] .pg-story__line {
+  animation: pg-story-bar linear both;
+}
+
+.pg-story__steps li[data-state='chosen'] .pg-story__line {
+  transform: none;
+}
+
+.pg-story__steps li[data-state='done'] .pg-story__line {
+  background: rgb(244 240 233 / 0.5);
+  transform: none;
+}
+
+@keyframes pg-story-bar {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.pg-story__time {
+  color: var(--gold);
+  font-family: var(--font-serif);
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+
+.pg-story__steps b {
+  color: var(--c-text);
+  font-family: var(--font-serif);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.15;
+}
+
+.pg-story__steps small {
+  margin-top: 3px;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pg-story[data-open] {
+    animation: none;
+  }
+
+  .pg-story__steps li[data-state='now'] .pg-story__line {
+    animation: none;
+    transform: none;
+  }
+}

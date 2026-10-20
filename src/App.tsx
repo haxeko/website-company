@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { readSoundOn, TransitionSound } from './audio/TransitionSound'
+import { getSound, useSoundOn } from './audio/sound'
 import { Header } from './components/Header'
 import { HeroCarousel, type HeroCarouselHandle } from './components/HeroCarousel'
 import { Loader } from './components/Loader'
@@ -18,26 +18,16 @@ function indexFromHash(): number | null {
 export default function App() {
   const { t } = useI18n()
   const carouselRef = useRef<HeroCarouselHandle>(null)
-  const soundRef = useRef<TransitionSound | null>(null)
   const [initialIndex] = useState(() => indexFromHash() ?? carouselConfig.initialIndex)
   const activeRef = useRef(initialIndex)
   const [loadProgress, setLoadProgress] = useState(0)
   const [ready, setReady] = useState(false)
-  const [soundOn, setSoundOn] = useState(readSoundOn)
-
-  useEffect(() => {
-    const sound = new TransitionSound()
-    soundRef.current = sound
-    return () => {
-      sound.dispose()
-      soundRef.current = null
-    }
-  }, [])
+  const soundOn = useSoundOn()
 
   const handleActiveChange = useCallback((index: number) => {
     const forward = (index - activeRef.current + slides.length) % slides.length === 1
     activeRef.current = index
-    soundRef.current?.play(forward ? 1 : -1)
+    getSound().whoosh(forward ? 1 : -1)
     const hash = `#${slides[index].id}`
     if (window.location.hash !== hash) window.history.replaceState(null, '', hash)
   }, [])
@@ -52,12 +42,7 @@ export default function App() {
     return () => window.removeEventListener('hashchange', onHashChange)
   }, [])
 
-  const toggleSound = useCallback(() => {
-    const sound = soundRef.current
-    if (!sound) return
-    sound.setOn(!sound.isOn)
-    setSoundOn(sound.isOn)
-  }, [])
+  const toggleSound = useCallback(() => getSound().setOn(!getSound().isOn), [])
 
   const goHome = useCallback(() => carouselRef.current?.goTo(carouselConfig.initialIndex), [])
   const handleReady = useCallback(() => setReady(true), [])

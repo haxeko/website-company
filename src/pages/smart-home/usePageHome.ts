@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useState } from 'react'
 import type { SceneId } from './content'
 
 export interface PageHome {
@@ -73,42 +73,4 @@ export function usePageHome() {
   const reset = useCallback(() => setHome(INITIAL), [])
 
   return { home, toggle, setLevel, setTemp, toggleArmed, applyScene, reset }
-}
-
-const STEPS: SceneId[] = ['home', 'relax', 'sleep']
-const STEP_MS = 3800
-
-/**
- * "Watch a living scene": the day plays on the panel — coming home, unwinding, good night —
- * then the room returns to how it was. `scene` is the step on show (null when not playing).
- */
-export function useSceneDemo(applyScene: (scene: SceneId) => void, reset: () => void, onStep?: () => void) {
-  const [scene, setScene] = useState<SceneId | null>(null)
-  const timer = useRef(0)
-
-  const stop = useCallback(() => {
-    window.clearTimeout(timer.current)
-    setScene(null)
-  }, [])
-
-  const play = useCallback(() => {
-    window.clearTimeout(timer.current)
-    const run = (i: number) => {
-      if (i >= STEPS.length) {
-        setScene(null)
-        reset()
-        onStep?.()
-        return
-      }
-      setScene(STEPS[i])
-      applyScene(STEPS[i])
-      onStep?.()
-      timer.current = window.setTimeout(() => run(i + 1), STEP_MS)
-    }
-    run(0)
-  }, [applyScene, reset, onStep])
-
-  useEffect(() => () => window.clearTimeout(timer.current), [])
-
-  return { scene, play, stop }
 }

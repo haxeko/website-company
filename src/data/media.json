@@ -71,16 +71,16 @@
         "warmth": 0.004
       },
       "screen": {
-        "$comment": "Where the live control screen (src/components/SmartHome) sits on the wall, in source-image pixels, before tilting: the photo only has dark glass there. tilt = the panel turned with the wall about the screen's left edge (degrees), perspective = viewing distance in source px — the photo was composited with this projection and the CSS transform of the screen repeats it.",
-        "x": 3239,
+        "$comment": "Where the live control screen (src/components/SmartHome) sits on the wall, in source-image pixels: x, y, width, height = the screen glass as a flat rectangle, before the turn. tilt = the panel turned with the wall about the screen's left edge (degrees; the right side recedes), perspective = viewing distance in source px — the photo was composited with this projection (the wall turned with it, the panel mounted on it) and the CSS transform of the screen repeats it. bezel = from the screen's left edge to the panel's outer left edge as seen (its depth included): the curtain stops just before it.",
+        "x": 3420,
         "y": 1691,
         "width": 2122,
         "height": 1278,
         "radius": 14,
-        "bezel": 64,
+        "bezel": 95,
         "tilt": {
-          "angle": 10,
-          "perspective": 9110
+          "angle": 34,
+          "perspective": 6000
         }
       }
     },
@@ -108,7 +108,7 @@
     }
   },
   "pages": {
-    "$comment": "Photos of the stand-alone pages (smart-home/…), encoded as they are (no grade, no seams): the full landscape view and a crop around the wall panel for phones. All positions in source-image pixels. panel = corners of the screen glass (top-left, top-right, bottom-right, bottom-left), where the live control screen is laid over the photo; window = left and right edge of the glass façade the curtain draws across.",
+    "$comment": "Photos of the stand-alone pages (smart-home/…), encoded as they are (no grade, no seams): the landscape view (crop = left, top, width, height of the source, when not the whole photo) and a crop for phones. All positions in source-image pixels. panel = corners of the screen glass (top-left, top-right, bottom-right, bottom-left), where the live control screen is laid over the photo; window = left and right edge of the glass façade the curtain draws across. extras = further images of a page (camera feeds, the drawing of a view, light variants…): each one cut from its own source (crop = left, top, width, height) and encoded at its widths as <name>-<w>.avif / .webp.",
     "outputDir": "public/assets/pages",
     "publicPath": "assets/pages",
     "smart-home": {
@@ -160,6 +160,193 @@
       "window": [
         3508,
         4800
+      ],
+      "extras": [
+        {
+          "name": "cam-garden",
+          "source": "cameras/cam-garden.jpg",
+          "credit": "Declan Sun on Unsplash (graded as a night-time colour camera, wide-angle lens)",
+          "widths": [
+            480,
+            800
+          ]
+        },
+        {
+          "name": "cam-gate",
+          "source": "cameras/cam-gate.jpg",
+          "credit": "ubeyonroad on Unsplash (infrared night vision; the security company sign removed)",
+          "widths": [
+            480,
+            800
+          ]
+        }
+      ]
+    },
+    "construction": {
+      "source": "panorama-construction-interior.jpg",
+      "credit": "Concept image by VILLA NEST; the drawing traced from it (XDoG line extraction, light lines on black: shown in screen blend over the page’s charcoal)",
+      "crop": [
+        0,
+        0,
+        6937,
+        2668
+      ],
+      "sourceSize": [
+        6937,
+        2668
+      ],
+      "landscapeWidths": [
+        1280,
+        1920,
+        2560,
+        3200
+      ],
+      "portrait": {
+        "crop": [
+          2300,
+          0,
+          3070,
+          2668
+        ],
+        "widths": [
+          640,
+          960,
+          1280
+        ]
+      },
+      "extras": [
+        {
+          "name": "construction-drawing",
+          "source": "construction-drawing.png",
+          "widths": [
+            1280,
+            1920,
+            2560,
+            3200
+          ]
+        },
+        {
+          "name": "construction-drawing-portrait",
+          "source": "construction-drawing.png",
+          "crop": [
+            1150,
+            0,
+            1535,
+            1334
+          ],
+          "widths": [
+            640,
+            960,
+            1280
+          ]
+        }
+      ]
+    },
+    "interior": {
+      "source": "panorama-construction-interior.jpg",
+      "credit": "Concept image by VILLA NEST; the morning and evening light are relit from it",
+      "crop": [
+        5150,
+        0,
+        2850,
+        2668
+      ],
+      "sourceSize": [
+        2850,
+        2668
+      ],
+      "landscapeWidths": [
+        960,
+        1280,
+        1920,
+        2560
+      ],
+      "extras": [
+        {
+          "name": "interior-morning",
+          "source": "interior/interior-morning.jpg",
+          "widths": [
+            960,
+            1280,
+            1920,
+            2560
+          ]
+        },
+        {
+          "name": "interior-evening",
+          "source": "interior/interior-evening.jpg",
+          "widths": [
+            960,
+            1280,
+            1920,
+            2560
+          ]
+        },
+        {
+          "name": "swatch-travertine",
+          "source": "panorama-construction-interior.jpg",
+          "crop": [
+            7620,
+            980,
+            320,
+            320
+          ],
+          "widths": [
+            160
+          ]
+        },
+        {
+          "name": "swatch-walnut",
+          "source": "panorama-construction-interior.jpg",
+          "crop": [
+            6760,
+            1210,
+            250,
+            250
+          ],
+          "widths": [
+            160
+          ]
+        },
+        {
+          "name": "swatch-marble",
+          "source": "panorama-construction-interior.jpg",
+          "crop": [
+            7110,
+            1606,
+            128,
+            128
+          ],
+          "widths": [
+            160
+          ]
+        },
+        {
+          "name": "swatch-boucle",
+          "source": "panorama-construction-interior.jpg",
+          "crop": [
+            6630,
+            1880,
+            130,
+            130
+          ],
+          "widths": [
+            160
+          ]
+        },
+        {
+          "name": "swatch-wool",
+          "source": "panorama-construction-interior.jpg",
+          "crop": [
+            7300,
+            2162,
+            120,
+            120
+          ],
+          "widths": [
+            160
+          ]
+        }
       ]
     }
   }

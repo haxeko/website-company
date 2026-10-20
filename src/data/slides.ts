@@ -45,6 +45,8 @@ export interface PanelRect {
   perspective: number
   /** Where the panel's frame begins, in % of the slide width (the curtain stops just before it). */
   frameLeft: number
+  /** The middle of the screen as seen, turned, in % of the slide width (the invitation, the light above). */
+  centerX: number
 }
 
 export interface Slide {
@@ -114,6 +116,9 @@ function placeOnPanel(id: MediaId, layout: 'landscape' | 'portrait'): PanelRect 
     crop = { left: 0, top: Math.round((height - h) * fy), width, height: h }
   }
   const { x, y, width: sw, height: sh, radius, bezel = 0, tilt } = cfg.screen
+  // The screen's middle after the turn (the projection of perspective() rotateY() about its left edge).
+  const angle = ((tilt?.angle ?? 0) * Math.PI) / 180
+  const seenX = (u: number) => x + (u * Math.cos(angle)) / (1 + (tilt ? (u * Math.sin(angle)) / tilt.perspective : 0))
   return {
     left: ((x - crop.left) / crop.width) * 100,
     top: ((y - crop.top) / crop.height) * 100,
@@ -124,6 +129,7 @@ function placeOnPanel(id: MediaId, layout: 'landscape' | 'portrait'): PanelRect 
     tilt: tilt?.angle ?? 0,
     perspective: tilt ? tilt.perspective / crop.width : 0,
     frameLeft: ((x - bezel - crop.left) / crop.width) * 100,
+    centerX: ((seenX(sw / 2) - crop.left) / crop.width) * 100,
   }
 }
 
@@ -171,7 +177,8 @@ export const slides: Slide[] = [
   },
   {
     id: 'construction',
-    ctaHref: '#construction',
+    // Its own page (construction/index.html).
+    ctaHref: 'construction/',
     copy: {
       vi: {
         title: 'Construction',
@@ -201,7 +208,8 @@ export const slides: Slide[] = [
   },
   {
     id: 'interior',
-    ctaHref: '#interior',
+    // Its own page (interior/index.html).
+    ctaHref: 'interior/',
     copy: {
       vi: {
         title: 'Interior',
