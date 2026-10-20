@@ -1,0 +1,11 @@
+.app {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: var(--c-bg);
+}
+
+.app__main {
+  position: absolute;
+  inset: 0;
+}

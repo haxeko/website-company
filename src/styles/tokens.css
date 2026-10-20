@@ -1,0 +1,22 @@
+:root {
+  color-scheme: dark;
+
+  /* Palette */
+  --c-bg: #101113;
+  --c-text: #f4f0e9;
+  --c-text-2: #a6a6a6;
+  --c-accent: #c8aa78;
+
+  /* Type */
+  --font-sans:
+    'Montserrat Variable', Montserrat, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue',
+    Arial, sans-serif;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* Spacing */
+  --gutter: clamp(20px, 4.2vw, 72px);
+  --gutter-top: clamp(20px, 4vh, 44px);
+}
