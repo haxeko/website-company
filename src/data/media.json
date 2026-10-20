@@ -1,0 +1,30 @@
+{
+  "$comment": "Image pipeline settings shared by scripts/optimize-images.mjs (build time) and src/data/slides.ts (runtime). Run `npm run images` after changing anything here or replacing a file in assets-src/.",
+  "sourceDir": "assets-src",
+  "outputDir": "public/assets/slides",
+  "publicPath": "assets/slides",
+  "landscapeWidths": [960, 1440, 1920, 2560],
+  "portraitWidths": [640, 960, 1280],
+  "portraitAspect": 0.8,
+  "quality": { "avif": 60, "webp": 84, "ambient": 72 },
+  "images": {
+    "smart-home": {
+      "source": "smart-home.jpg",
+      "focus": [0.5, 0.5],
+      "portraitFocusX": 0.6,
+      "grade": { "exposure": 0.94, "contrast": 0.32, "saturation": 0.9, "greens": 0.8, "warmth": 0.012 }
+    },
+    "construction": {
+      "source": "construction.jpg",
+      "focus": [0.5, 0.42],
+      "portraitFocusX": 0.6,
+      "grade": { "exposure": 1.02, "contrast": 0.2, "saturation": 0.86, "greens": 0.45, "warmth": 0.02 }
+    },
+    "interior": {
+      "source": "interior.jpg",
+      "focus": [0.4, 0.5],
+      "portraitFocusX": 0.27,
+      "grade": { "exposure": 0.8, "contrast": 0.24, "saturation": 0.95, "greens": 0.8, "warmth": 0.04 }
+    }
+  }
+}

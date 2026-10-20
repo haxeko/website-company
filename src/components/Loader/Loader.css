@@ -1,0 +1,53 @@
+.loader {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  transition:
+    opacity 0.8s var(--ease-out),
+    visibility 0s linear 0.8s;
+}
+
+.loader[data-done] {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.loader__inner {
+  display: grid;
+  justify-items: center;
+  gap: 18px;
+  opacity: 0;
+  animation: loader-in 0.8s var(--ease-out) 0.3s forwards;
+}
+
+.loader__brand {
+  margin-right: -0.5em;
+  color: var(--c-text-2);
+  font-size: 11px;
+  font-weight: 300;
+  letter-spacing: 0.5em;
+}
+
+.loader__track {
+  width: 120px;
+  height: 1px;
+  overflow: hidden;
+  background: rgb(244 240 233 / 0.12);
+}
+
+.loader__bar {
+  display: block;
+  height: 100%;
+  background: var(--c-accent);
+  transform-origin: left center;
+  transition: transform 0.5s var(--ease-out);
+}
+
+@keyframes loader-in {
+  to {
+    opacity: 1;
+  }
+}

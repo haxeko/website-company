@@ -1,0 +1,431 @@
+/*
+ * Hero carousel
+ * Layout variables (--hc-w, --hc-h, --hc-cy) and the feather masks are written by
+ * CarouselEngine from src/config/animation.ts; the values below are only first-paint fallbacks.
+ */
+.hc {
+  --hc-w: 58vw;
+  --hc-h: 36.25vw;
+  --hc-cy: 47vh;
+  --hc-edge: 19%;
+  --hc-reflection-h: 42%;
+  --hc-reflection-opacity: 0.22;
+  --hc-floor-y: calc(var(--hc-cy) + var(--hc-h) / 2);
+
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--c-bg);
+}
+
+.hc[data-layout='portrait'] {
+  --hc-edge: 4%;
+}
+
+/* ── Atmosphere: coloured room light, top light, glossy floor ─────────────── */
+
+.hc-atmosphere,
+.hc-ambient,
+.hc-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.hc-ambient__layer {
+  position: absolute;
+  inset: 0;
+  background-position: center;
+  background-size: cover;
+  opacity: 0;
+  will-change: opacity;
+}
+
+/* Keeps the light around the slides and lets it die out towards the walls. */
+.hc-ambient::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 56% 52% at 50% var(--hc-cy),
+    rgb(16 17 19 / 0.2) 0%,
+    rgb(16 17 19 / 0.62) 46%,
+    rgb(16 17 19 / 0.94) 72%,
+    var(--c-bg) 90%
+  );
+}
+
+.hc-light {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 26% 36% at 50% -10%, rgb(255 247 236 / 0.16), rgb(255 247 236 / 0.045) 50%, transparent 78%),
+    radial-gradient(ellipse 60% 45% at 50% -14%, rgb(255 250 244 / 0.035), transparent 72%);
+}
+
+.hc-floor {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 46% 14% at 50% var(--hc-floor-y), rgb(236 220 196 / 0.07), transparent 100%),
+    radial-gradient(ellipse 70% 30% at 50% var(--hc-floor-y), rgb(255 255 255 / 0.025), transparent 100%);
+}
+
+/* ── Stage & slides ──────────────────────────────────────────────────────── */
+
+.hc-stage {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  cursor: grab;
+  touch-action: pan-y pinch-zoom;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.hc-stage.is-dragging,
+.hc-stage.is-dragging .hc-slide {
+  cursor: grabbing;
+}
+
+.hc-slide {
+  position: absolute;
+  top: var(--hc-cy);
+  left: 50%;
+  width: var(--hc-w);
+  height: var(--hc-h);
+  margin: calc(var(--hc-h) / -2) 0 0 calc(var(--hc-w) / -2);
+  transform-origin: 50% 50%;
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+
+.hc-slide[data-position='side'] {
+  cursor: pointer;
+}
+
+.hc-slide__reveal {
+  position: absolute;
+  inset: 0;
+}
+
+/* Borderless: the frame dissolves into the room on all four sides. */
+.hc-slide__frame {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  -webkit-mask-image: var(--hc-mask-x), var(--hc-mask-y);
+  -webkit-mask-composite: source-in;
+  mask-image: var(--hc-mask-x), var(--hc-mask-y);
+  mask-composite: intersect;
+}
+
+.hc-slide__inner {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+
+.hc-slide__inner picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.hc-slide__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: var(--focus, 50% 50%);
+  -webkit-user-drag: none;
+}
+
+.hc[data-layout='portrait'] .hc-slide__img {
+  object-position: 50% 50%;
+}
+
+/* Glossy floor: a mirrored copy that fades out with distance. */
+.hc-slide__reflection {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  height: var(--hc-reflection-h);
+  overflow: hidden;
+  pointer-events: none;
+  opacity: var(--hc-reflection-opacity);
+  -webkit-mask-image: var(--hc-mask-x), var(--hc-mask-reflection);
+  -webkit-mask-composite: source-in;
+  mask-image: var(--hc-mask-x), var(--hc-mask-reflection);
+  mask-composite: intersect;
+}
+
+.hc-slide__mirror {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: var(--hc-h);
+  transform: scaleY(-1);
+}
+
+/* ── Overlays: walls fade to dark, vignette, film grain ──────────────────── */
+
+.hc-overlay {
+  z-index: 2;
+}
+
+.hc-vignette {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      to right,
+      var(--c-bg) 0%,
+      rgb(16 17 19 / 0.7) calc(var(--hc-edge) * 0.3),
+      rgb(16 17 19 / 0.25) calc(var(--hc-edge) * 0.65),
+      rgb(16 17 19 / 0) var(--hc-edge),
+      rgb(16 17 19 / 0) calc(100% - var(--hc-edge)),
+      rgb(16 17 19 / 0.25) calc(100% - var(--hc-edge) * 0.65),
+      rgb(16 17 19 / 0.7) calc(100% - var(--hc-edge) * 0.3),
+      var(--c-bg) 100%
+    ),
+    radial-gradient(ellipse 90% 80% at 50% var(--hc-cy), transparent 55%, rgb(0 0 0 / 0.45) 100%);
+}
+
+.hc-grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.09;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 220px 220px;
+}
+
+/* Low-power mode, and the full-screen grain blend on phones, are skipped to save GPU time. */
+.hc[data-quality='low'] .hc-grain,
+.hc[data-quality='low'] .hc-slide__reflection,
+.hc[data-layout='portrait'] .hc-grain {
+  display: none;
+}
+
+/* ── Arrows ──────────────────────────────────────────────────────────────── */
+
+.hc-arrow {
+  position: absolute;
+  top: var(--hc-cy);
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  margin-top: -32px;
+  color: rgb(244 240 233 / 0.6);
+  transition: color 0.5s ease;
+}
+
+.hc-arrow--prev {
+  left: max(4px, calc(var(--gutter) - 22px));
+}
+
+.hc-arrow--next {
+  right: max(4px, calc(var(--gutter) - 22px));
+}
+
+.hc-arrow svg {
+  width: 15px;
+  height: 30px;
+  overflow: visible;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.6s var(--ease-out);
+}
+
+@media (hover: hover) {
+  .hc-arrow:hover {
+    color: var(--c-text);
+  }
+
+  .hc-arrow--prev:hover svg {
+    transform: translateX(-5px);
+  }
+
+  .hc-arrow--next:hover svg {
+    transform: translateX(5px);
+  }
+}
+
+/* ── Bottom navigation: SMART HOME — CONSTRUCTION — INTERIOR ─────────────── */
+
+.hc-nav {
+  position: absolute;
+  bottom: max(4.4vh, calc(env(safe-area-inset-bottom, 0px) + 16px));
+  left: 50%;
+  z-index: 3;
+  width: min(720px, calc(100% - 2 * var(--gutter)));
+  transform: translateX(-50%);
+}
+
+.hc-nav__list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hc-nav__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  padding: 8px 0;
+  color: var(--c-text-2);
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  line-height: 1;
+  text-transform: uppercase;
+  transition: color 0.6s ease;
+}
+
+.hc-nav__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgb(166 166 166 / 0.55);
+  transition:
+    background-color 0.6s ease,
+    box-shadow 0.6s ease,
+    transform 0.6s var(--ease-out);
+}
+
+.hc-nav__label {
+  position: relative;
+  padding: 0 0 14px;
+  white-space: nowrap;
+}
+
+.hc-nav__label::after {
+  content: '';
+  position: absolute;
+  right: -12px;
+  bottom: 0;
+  left: -12px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transition: transform 0.8s var(--ease-out);
+}
+
+.hc-nav__item[aria-current='true'] {
+  color: var(--c-text);
+}
+
+.hc-nav__item[aria-current='true'] .hc-nav__dot {
+  background: var(--c-accent);
+  box-shadow:
+    0 0 0 5px rgb(200 170 120 / 0.1),
+    0 0 18px 2px rgb(200 170 120 / 0.45);
+  transform: scale(1.3);
+}
+
+.hc-nav__item[aria-current='true'] .hc-nav__label::after {
+  transform: scaleX(1);
+}
+
+@media (hover: hover) {
+  .hc-nav__item:hover {
+    color: #ddd7cd;
+  }
+}
+
+/* ── Phases: hidden while images load, then revealed by the intro ────────── */
+
+.hc:not([data-phase='intro'], [data-phase='ready']) :is(.hc-stage, .hc-atmosphere) {
+  visibility: hidden;
+}
+
+.hc-arrow,
+.hc-nav {
+  opacity: 0;
+  translate: 0 10px;
+  pointer-events: none;
+}
+
+.hc:is([data-phase='intro'], [data-phase='ready']) :is(.hc-arrow, .hc-nav) {
+  opacity: 1;
+  translate: 0 0;
+  pointer-events: auto;
+  transition:
+    opacity 1.4s var(--ease-out) 1.2s,
+    translate 1.4s var(--ease-out) 1.2s,
+    color 0.5s ease;
+}
+
+/* ── Small screens ───────────────────────────────────────────────────────── */
+
+@media (max-width: 640px) {
+  .hc-nav__item {
+    gap: 15px;
+    font-size: 10.5px;
+    letter-spacing: 0.11em;
+  }
+
+  .hc-nav__label {
+    padding-bottom: 11px;
+  }
+
+  .hc-nav__label::after {
+    right: -6px;
+    left: -6px;
+  }
+
+  .hc-arrow {
+    width: 48px;
+    height: 56px;
+    margin-top: -28px;
+  }
+
+  .hc-arrow svg {
+    width: 11px;
+    height: 22px;
+  }
+}
+
+@media (max-height: 520px) and (orientation: landscape) {
+  .hc-nav {
+    bottom: 10px;
+  }
+
+  .hc-nav__item {
+    gap: 10px;
+    font-size: 10.5px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hc-arrow,
+  .hc-nav {
+    translate: none;
+  }
+
+  .hc:is([data-phase='intro'], [data-phase='ready']) :is(.hc-arrow, .hc-nav) {
+    transition-duration: 0.4s;
+    transition-delay: 0.2s;
+  }
+
+  .hc-arrow svg,
+  .hc-nav__label::after,
+  .hc-nav__dot {
+    transition-duration: 0.01ms;
+  }
+}
