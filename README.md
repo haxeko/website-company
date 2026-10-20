@@ -105,6 +105,8 @@ lạ về trang chủ. Nếu Nginx của bạn cũ hơn 1.24 và chưa biết đ
 
 **Tên miền qua Cloudflare** (HTTPS, không cần mở cổng modem): xem [`docs/CLOUDFLARE.md`](docs/CLOUDFLARE.md).
 
+Chẩn đoán trên Pi (chỉ đọc, không sửa gì): `bash deploy/doctor-pi.sh`.
+
 Bản build dùng đường dẫn tương đối (`base: './'`) nên có thể đặt ở gốc tên miền hoặc trong thư mục con
 (ví dụ `https://example.com/villa/`). Website cần được phục vụ qua HTTP (Nginx, `npm run preview`, hoặc bất kỳ
 static server nào); mở trực tiếp `dist/index.html` bằng `file://` sẽ bị trình duyệt chặn module JavaScript.
@@ -115,7 +117,8 @@ static server nào); mở trực tiếp `dist/index.html` bằng `file://` sẽ 
 ├── assets-src/                 Ảnh gốc độ phân giải cao (đầu vào của npm run images)
 ├── deploy/
 │   ├── nginx.conf              Cấu hình Nginx mẫu
-│   └── install-pi.sh           Script cài lên Raspberry Pi / Debian / Ubuntu
+│   ├── install-pi.sh           Script cài lên Raspberry Pi / Debian / Ubuntu (sao lưu, không đụng site khác)
+│   └── doctor-pi.sh            Chẩn đoán các website trên Pi (chỉ đọc)
 ├── docs/                       Ảnh chụp màn hình, hướng dẫn Raspberry Pi
 ├── public/
 │   ├── assets/slides/          Tấm toàn cảnh đã tối ưu: AVIF/WebP ngang, dọc, ambient (sinh tự động)

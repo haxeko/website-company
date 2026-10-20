@@ -85,14 +85,36 @@ bash deploy/install-pi.sh --no-build
 
 ### Pi đã có website khác (ví dụ một dashboard)
 
-Script không động vào các site khác trong `/etc/nginx/sites-enabled/`, chỉ gỡ trang "Welcome to nginx" mặc định.
-Nếu cổng 80 đã có site khác làm trang mặc định, script sẽ báo — khi đó cài VILLA NEST ở cổng riêng:
+Script không sửa, không xoá website khác:
+
+- Trước mỗi lần cài, toàn bộ cấu hình Nginx được **sao lưu** vào `/var/backups/villa-nest/<thời-gian>/` (giữ 10 bản).
+- Nếu tên `villa-nest` (file cấu hình hoặc thư mục `/var/www/villa-nest`) đang là của **một website khác**, script
+  dừng lại và không động vào gì. Khi đó cài VILLA NEST với tên khác: `SITE=villa-nest-web bash deploy/install-pi.sh`.
+- Trang `default` chỉ bị tắt khi nó còn là trang "Welcome to nginx" nguyên bản; nếu bạn đã sửa nó hoặc đặt website
+  vào `/var/www/html` thì giữ nguyên.
+- Nếu cổng 80 đã có website khác làm trang mặc định, VILLA NEST nên chạy ở cổng riêng hoặc theo tên miền:
 
 ```bash
-PORT=8080 bash deploy/install-pi.sh      # → http://<IP-của-Pi>:8080/
+PORT=8080 bash deploy/install-pi.sh                              # → http://<IP-của-Pi>:8080/
+SERVER_NAME="tenmien.vn www.tenmien.vn" bash deploy/install-pi.sh  # chỉ trả lời cho tên miền này
 ```
 
-Nếu cấu hình mới bị lỗi, script tự gỡ `villa-nest` ra để các site khác vẫn chạy bình thường.
+Cổng, tên miền và HTTPS (Certbot) đã đặt được giữ nguyên ở các lần cài sau. Nếu cấu hình mới bị lỗi, script trả toàn
+bộ cấu hình về như trước khi cài.
+
+### Kiểm tra / chẩn đoán
+
+```bash
+bash deploy/doctor-pi.sh                  # chỉ đọc: các site Nginx, thư mục web, cổng, Cloudflare Tunnel, bộ nhớ
+bash deploy/doctor-pi.sh tenmien          # kèm tìm một tên miền / tên website trên máy
+```
+
+Khôi phục cấu hình Nginx về một bản sao lưu:
+
+```bash
+ls /var/backups/villa-nest/
+sudo cp -a /var/backups/villa-nest/<thời-gian>/nginx/. /etc/nginx/ && sudo nginx -t && sudo systemctl reload nginx
+```
 
 ## Mở website
 
@@ -142,6 +164,7 @@ sudo reboot
 | Script báo Node.js quá cũ                   | Làm lại bước 2 (NodeSource 22.x)                                                   |
 | Ảnh không hiện                              | `grep avif /etc/nginx/mime.types` phải có dòng `image/avif`; chạy lại script        |
 | Xem lỗi Nginx                               | `sudo nginx -t` và `sudo tail -n 50 /var/log/nginx/error.log`                      |
+| Một website khác trên Pi không vào được      | Chạy `bash deploy/doctor-pi.sh` và gửi kết quả; khôi phục cấu hình từ `/var/backups/villa-nest/` (ở trên) |
 
 ## Đưa lên tên miền
 
