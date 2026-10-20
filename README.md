@@ -154,8 +154,9 @@ chữ phụ `#A6A6A6`, điểm nhấn `#C8AA78`.
 
 ## Logo công ty
 
-Đặt file logo (nền trong suốt) vào `src/assets/brand/` với tên `logo.svg`, `logo.png` hoặc `logo.webp`, rồi build
-lại. Khi chưa có file, header hiện chữ "VILLA NEST · Architecture & Construction".
+Logo nằm ở `src/assets/brand/logo.webp` (nền trong suốt, cao 240 px). Muốn đổi logo: thay file này (hoặc đặt
+`logo.svg` / `logo.png` vào cùng thư mục) rồi build lại. Biểu tượng trên tab trình duyệt (`public/favicon.png`) và
+icon khi lưu ra màn hình điện thoại (`public/apple-touch-icon.png`) dùng phần chữ V của logo.
 
 ## Nội dung & ngôn ngữ
 
