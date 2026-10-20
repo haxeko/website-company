@@ -142,3 +142,7 @@ sudo reboot
 | Script báo Node.js quá cũ                   | Làm lại bước 2 (NodeSource 22.x)                                                   |
 | Ảnh không hiện                              | `grep avif /etc/nginx/mime.types` phải có dòng `image/avif`; chạy lại script        |
 | Xem lỗi Nginx                               | `sudo nginx -t` và `sudo tail -n 50 /var/log/nginx/error.log`                      |
+
+## Đưa lên tên miền
+
+Để mọi người truy cập bằng `https://tenmien.vn` (không cần mở cổng modem), xem [CLOUDFLARE.md](CLOUDFLARE.md).
