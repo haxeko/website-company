@@ -21,7 +21,7 @@ export interface SlideCopy {
   subtitle: string
   /** Small caps line above the headline. */
   kicker: string
-  /** First line of the headline (serif). */
+  /** First line of the headline (serif); `\n` = a line break of its own. */
   headline: string
   /** Second, italic gold line of the headline. */
   accent: string
@@ -143,10 +143,10 @@ export const slides: Slide[] = [
         title: 'Smart Home',
         subtitle: 'Sống thông minh',
         kicker: 'Ngôi nhà biết lắng nghe',
-        headline: 'Ánh sáng theo ý bạn.',
-        accent: 'Ngôi nhà hiểu từng nhịp sống.',
+        headline: 'Chạm nhẹ, cả ngôi nhà\nchuyển động.',
+        accent: 'Công nghệ ẩn mình, trải nghiệm lên tiếng.',
         description:
-          'Chiếu sáng, khí hậu, rèm và an ninh hội tụ trong một màn hình điều khiển trung tâm — tinh gọn, trực quan, vận hành trong im lặng.',
+          'Ánh sáng, rèm, điều hòa, an ninh và cảm biến liên kết trong một hệ sinh thái tinh gọn — để ngôi nhà hiểu thói quen sống của bạn và phản hồi đúng lúc.',
         cta: 'Khám phá giải pháp',
         alt: 'Màn hình điều khiển trung tâm của hệ thống nhà thông minh gắn trên tường đá travertine, buổi tối',
       },
@@ -154,10 +154,10 @@ export const slides: Slide[] = [
         title: 'Smart Home',
         subtitle: 'Smart living',
         kicker: 'A home that listens',
-        headline: 'Light, on your terms.',
-        accent: 'A home that knows your rhythm.',
+        headline: 'One light touch, and the\nwhole home moves.',
+        accent: 'Technology out of sight, experience in the spotlight.',
         description:
-          'Lighting, climate, shading and security come together in one central control panel — calm, intuitive, quietly at work.',
+          'Lighting, curtains, climate, security and sensors joined in one lean ecosystem — so your home learns how you live and answers at the right moment.',
         cta: 'Explore solutions',
         alt: 'The central control screen of a smart-home system on a travertine wall, in the evening',
       },

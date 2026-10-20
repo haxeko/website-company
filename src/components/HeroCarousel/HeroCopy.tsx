@@ -1,8 +1,8 @@
-import { gsap } from 'gsap'
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { Fragment, useLayoutEffect, useRef } from 'react'
 import type { Slide } from '../../data/slides'
 import { useI18n } from '../../i18n/context'
-import { REDUCED_MOTION_QUERY } from '../../utils/device'
+import './editorial.css'
+import { useLineSwap } from './useLineSwap'
 
 interface HeroCopyProps {
   slides: Slide[]
@@ -13,67 +13,44 @@ interface HeroCopyProps {
 
 const pad = (n: number) => String(n).padStart(2, '0')
 
+/** Text with `\n` line breaks of its own (headlines broken where the copy says). */
+export function MultiLine({ text }: { text: string }) {
+  return text.split('\n').map((line, i) => (
+    <Fragment key={i}>
+      {i > 0 && <br />}
+      {line}
+    </Fragment>
+  ))
+}
+
 /**
  * The editorial text of the space in the centre. When the space changes, the lines slide
- * out, the text is swapped and the new lines rise in one after another.
+ * out, the text is swapped and the new lines rise in one after another (useLineSwap).
  */
 export function HeroCopy({ slides, active, ready }: HeroCopyProps) {
   const { lang } = useI18n()
   const rootRef = useRef<HTMLDivElement>(null)
-  const [shown, setShown] = useState(active)
-  const entered = useRef(false)
+  const shown = useLineSwap(rootRef, active, ready)
 
-  // Out: lines leave, then the content is swapped.
-  useEffect(() => {
-    if (active === shown) return
-    const lines = rootRef.current?.querySelectorAll('[data-line]')
-    if (!lines?.length || !entered.current) {
-      setShown(active)
-      return
-    }
-    const reduced = window.matchMedia(REDUCED_MOTION_QUERY).matches
-    const tween = gsap.to(lines, {
-      opacity: 0,
-      y: reduced ? 0 : -16,
-      duration: reduced ? 0.2 : 0.38,
-      ease: 'power2.in',
-      stagger: reduced ? 0 : 0.035,
-      overwrite: true,
-      onComplete: () => setShown(active),
-    })
-    return () => {
-      tween.kill()
-    }
-  }, [active, shown])
-
-  // In: on first reveal and after every swap.
+  // Phones: when the text would run into the bottom navigation, the description goes, then
+  // the kicker — the type keeps its size.
   useLayoutEffect(() => {
-    const lines = rootRef.current?.querySelectorAll('[data-line]')
-    if (!lines?.length) return
-    if (!ready) {
-      gsap.set(lines, { opacity: 0 })
-      return
+    const copy = rootRef.current
+    const root = copy?.parentElement
+    const nav = root?.querySelector<HTMLElement>('.hc-nav')
+    if (!copy || !root || !nav) return
+    const fit = () => {
+      for (const tight of ['0', '1', '2']) {
+        copy.dataset.tight = tight
+        // (layout boxes, not the animated ones)
+        if (root.dataset.layout !== 'portrait' || copy.offsetTop + copy.offsetHeight <= nav.offsetTop - 8) break
+      }
     }
-    const reduced = window.matchMedia(REDUCED_MOTION_QUERY).matches
-    const first = !entered.current
-    entered.current = true
-    const tween = gsap.fromTo(
-      lines,
-      { opacity: 0, y: reduced ? 0 : 28 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: reduced ? 0.3 : 1.05,
-        ease: 'power3.out',
-        stagger: reduced ? 0 : 0.075,
-        delay: first && !reduced ? 1.1 : 0.05,
-        overwrite: true,
-      },
-    )
-    return () => {
-      tween.kill()
-    }
-  }, [shown, ready])
+    fit()
+    const observer = new ResizeObserver(fit)
+    observer.observe(root)
+    return () => observer.disconnect()
+  }, [shown, lang])
 
   const slide = slides[shown]
   const copy = slide.copy[lang]
@@ -89,7 +66,9 @@ export function HeroCopy({ slides, active, ready }: HeroCopyProps) {
         {copy.kicker}
       </p>
       <h2 className="hc-copy__headline">
-        <span data-line>{copy.headline}</span>
+        <span data-line>
+          <MultiLine text={copy.headline} />
+        </span>
         <em data-line>{copy.accent}</em>
       </h2>
       <p className="hc-copy__description" data-line>

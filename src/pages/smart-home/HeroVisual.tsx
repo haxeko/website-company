@@ -41,6 +41,8 @@ interface HeroVisualProps {
   children: ReactNode
   /** Only while the hero is on screen (the particles stop otherwise). */
   visible: boolean
+  /** Over the photo, at the front (the arrows). */
+  overlay?: ReactNode
   alt: string
 }
 
@@ -49,7 +51,7 @@ interface HeroVisualProps {
  * screen is mapped onto the photographed glass with a projective transform, the lamps light
  * or darken the room, the curtain draws across the glass façade, the air-con brings snow.
  */
-export function HeroVisual({ home, copyRef, children, visible, alt }: HeroVisualProps) {
+export function HeroVisual({ home, copyRef, children, visible, overlay, alt }: HeroVisualProps) {
   const ref = useRef<HTMLDivElement>(null)
   const imgRef = useRef<HTMLImageElement>(null)
   const panelRef = useRef<HTMLDivElement>(null)
@@ -129,6 +131,7 @@ export function HeroVisual({ home, copyRef, children, visible, alt }: HeroVisual
       </div>
       <div className="shp-visual__shade" aria-hidden="true" />
       <SceneEffects snow={snowDensity(home)} wind={0} visible={visible} />
+      {overlay}
     </div>
   )
 }

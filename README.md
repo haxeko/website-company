@@ -52,18 +52,22 @@ phòng — cuối ảnh này ăn khớp với đầu ảnh kia — và xoay đ�
   quá nhỏ để bấm, nên chạm vào nó sẽ mở bảng điều khiển phóng to **gọn ở cuối màn hình** (giờ và chỉ số một hàng, bốn
   thẻ 2 × 2), để vẫn thấy gần hết căn phòng và rèm kéo vào; xoay ngang điện thoại thì bảng dùng bố cục 4 thẻ một hàng như
   trên tường. Người dùng bật "giảm chuyển động" chỉ thấy bảng đổi trạng thái, ánh sáng và rèm, không có tuyết / lá.
-- **Trang Smart Home riêng** (`/smart-home/`, mở bằng nút **"Khám phá giải pháp"** ở cảnh Smart Home): dải chuẩn kết nối
-  (Matter, Zigbee, Thread, Wi-Fi, Home Assistant, HomeKit), tiêu đề *"Chạm nhẹ, cả ngôi nhà chuyển động."*, ảnh tường
-  đá với bảng điều khiển lớn gắn tường và căn biệt thự sáng đèn phía sau, bốn chủ đề **Kịch bản sống · An ninh thông
-  minh · Tiết kiệm năng lượng · Hệ mở** và các phần giới thiệu bên dưới (cuộn xuống). Màn hình trên bảng là giao diện
-  thật, được "dán" vào mặt kính trong ảnh bằng phép chiếu phối cảnh (`matrix3d`), nên luôn nét và bấm được:
-  - **Đèn** (thanh độ sáng) — tắt đèn căn phòng tối đi; **Rèm cửa** — rèm voan kéo ngang vách kính bên phải;
-    **Điều hòa** (thanh nhiệt độ 16–30 °C) — tuyết rơi nhẹ; **Chế độ về nhà**, **Chế độ ngủ**, **An ninh** (bật / tắt).
+- **Trang Smart Home riêng** (`/smart-home/`, mở bằng nút **"Khám phá giải pháp"** ở cảnh Smart Home): header **cố định
+  khi cuộn** (có nền mờ khi đã cuộn xuống), dải chuẩn kết nối với **logo chính thức** của Matter, Zigbee, Thread, Wi-Fi,
+  Home Assistant, HomeKit, ảnh tường đá với bảng điều khiển lớn gắn tường và căn biệt thự sáng đèn phía sau.
+  - **Bốn chủ đề chuyển như trang chủ**: *Kịch bản sống · An ninh thông minh · Tiết kiệm năng lượng · Hệ mở* — bấm thẻ ở
+    hàng dưới, **vuốt / kéo ngang**, **phím mũi tên** hoặc nút ← → bên phải (vòng tròn 01 → 04 → 01). Chữ đổi theo đúng
+    hiệu ứng và cỡ chữ của trang chủ; hàng thẻ dưới cùng giống thanh 01 · 02 · 03 của trang chủ, gợi ý *"Click · Vuốt ·
+    Phím mũi tên"* nằm cùng hàng. Nút của mỗi chủ đề cuộn xuống phần giới thiệu tương ứng bên dưới.
+  - Màn hình trên bảng là giao diện thật, được "dán" vào mặt kính trong ảnh bằng phép chiếu phối cảnh (`matrix3d`),
+    nên luôn nét và bấm được; mỗi chủ đề mở một màn hình của bảng (lướt ngang): **Trang chủ** (Đèn, Rèm cửa, Điều hòa,
+    Chế độ về nhà / ngủ, An ninh — tắt đèn căn phòng tối đi, rèm voan kéo ngang vách kính, điều hòa có tuyết rơi nhẹ),
+    **Kịch bản**, **An ninh** (camera, khóa cửa, cảm biến, bật / tắt báo động), **Năng lượng** (điện năng hôm nay, cả
+    tuần, thiết bị đang dùng — đổi theo đèn / điều hòa) và **Cài đặt** (các chuẩn và nền tảng đang kết nối). Menu bên
+    trái của bảng cũng chuyển chủ đề.
   - **"Xem kịch bản sống"** chạy một ngày trên bảng: 18:00 *Về nhà* → 20:30 *Thư giãn* → 23:00 *Ngủ ngon* (giờ trên
-    bảng, ánh sáng, rèm, điều hòa đổi theo), rồi căn phòng sáng lại như cũ. Các kịch bản ở phần *Kịch bản sống* bên dưới
-    cũng chạy được — trang tự cuộn lên để xem.
-  - Bốn chủ đề và menu bên trái của bảng dẫn tới phần tương ứng; logo và cuối trang dẫn về trang chủ. Song ngữ, nút âm
-    thanh dùng chung với trang chủ. Trên điện thoại chữ nằm trên, ảnh bảng điều khiển bên dưới.
+    bảng, ánh sáng, rèm, điều hòa đổi theo), rồi căn phòng sáng lại như cũ. Song ngữ, nút âm thanh dùng chung với trang
+    chủ; trên điện thoại chữ nằm trên, ảnh bảng điều khiển bên dưới, bốn thẻ xếp 2 × 2.
 - **Âm thanh chuyển cảnh**: không có nhạc nền; mỗi lần chuyển cảnh có một tiếng "xẹt" nhẹ như gió thổi, âm lượng
   nhỏ, lướt theo hướng chuyển (trái → phải hoặc ngược lại). Tổng hợp ngay trong trình duyệt bằng Web Audio (không cần
   file âm thanh, chạy offline). Mặc định bật, kêu từ lần bấm / chạm đầu tiên (trình duyệt không cho phát âm thanh
@@ -165,13 +169,16 @@ static server nào); mở trực tiếp `dist/index.html` bằng `file://` sẽ 
     │   │   ├── CarouselEngine.ts   Engine GSAP: progress, kéo/vuốt/phím/wheel, intro, chế độ nhẹ
     │   │   ├── carouselMath.ts     Toán thuần: trạng thái CENTER/LEFT/RIGHT, mask làm mềm cạnh
     │   │   ├── HeroCopy.tsx        Khối chữ: số thứ tự, tiêu đề serif, mô tả, nút "Khám phá"
+    │   │   ├── useLineSwap.ts      Hiệu ứng đổi chữ khi chuyển cảnh (dùng chung với trang Smart Home)
+    │   │   ├── editorial.css       Kiểu chữ, nút mũi tên, thanh 01 · 02 · 03 + gợi ý (dùng chung hai trang)
     │   │   ├── SlideImage.tsx      <picture> AVIF/WebP, art-direction ngang/dọc
     │   │   └── HeroCarousel.css
     │   ├── SmartHome/          Bảng điều khiển (ControlScreen), tường: ánh sáng, lời mời (HomeWall), rèm (Curtains), tuyết / lá (SceneEffects)
     │   ├── Header/             Logo, slogan, nút âm thanh, chọn ngôn ngữ
     │   └── Loader/             Vạch tiến trình tối giản khi ảnh đang tải
     ├── pages/smart-home/       Trang Smart Home: content.ts (chữ VI/EN) · HeroVisual (ảnh + màn hình phối cảnh)
-    │                           · ScenePanel (giao diện bảng) · Sections (phần bên dưới) · usePageHome (trạng thái, kịch bản)
+    │                           · ScenePanel (các màn hình của bảng) · ThemeCopy (chữ từng chủ đề) · Sections (phần bên
+    │                           dưới) · usePageHome (trạng thái, kịch bản) · icons.tsx (biểu tượng, logo các chuẩn)
     ├── styles/                 tokens.css (màu, font, khoảng cách) · global.css
     └── utils/device.ts         Nhận diện chế độ chất lượng & media query
 ```
@@ -293,6 +300,12 @@ Thay bằng ảnh dự án thật của VILLA NEST trước khi ra mắt chính 
 - Construction, Interior — ảnh concept của VILLA NEST (`assets-src/panorama-construction-interior.jpg`).
 - Trang Smart Home — ảnh từ bản thiết kế VILLA NEST cung cấp (`assets-src/smart-home-page.jpg`: đã xoá chữ, phóng to
   ×4 bằng Real-ESRGAN; giao diện trên bảng là HTML thật).
+- Logo các chuẩn (`src/pages/smart-home/icons.tsx`, một màu): Matter — [SVG Logos](https://github.com/gilbarbara/logos)
+  (CC0); Zigbee, Home Assistant — [Simple Icons](https://simpleicons.org) (CC0); Wi-Fi — [Material Symbols](https://fonts.google.com/icons)
+  (Apache 2.0); Thread, Apple HomeKit — [selfh.st/icons](https://selfh.st/icons) (CC BY 4.0). Đây là nhãn hiệu của các chủ
+  sở hữu (Connectivity Standards Alliance, Thread Group, Wi-Fi Alliance, Home Assistant / Open Home Foundation, Apple);
+  việc dùng logo chính thức thường kèm điều kiện của chủ sở hữu (thiết bị / chương trình được chứng nhận) — nên kiểm
+  tra trước khi ra mắt.
 - Smart Home — nền tường đá travertine từ ảnh của [HUUM](https://unsplash.com/photos/smart-thermostat-on-stone-wall-eJAWSL_0L98)
   ([Unsplash License](https://unsplash.com/license), miễn phí cho mục đích thương mại; thiết bị gốc đã được xoá),
   ánh sáng buổi tối và màn hình điều khiển trung tâm (giao diện VILLA NEST) được dựng thêm.

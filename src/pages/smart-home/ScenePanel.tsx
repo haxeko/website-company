@@ -1,23 +1,39 @@
-import { useEffect, useState, type CSSProperties, type ReactNode } from 'react'
+import { useEffect, useState, type ComponentType, type CSSProperties, type ReactNode } from 'react'
 import { useI18n } from '../../i18n/context'
 import type { PageCopy, SceneId } from './content'
 import {
   AirConIcon,
   BulbIcon,
+  CameraIcon,
   CurtainIcon,
   GearIcon,
   HomeIcon,
   LeafIcon,
+  LockIcon,
   MoonIcon,
+  PersonIcon,
+  ProtocolIcon,
   ScenesIcon,
+  SensorIcon,
   ShieldIcon,
+  SunIcon,
   WeatherIcon,
 } from './icons'
 import { MAX_TEMP, MIN_TEMP, type PageDevice, type PageHome } from './usePageHome'
 
+/** The screens of the panel, one per item of its side menu. */
+export type PanelView = 'home' | 'scenes' | 'security' | 'energy' | 'settings'
+
 export interface ScenePanelProps {
   home: PageHome
   copy: PageCopy['panel']
+  scenes: PageCopy['scenes']
+  view: PanelView
+  /** Which way the screen slides when it changes (1 = to the next). */
+  dir: 1 | -1
+  onNavigate: (view: PanelView) => void
+  /** The photo, for the camera tiles of the security screen. */
+  photo: string
   /** The clock shows the time of the scene on show while the demo plays. */
   clock?: string
   onToggle: (key: PageDevice) => void
@@ -92,42 +108,42 @@ function ModeCard({ kind, icon, title, note, active, onClick }: ModeCardProps) {
   )
 }
 
+const NAV: { view: PanelView; Icon: ComponentType<{ className?: string }>; label: keyof PageCopy['panel']['nav'] }[] = [
+  { view: 'home', Icon: HomeIcon, label: 'home' },
+  { view: 'scenes', Icon: ScenesIcon, label: 'scenes' },
+  { view: 'energy', Icon: LeafIcon, label: 'energy' },
+  { view: 'security', Icon: ShieldIcon, label: 'security' },
+  { view: 'settings', Icon: GearIcon, label: 'settings' },
+]
+
+const SCENE_ICONS: Record<SceneId, ReactNode> = { home: <PersonIcon />, relax: <SunIcon />, sleep: <MoonIcon /> }
+/** Illustrative: kWh per day this week, and what the devices draw (kW). */
+const WEEK = [18.2, 16.9, 17.4, 15.8, 16.3, 21.5, 12.4]
+const DRAW = { lights: 0.36, ac: 1.2, pool: 0.75, standby: 0.08 }
+
 /**
  * The control screen of the wall panel in the photo: a working (demo) interface laid over the
- * glass, as in the design — side menu, clock and weather, devices and scenes.
+ * glass, as in the design — side menu, clock and weather, and one screen per menu item: the
+ * devices and scenes, the scenes of the day, security, energy and the connected standards.
  */
-export function ScenePanel({ home, copy: p, clock, onToggle, onSetLevel, onSetTemp, onScene, onToggleArmed }: ScenePanelProps) {
+export function ScenePanel(props: ScenePanelProps) {
+  const { home, copy: p, scenes, view, dir, onNavigate, clock } = props
   const { lang } = useI18n()
   const now = useNow(15_000)
   const locale = lang === 'vi' ? 'vi-VN' : 'en-GB'
   const time = clock ?? now.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })
   const date = now.toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'long' })
-  const { lights, curtain, ac, armed, mode } = home
 
   return (
-    <div className="shp-panel__ui" role="group" aria-label={p.label}>
+    <div className="shp-panel__ui" role="group" aria-label={p.label} data-no-drag>
       <nav className="shp-panel__nav">
         <span className="shp-panel__chevron" aria-hidden="true" />
-        <a href="#top" aria-current="page">
-          <HomeIcon />
-          {p.nav.home}
-        </a>
-        <a href="#scenes">
-          <ScenesIcon />
-          {p.nav.scenes}
-        </a>
-        <a href="#energy">
-          <LeafIcon />
-          {p.nav.energy}
-        </a>
-        <a href="#security">
-          <ShieldIcon />
-          {p.nav.security}
-        </a>
-        <a href="#open">
-          <GearIcon />
-          {p.nav.settings}
-        </a>
+        {NAV.map(({ view: v, Icon, label }) => (
+          <button key={v} type="button" aria-current={view === v ? 'page' : undefined} onClick={() => onNavigate(v)}>
+            <Icon />
+            {p.nav[label]}
+          </button>
+        ))}
       </nav>
 
       <div className="shp-panel__main">
@@ -143,74 +159,157 @@ export function ScenePanel({ home, copy: p, clock, onToggle, onSetLevel, onSetTe
           </p>
         </header>
 
-        <div className="shp-panel__cards">
-          <DeviceCard
-            kind="lights"
-            icon={<BulbIcon />}
-            title={p.lights}
-            note={lights.on ? `${p.lightsNote} · ${lights.level}%` : p.off}
-            on={lights.on}
-            value={lights.level}
-            min={1}
-            max={100}
-            sliderLabel={p.brightness}
-            valueText={`${lights.level}%`}
-            onToggle={() => onToggle('lights')}
-            onChange={(v) => onSetLevel('lights', v)}
-          />
-          <DeviceCard
-            kind="curtain"
-            icon={<CurtainIcon />}
-            title={p.curtain}
-            note={curtain.on ? p.closed.replace('{n}', String(curtain.level)) : p.curtainNote}
-            on={curtain.on}
-            value={curtain.level}
-            min={1}
-            max={100}
-            sliderLabel={p.curtainLevel}
-            valueText={`${curtain.level}%`}
-            onToggle={() => onToggle('curtain')}
-            onChange={(v) => onSetLevel('curtain', v)}
-          />
-          <DeviceCard
-            kind="ac"
-            icon={<AirConIcon />}
-            title={p.ac}
-            note={ac.on ? `${ac.temp}°C` : `${p.off} · ${ac.temp}°C`}
-            on={ac.on}
-            value={ac.temp}
-            min={MIN_TEMP}
-            max={MAX_TEMP}
-            sliderLabel={p.temperature}
-            valueText={`${ac.temp} °C`}
-            onToggle={() => onToggle('ac')}
-            onChange={onSetTemp}
-          />
-          <ModeCard
-            kind="home"
-            icon={<LeafIcon />}
-            title={p.homeMode}
-            note={p.homeModeNote}
-            active={mode === 'home'}
-            onClick={() => onScene('home')}
-          />
-          <ModeCard
-            kind="sleep"
-            icon={<MoonIcon />}
-            title={p.sleepMode}
-            note={p.sleepModeNote}
-            active={mode === 'sleep'}
-            onClick={() => onScene('sleep')}
-          />
-          <ModeCard
-            kind="security"
-            icon={<ShieldIcon />}
-            title={p.security}
-            note={armed ? p.armed : p.disarmed}
-            active={armed}
-            onClick={onToggleArmed}
-          />
+        <div key={view} className="shp-panel__view" data-view={view} data-dir={dir}>
+          {view === 'home' && <HomeView {...props} />}
+          {view === 'scenes' && (
+            <div className="shp-panel__scenes">
+              {(Object.keys(scenes) as SceneId[]).map((id) => (
+                <button key={id} type="button" className="shp-card shp-card--mode" data-on={home.mode === id || undefined} onClick={() => props.onScene(id)}>
+                  {SCENE_ICONS[id]}
+                  <span className="shp-card__time">{scenes[id].time}</span>
+                  <b>{scenes[id].name}</b>
+                  <small>{scenes[id].does}</small>
+                </button>
+              ))}
+            </div>
+          )}
+          {view === 'security' && <SecurityView {...props} />}
+          {view === 'energy' && <EnergyView {...props} />}
+          {view === 'settings' && (
+            <div className="shp-panel__networks">
+              {p.networks.map(([count, state], i) => (
+                <div key={i} className="shp-card shp-card--network">
+                  <ProtocolIcon index={i} />
+                  <b>{['Matter', 'Zigbee', 'Thread', 'Wi-Fi', 'Home Assistant', 'HomeKit'][i]}</b>
+                  <small>{count}</small>
+                  <span className="shp-card__state">{state}</span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
+      </div>
+    </div>
+  )
+}
+
+function HomeView({ home, copy: p, onToggle, onSetLevel, onSetTemp, onScene, onToggleArmed }: ScenePanelProps) {
+  const { lights, curtain, ac, armed, mode } = home
+  return (
+    <div className="shp-panel__cards">
+      <DeviceCard
+        kind="lights"
+        icon={<BulbIcon />}
+        title={p.lights}
+        note={lights.on ? `${p.lightsNote} · ${lights.level}%` : p.off}
+        on={lights.on}
+        value={lights.level}
+        min={1}
+        max={100}
+        sliderLabel={p.brightness}
+        valueText={`${lights.level}%`}
+        onToggle={() => onToggle('lights')}
+        onChange={(v) => onSetLevel('lights', v)}
+      />
+      <DeviceCard
+        kind="curtain"
+        icon={<CurtainIcon />}
+        title={p.curtain}
+        note={curtain.on ? p.closed.replace('{n}', String(curtain.level)) : p.curtainNote}
+        on={curtain.on}
+        value={curtain.level}
+        min={1}
+        max={100}
+        sliderLabel={p.curtainLevel}
+        valueText={`${curtain.level}%`}
+        onToggle={() => onToggle('curtain')}
+        onChange={(v) => onSetLevel('curtain', v)}
+      />
+      <DeviceCard
+        kind="ac"
+        icon={<AirConIcon />}
+        title={p.ac}
+        note={ac.on ? `${ac.temp}°C` : `${p.off} · ${ac.temp}°C`}
+        on={ac.on}
+        value={ac.temp}
+        min={MIN_TEMP}
+        max={MAX_TEMP}
+        sliderLabel={p.temperature}
+        valueText={`${ac.temp} °C`}
+        onToggle={() => onToggle('ac')}
+        onChange={onSetTemp}
+      />
+      <ModeCard kind="home" icon={<LeafIcon />} title={p.homeMode} note={p.homeModeNote} active={mode === 'home'} onClick={() => onScene('home')} />
+      <ModeCard kind="sleep" icon={<MoonIcon />} title={p.sleepMode} note={p.sleepModeNote} active={mode === 'sleep'} onClick={() => onScene('sleep')} />
+      <ModeCard kind="security" icon={<ShieldIcon />} title={p.security} note={armed ? p.armed : p.disarmed} active={armed} onClick={onToggleArmed} />
+    </div>
+  )
+}
+
+function SecurityView({ home, copy: p, photo, onToggleArmed }: ScenePanelProps) {
+  return (
+    <div className="shp-panel__security">
+      {p.cameras.map((name, i) => (
+        <div key={name} className="shp-camera" style={{ backgroundImage: `url(${photo})` }} data-cam={i}>
+          <span className="shp-camera__live">{p.live}</span>
+          <b>
+            <CameraIcon />
+            {name}
+          </b>
+        </div>
+      ))}
+      <ModeCard kind="security" icon={<ShieldIcon />} title={p.security} note={home.armed ? p.armed : p.disarmed} active={home.armed} onClick={onToggleArmed} />
+      <ul className="shp-panel__locks">
+        {p.locks.map(([name, state], i) => (
+          <li key={name}>
+            {i < 2 ? <LockIcon /> : <SensorIcon />}
+            <span>{name}</span>
+            <b>{state}</b>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+function EnergyView({ home, copy: p }: ScenePanelProps) {
+  const { lang } = useI18n()
+  const locale = lang === 'vi' ? 'vi-VN' : 'en-GB'
+  const num = (n: number) => n.toLocaleString(locale, { maximumFractionDigits: 2 })
+  const draw = {
+    lights: home.lights.on ? (DRAW.lights * home.lights.level) / 100 : 0,
+    ac: home.ac.on ? DRAW.ac : 0,
+    pool: DRAW.pool,
+    standby: DRAW.standby,
+  }
+  const total = draw.lights + draw.ac + draw.pool + draw.standby
+  const max = Math.max(...WEEK)
+  return (
+    <div className="shp-panel__energy">
+      <div className="shp-card shp-card--chart">
+        <small>{p.today}</small>
+        <b>
+          {num(WEEK[WEEK.length - 1])} <small>{p.unit}</small>
+        </b>
+        <div className="shp-panel__bars" aria-hidden="true">
+          {WEEK.map((v, i) => (
+            <i key={i} style={{ '--h': v / max } as CSSProperties} data-today={i === WEEK.length - 1 || undefined} />
+          ))}
+        </div>
+      </div>
+      <div className="shp-card shp-card--draw">
+        <small>
+          {p.drawTitle} · {num(total)} kW
+        </small>
+        <ul>
+          {(Object.keys(draw) as (keyof typeof draw)[]).map((k) => (
+            <li key={k} data-off={draw[k] === 0 || undefined}>
+              <span>{p.draw[k]}</span>
+              <b>{num(draw[k])} kW</b>
+              <i style={{ '--w': draw[k] / DRAW.ac } as CSSProperties} />
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   )
