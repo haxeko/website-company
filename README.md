@@ -1,7 +1,8 @@
 # VILLA NEST — Architecture · Interior · Smart Home
 
-Website cao cấp cho thương hiệu **VILLA NEST**. Trang chủ là một **carousel 3D điện ảnh, không viền**: ba không gian
-**SMART HOME — CONSTRUCTION — INTERIOR** trôi nổi trong một căn phòng tối, hòa tan vào nhau và vào nền.
+Website cao cấp cho thương hiệu **VILLA NEST**. Trang chủ là một **bức toàn cảnh 3D điện ảnh, liền mạch**: ba không
+gian **SMART HOME — CONSTRUCTION — INTERIOR** nối tiếp nhau như những bức tường cong của một căn phòng tối — cuối ảnh
+này ăn khớp với đầu ảnh kia — và vẫn xoay để chuyển cảnh khi bấm, kéo hay vuốt.
 
 ![VILLA NEST — desktop](docs/screenshot-desktop.jpg)
 
@@ -9,16 +10,20 @@ Website cao cấp cho thương hiệu **VILLA NEST**. Trang chủ là một **ca
 
 ## Điểm nổi bật
 
-- **Mở màn ~2 giây**: màn hình tối → biệt thự hiện ra từ bóng tối và lấy nét như ống kính máy quay → hai không gian bên
-  trượt vào từ hai bức tường → logo, menu, nhãn hiện lên sau cùng.
-- **Không viền thật sự**: mỗi ảnh được làm mềm cả 4 cạnh bằng `mask-image` (hai gradient giao nhau, đường cong
-  ease-in-out nên không có vệt mép). Ảnh hai bên thu nhỏ, nghiêng ±12°, mờ và tối dần ra mép màn hình. Có phản chiếu
-  trên sàn bóng, ánh sáng môi trường đổi màu theo ảnh ở giữa, vignette và film grain.
-- **Carousel 3D vô hạn, không giật**: toàn bộ trạng thái là một số liên tục `progress`; một ảnh chỉ đổi phía khi đã
-  trong suốt hoàn toàn nên vòng lặp không bao giờ nhấp nháy hay nhảy vị trí.
+- **Ba ảnh hòa làm một**: các tấm ảnh được "bản lề" vào nhau trên một đa giác nhìn từ bên trong (tường cong), nên
+  mép phải tấm này luôn trùng khít mép trái tấm kia ở mọi khung hình, kể cả khi đang xoay. Hai ảnh kề nhau chồng lên
+  nhau một dải hẹp và hòa dần vào nhau (`mask-image`); khi xử lý ảnh, màu và ánh sáng ở hai mép chạm nhau còn được
+  kéo về cùng một tông nên đường nối gần như biến mất.
+- **Mở màn ~2 giây**: màn hình tối → máy quay lia nhẹ qua bức toàn cảnh, biệt thự hiện ra từ bóng tối và lấy nét →
+  logo, menu, nhãn hiện lên sau cùng.
+- **Chiều sâu điện ảnh**: ảnh hai bên nghiêng ±12°, nhoè và tối dần ra mép màn hình; mép trên/dưới tan vào bóng tối;
+  phản chiếu trên sàn bóng, ánh sáng môi trường đổi màu theo ảnh ở giữa, vignette và film grain.
+- **Vòng xoay vô hạn, không giật**: toàn bộ trạng thái là một số liên tục `progress`; mỗi ảnh có hai bản sao quanh
+  vòng nên cả hai mép màn hình luôn có ảnh nối tiếp, không bao giờ trống hay nhảy vị trí.
 - **Tương tác đầy đủ**: click ảnh bên, kéo chuột, vuốt cảm ứng có quán tính, phím ← →, bánh xe chuột / trackpad,
   hai mũi tên, nhãn bên dưới, hover (ảnh bên nghiêng vào và sáng lên), parallax nhẹ theo chuột, menu toàn màn hình.
-- **Ảnh nội bộ, tối ưu**: AVIF + WebP, 4 kích thước ngang cho desktop và bản cắt dọc 4:5 cho điện thoại. Ảnh được tải
+- **Ảnh nội bộ, sắc nét**: AVIF (4:4:4, chất lượng cao) + WebP, 5 kích thước tới 3200 px cho màn hình Retina/4K và
+  bản dọc cho điện thoại, thu nhỏ bằng Lanczos và làm nét nhẹ. Ảnh được tải
   **và giải mã** trước khi cảnh xuất hiện — không bao giờ có khung trắng khi chuyển cảnh. Không phụ thuộc CDN hay
   Internet (font cũng được đóng gói cục bộ).
 - **Nhẹ cho GPU**: chỉ dùng CSS 3D transform / opacity / filter, không WebGL. Tự chuyển sang chế độ nhẹ khi FPS thấp,
@@ -82,9 +87,9 @@ static server nào); mở trực tiếp `dist/index.html` bằng `file://` sẽ 
 │   └── install-pi.sh           Script cài lên Raspberry Pi / Debian / Ubuntu
 ├── docs/                       Ảnh chụp màn hình, hướng dẫn Raspberry Pi
 ├── public/
-│   ├── assets/slides/          Ảnh đã tối ưu: AVIF/WebP ngang, dọc 4:5, ambient (sinh tự động)
+│   ├── assets/slides/          Tấm toàn cảnh đã tối ưu: AVIF/WebP ngang, dọc, ambient (sinh tự động)
 │   └── favicon.svg
-├── scripts/optimize-images.mjs Pipeline ảnh: chỉnh màu điện ảnh + resize + mã hoá AVIF/WebP
+├── scripts/optimize-images.mjs Pipeline ảnh: chỉnh màu, cắt tấm, hòa mép, resize, mã hoá AVIF/WebP
 └── src/
     ├── App.tsx                 Ghép Header, Menu, Loader và HeroCarousel
     ├── config/animation.ts     ★ Toàn bộ thông số hiệu ứng / chuyển động / bố cục
@@ -117,22 +122,20 @@ trang tự cập nhật.
 | `releaseEase`        | `power3.out`    | Easing khi thả tay sau khi kéo/vuốt (giữ quán tính)                         |
 | `dragSensitivity`    | `1`             | Độ nhạy kéo/vuốt: 1 = ảnh bám theo ngón tay 1:1                             |
 | `flickVelocity`      | `0.35`          | Tốc độ (slide/giây) tối thiểu để một cú vuốt nhanh được tính là chuyển slide |
-| `sideScale`          | `0.8`           | Tỉ lệ ảnh hai bên                                                           |
-| `sideRotate`         | `12`            | Góc nghiêng (độ) ảnh hai bên: trái +12°, phải −12°                          |
-| `sideOpacity`        | `0.65`          | Độ đục ảnh hai bên                                                          |
-| `sideBlur`           | `4`             | Độ nhoè (px) ảnh hai bên (0 = tắt filter blur)                              |
-| `sideBrightness`     | `0.6`           | Độ sáng ảnh hai bên (1 = giữ nguyên)                                        |
+| `sideRotate`         | `12`            | Góc (độ) giữa hai tấm kề nhau — độ cong của bức tường: trái +12°, phải −12°. Nên 6–20 |
+| `sideOpacity`        | `1`             | Độ đục ảnh hai bên (giữ 1 để toàn cảnh liền mạch)                           |
+| `sideBlur`           | `3`             | Độ nhoè (px) ảnh hai bên (0 = tắt filter blur)                              |
+| `sideBrightness`     | `0.62`          | Độ sáng ảnh hai bên (1 = giữ nguyên)                                        |
 | `perspective`        | `1300`          | Khoảng phối cảnh CSS (px); càng nhỏ 3D càng mạnh                            |
-| `fadeStrength`       | `0.5`           | Độ mềm của cạnh không viền: 0 ≈ cạnh gọn, 1 = rất mềm, mơ màng              |
-| `floorAlign`         | `1`             | 1 = các ảnh "đứng" trên cùng một mặt sàn, 0 = căn giữa theo chiều dọc        |
+| `fadeStrength`       | `0.5`           | Độ mềm của mép trên/dưới: 0 ≈ cạnh gọn, 1 = rất mềm, mơ màng                 |
+| `seam`               | `0.22`          | Bề rộng dải hòa trộn giữa hai ảnh kề nhau (lấy từ `media.json`, xem Thay ảnh) |
 | `reflection`         | `0.22`          | Độ đậm phản chiếu trên sàn (0 = tắt)                                        |
 | `ambientLight`       | `0.36`          | Độ mạnh ánh sáng màu hắt ra phòng từ ảnh trung tâm (0 = tắt)                |
-| `parallaxTilt`       | `2.2`           | Góc nghiêng tối đa (độ) theo chuột trên desktop (0 = tắt)                   |
-| `innerParallax`      | `0.04`          | Độ trôi của ảnh bên trong khung khi chuyển cảnh (0 = tắt)                   |
-| `hover.*`            | —               | Ảnh bên khi rê chuột: nghiêng vào trong, sáng lên, bớt nhoè                 |
-| `intro.duration`     | `2.2`           | Thời gian lấy nét của cảnh mở màn                                           |
-| `layouts.portrait`   | —               | Bố cục điện thoại / màn hình dọc (rộng 80%, khung 4:5, perspective 1000…)   |
-| `layouts.landscape`  | —               | Bố cục desktop (rộng 58% màn hình, khung 16:10…)                            |
+| `parallaxTilt`       | `2`             | Góc nghiêng tối đa (độ) theo chuột trên desktop (0 = tắt)                   |
+| `hover.*`            | —               | Ảnh bên khi rê chuột: sáng lên, bớt nhoè                                    |
+| `intro.duration`     | `2.2`           | Thời gian lia máy và lấy nét của cảnh mở màn                                |
+| `layouts.portrait`   | —               | Bố cục điện thoại / màn hình dọc (mỗi tấm rộng 80%, perspective 1000…)      |
+| `layouts.landscape`  | —               | Bố cục desktop (mỗi tấm rộng 58% màn hình, tỉ lệ 3:2…)                      |
 
 Màu sắc và font nằm trong [`src/styles/tokens.css`](src/styles/tokens.css): nền `#101113`, chữ `#F4F0E9`,
 chữ phụ `#A6A6A6`, điểm nhấn `#C8AA78`.
@@ -142,10 +145,15 @@ chữ phụ `#A6A6A6`, điểm nhấn `#C8AA78`.
 1. Đặt ảnh gốc ngang, chất lượng cao (khuyến nghị ≥ 3000 px chiều rộng) vào `assets-src/`, ví dụ
    `assets-src/construction.jpg`.
 2. Chỉnh `src/data/media.json` nếu cần:
-   - `focus` — điểm canh ảnh trong khung ngang `[x, y]` (0–1),
-   - `portraitFocusX` — vị trí cắt ngang cho bản dọc 4:5 trên điện thoại,
-   - `grade` — chỉnh màu: `exposure`, `contrast`, `saturation`, `greens` (giảm xanh lá), `warmth`.
-3. Chạy `npm run images` (hoặc `npm run images -- construction` để chỉ xử lý một ảnh).
+   - `order` — thứ tự ảnh trên bức toàn cảnh (ảnh cuối nối vòng về ảnh đầu),
+   - `focus` — điểm canh khi cắt ảnh cho tấm ngang `[x, y]` (0–1),
+   - `portraitFocusX` — vị trí cắt ngang cho tấm dọc trên điện thoại,
+   - `grade` — chỉnh màu: `exposure`, `contrast`, `saturation`, `greens` (giảm xanh lá), `warmth`,
+   - `geometry` — tỉ lệ tấm (`landscapeAspect`, `portraitAspect`) và `seam` (bề rộng dải hòa trộn),
+   - `harmonize` — mức kéo màu hai mép chạm nhau về cùng tông (`strength` 0–1) và độ sâu vào trong ảnh (`reach`).
+3. Chạy `npm run images` (luôn xử lý cả ba ảnh vì các mép phụ thuộc lẫn nhau; mất vài phút).
+   Muốn xem nhanh đường nối trước: `PANORAMA_PREVIEW=preview.jpg node scripts/optimize-images.mjs` sẽ ghép ba ảnh
+   thành một tấm `preview.jpg` rồi dừng.
 4. Cập nhật mô tả `alt`, nhãn và thông tin tác giả trong `src/data/slides.ts`.
 
 ## Điều khiển

@@ -1,12 +1,23 @@
 {
-  "$comment": "Image pipeline settings shared by scripts/optimize-images.mjs (build time) and src/data/slides.ts (runtime). Run `npm run images` after changing anything here or replacing a file in assets-src/.",
+  "$comment": "Image pipeline settings shared by scripts/optimize-images.mjs (build time), src/data/slides.ts and src/config/animation.ts (runtime). Run `npm run images` after changing anything here or replacing a file in assets-src/.",
   "sourceDir": "assets-src",
   "outputDir": "public/assets/slides",
   "publicPath": "assets/slides",
-  "landscapeWidths": [960, 1440, 1920, 2560],
+  "order": ["smart-home", "construction", "interior"],
+  "geometry": {
+    "$comment": "Panel aspect = width/height of one panel's own share of the panorama. seam = overlap with each neighbour, as a fraction of that width; every image is cropped to aspect × (1 + seam) so its edges line up exactly with its neighbours.",
+    "landscapeAspect": 1.5,
+    "portraitAspect": 0.8,
+    "seam": 0.22
+  },
+  "harmonize": {
+    "$comment": "How strongly the colours and light of touching edges are pulled together (0 = off, 1 = identical average colour at the seam), and how far into the image the correction reaches (in seam widths).",
+    "strength": 0.9,
+    "reach": 2.4
+  },
+  "landscapeWidths": [960, 1440, 1920, 2560, 3200],
   "portraitWidths": [640, 960, 1280],
-  "portraitAspect": 0.8,
-  "quality": { "avif": 60, "webp": 84, "ambient": 72 },
+  "quality": { "avif": 70, "webp": 90, "ambient": 72 },
   "images": {
     "smart-home": {
       "source": "smart-home.jpg",
@@ -16,13 +27,13 @@
     },
     "construction": {
       "source": "construction.jpg",
-      "focus": [0.5, 0.42],
+      "focus": [0.5, 0.45],
       "portraitFocusX": 0.6,
       "grade": { "exposure": 1.02, "contrast": 0.2, "saturation": 0.86, "greens": 0.45, "warmth": 0.02 }
     },
     "interior": {
       "source": "interior.jpg",
-      "focus": [0.4, 0.5],
+      "focus": [0.42, 0.5],
       "portraitFocusX": 0.27,
       "grade": { "exposure": 0.8, "contrast": 0.24, "saturation": 0.95, "greens": 0.8, "warmth": 0.04 }
     }

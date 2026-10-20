@@ -4,19 +4,24 @@
  * Every visual and motion parameter of the 3D carousel lives here, so the look can be
  * adjusted without touching component code. In development, saving this file hot-reloads
  * the page. See README.md ("Tinh chỉnh hiệu ứng") for a description of each value.
+ *
+ * The three photos form ONE continuous panorama: the panels are hinged to each other
+ * like the walls of a curved room, so the end of one image always meets the start of
+ * the next, and neighbouring images cross-fade over a shared strip (`seam`).
+ * Panel proportions and the seam come from src/data/media.json, because the images are
+ * cropped to match them (`npm run images` after changing them).
  */
+import media from '../data/media.json'
 
 export interface LayoutConfig {
   /** Media query that enables this layout. The first matching layout wins. */
   query: string
-  /** Centre slide width as a fraction of the viewport width. */
+  /** Width of one panel (its own share of the panorama) as a fraction of the viewport width. */
   slideWidth: number
-  /** Upper bound for the slide height as a fraction of the viewport height. */
+  /** Upper bound for the panel height as a fraction of the viewport height. */
   maxSlideHeight: number
-  /** Frame aspect ratio (width / height). */
+  /** Panel aspect ratio (width / height) — fixed by the image crops in media.json. */
   aspectRatio: number
-  /** Distance between the centre and a side slide, as a fraction of the slide width. */
-  sideOffset: number
   /** Vertical centre of the slides as a fraction of the viewport height. */
   centerY: number
   /** Optional per-layout overrides of the global values below. */
@@ -42,10 +47,13 @@ export interface CarouselConfig {
   /** Navigate with the mouse wheel / trackpad swipe. */
   wheel: boolean
 
-  /** LEFT / RIGHT state. */
-  sideScale: number
-  /** Y rotation of the side slides in degrees (left = +value, right = −value). */
+  /**
+   * Angle in degrees between two neighbouring panels (left panel turned +value, right
+   * panel −value). The panels stay hinged at their shared edge whatever the value.
+   * Recommended 6 – 20.
+   */
   sideRotate: number
+  /** Opacity of the side panels. Keep 1 for a seamless panorama (lower values let the dark room show through). */
   sideOpacity: number
   /** Blur of the side slides in px (0 disables the blur filter entirely). */
   sideBlur: number
@@ -54,10 +62,10 @@ export interface CarouselConfig {
 
   /** CSS perspective distance in px. Smaller = stronger 3D. */
   perspective: number
-  /** Softness of the borderless edges: 0 = almost hard edges, 1 = very soft, dreamy fade. */
+  /** Softness of the top and bottom edges: 0 = almost hard edges, 1 = very soft, dreamy fade. */
   fadeStrength: number
-  /** 1 = all slides stand on the same floor line, 0 = vertically centred. */
-  floorAlign: number
+  /** Width of the cross-fade between neighbouring images, as a fraction of a panel (from media.json). */
+  seam: number
   /** Opacity of the floor reflection (0 disables it). */
   reflection: number
   /** Height of the floor reflection as a fraction of the slide height. */
@@ -66,13 +74,9 @@ export interface CarouselConfig {
   ambientLight: number
   /** Max tilt in degrees following the mouse on desktop (0 disables it). */
   parallaxTilt: number
-  /** Image drift inside its frame while moving, as a fraction of the frame width (0 disables it). */
-  innerParallax: number
 
-  /** Desktop hover on a side slide. */
+  /** Desktop hover on a side panel. */
   hover: {
-    /** How far (in slide units) the hovered side slide leans towards the centre. */
-    nudge: number
     /** Brightness added on hover. */
     brighten: number
     /** Blur (px) removed on hover. */
@@ -82,7 +86,7 @@ export interface CarouselConfig {
   /** Entrance animation played once the images are loaded. */
   intro: {
     enabled: boolean
-    /** Seconds for the centre image to come into focus. */
+    /** Seconds for the panorama to pan into place and the centre image to come into focus. */
     duration: number
   }
 
@@ -121,24 +125,21 @@ export const carouselConfig: CarouselConfig = {
   flickVelocity: 0.35,
   wheel: true,
 
-  sideScale: 0.8,
   sideRotate: 12,
-  sideOpacity: 0.65,
-  sideBlur: 4,
-  sideBrightness: 0.6,
+  sideOpacity: 1,
+  sideBlur: 3,
+  sideBrightness: 0.62,
 
   perspective: 1300,
   fadeStrength: 0.5,
-  floorAlign: 1,
+  seam: media.geometry.seam,
   reflection: 0.22,
   reflectionHeight: 0.42,
   ambientLight: 0.36,
-  parallaxTilt: 2.2,
-  innerParallax: 0.04,
+  parallaxTilt: 2,
 
   hover: {
-    nudge: 0.04,
-    brighten: 0.16,
+    brighten: 0.18,
     unblur: 1.5,
   },
 
@@ -162,18 +163,16 @@ export const carouselConfig: CarouselConfig = {
       query: '(max-aspect-ratio: 1/1)',
       slideWidth: 0.8,
       maxSlideHeight: 0.6,
-      aspectRatio: 4 / 5,
-      sideOffset: 0.76,
+      aspectRatio: media.geometry.portraitAspect,
       centerY: 0.44,
       perspective: 1000,
-      sideBlur: 3,
+      sideBlur: 2.5,
     },
     landscape: {
       query: 'all',
       slideWidth: 0.58,
       maxSlideHeight: 0.62,
-      aspectRatio: 16 / 10,
-      sideOffset: 0.8,
+      aspectRatio: media.geometry.landscapeAspect,
       centerY: 0.47,
     },
   },

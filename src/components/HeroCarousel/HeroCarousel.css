@@ -7,7 +7,7 @@
   --hc-w: 58vw;
   --hc-h: 36.25vw;
   --hc-cy: 47vh;
-  --hc-edge: 19%;
+  --hc-edge: 15%;
   --hc-reflection-h: 42%;
   --hc-reflection-opacity: 0.22;
   --hc-floor-y: calc(var(--hc-cy) + var(--hc-h) / 2);
@@ -112,7 +112,7 @@
   inset: 0;
 }
 
-/* Borderless: the frame dissolves into the room on all four sides. */
+/* Borderless: the left strip cross-fades into the neighbouring image, top and bottom dissolve into the room. */
 .hc-slide__frame {
   position: absolute;
   inset: 0;
@@ -123,29 +123,20 @@
   mask-composite: intersect;
 }
 
-.hc-slide__inner {
-  position: absolute;
-  inset: 0;
-  will-change: transform;
-}
-
-.hc-slide__inner picture {
+.hc-slide__frame picture,
+.hc-slide__mirror picture {
   display: block;
   width: 100%;
   height: 100%;
 }
 
+/* Files are pre-cropped to the exact panel shape, so nothing is cropped here. */
 .hc-slide__img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: var(--focus, 50% 50%);
   -webkit-user-drag: none;
-}
-
-.hc[data-layout='portrait'] .hc-slide__img {
-  object-position: 50% 50%;
 }
 
 /* Glossy floor: a mirrored copy that fades out with distance. */

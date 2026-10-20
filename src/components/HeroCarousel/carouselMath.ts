@@ -22,70 +22,64 @@ const easeInOutSine = (t: number) => (1 - Math.cos(Math.PI * t)) / 2
 export const wrapOffset = (index: number, progress: number, count: number) =>
   mod(index - progress + count / 2, count) - count / 2
 
-/** Distance (in slide units) beyond the side position over which a slide fades out before it wraps. */
-const EXIT_ZONE = 0.5
+/** Panels further than this (in panel units) from the centre are off-screen and not rendered. */
+export const VISIBLE_RANGE = 2.4
 
 export interface VisualParams {
-  /** px between the centre and a side slide. */
-  spacing: number
-  /** Extra px a slide travels outwards while it fades out at the back. */
-  exitDistance: number
-  slideHeight: number
-  sideScale: number
-  sideRotate: number
+  /** Width of one panel's own share of the panorama, px. */
+  pitch: number
+  /** Angle between neighbouring panels, radians. */
+  angle: number
   sideOpacity: number
   sideBlur: number
   sideBrightness: number
-  floorAlign: number
-  innerParallax: number
-  hoverNudge: number
   hoverBrighten: number
   hoverUnblur: number
 }
 
 export interface SlideVisual {
   x: number
-  y: number
+  z: number
   rotateY: number
-  scale: number
   opacity: number
   blur: number
   brightness: number
   zIndex: number
-  /** Scale of the image inside its frame. */
-  innerScale: number
-  /** Horizontal drift of the image inside its frame, in % of the frame width. */
-  innerShift: number
+  visible: boolean
 }
 
 /**
- * offset 0 → CENTER, -1 → LEFT, +1 → RIGHT, beyond ±1 → fading out at the back.
- * `hover` (0–1) lets a hovered side slide lean slightly towards the centre and brighten.
+ * Panels sit on a regular polygon seen from the inside (a gently curved wall). Rotating the
+ * polygon moves every panel together, so neighbouring panels stay hinged at their shared
+ * edge at every frame: the end of one image always meets the start of the next.
+ * offset 0 → CENTER, -1 → LEFT, +1 → RIGHT.
  */
 export function computeSlideVisual(offset: number, hover: number, p: VisualParams): SlideVisual {
-  const dir = offset < 0 ? -1 : 1
   const distance = Math.abs(offset)
-  const hoverWeight = hover * (1 - smoothstep(0, 0.4, Math.abs(distance - 1)))
-  const a = Math.max(0, distance - p.hoverNudge * hoverWeight)
+  const t = Math.min(distance, 1)
+  const hoverWeight = hover * (1 - smoothstep(0, 0.45, Math.abs(distance - 1)))
 
-  const t = Math.min(a, 1) // centre → side
-  const u = clamp((a - 1) / EXIT_ZONE, 0, 1) // side → gone
-  const scale = lerp(1, p.sideScale, t) * (1 - 0.12 * u)
-  const blurBase = p.sideBlur > 0 ? p.sideBlur * t ** 1.25 + 4 * u : 0
+  let x = offset * p.pitch
+  let z = 0
+  const theta = offset * p.angle
+  if (p.angle > 1e-4) {
+    const apothem = p.pitch / (2 * Math.tan(p.angle / 2))
+    x = apothem * Math.sin(theta)
+    z = apothem * (1 - Math.cos(theta))
+  }
 
   return {
-    x: dir * (p.spacing * t + p.exitDistance * u),
-    y: (1 - scale) * p.slideHeight * 0.5 * p.floorAlign,
-    rotateY: -dir * (p.sideRotate * t + 6 * u),
-    scale,
-    // Fully transparent for the last 15% before the wrap point, so even a fast chained move
-    // never shows a slide jumping from one side to the other.
-    opacity: lerp(1, p.sideOpacity, t) * (1 - smoothstep(0, 0.85, u)),
-    blur: Math.max(0, blurBase - p.hoverUnblur * hoverWeight),
-    brightness: lerp(1, p.sideBrightness, smoothstep(0, 1, t)) * (1 - 0.3 * u) + p.hoverBrighten * hoverWeight,
-    zIndex: Math.round(40 - a * 10),
-    innerScale: 1 + (p.innerParallax > 0 ? 2 * p.innerParallax + 0.02 : 0) * t,
-    innerShift: -dir * p.innerParallax * t * 100,
+    x,
+    z,
+    rotateY: (-theta * 180) / Math.PI,
+    opacity: lerp(1, p.sideOpacity, t),
+    blur: p.sideBlur > 0 ? Math.max(0, p.sideBlur * Math.min(distance, 1.6) ** 1.2 - p.hoverUnblur * hoverWeight) : 0,
+    brightness:
+      lerp(1, p.sideBrightness, smoothstep(0, 1, t)) * (1 - 0.25 * clamp(distance - 1, 0, 1)) +
+      p.hoverBrighten * hoverWeight,
+    // The panel to the right is always on top: its seam fades in over its left neighbour.
+    zIndex: Math.round(100 + offset * 10),
+    visible: distance < VISIBLE_RANGE,
   }
 }
 
@@ -109,9 +103,19 @@ export function featherGradient(direction: 'right' | 'bottom', start: number, en
   return `linear-gradient(to ${direction}, ${[...ramp(0, start, 0, 1), ...ramp(100 - end, 100, 1, 0)].join(', ')})`
 }
 
+/**
+ * Horizontal mask of a panel: its left strip (the part it shares with the panel on its left)
+ * fades in from transparent, so the two images cross-fade into each other; the right edge
+ * stays opaque under the next panel's fade (a hair of feathering hides any sub-pixel edge).
+ * `seamFraction` is the shared strip as a fraction of the element width.
+ */
+export function seamGradient(seamFraction: number): string {
+  const f = seamFraction * 100
+  const tail = Math.max(0.15, f * 0.08)
+  return `linear-gradient(to right, ${[...ramp(0, f, 0, 1, 10), ...ramp(100 - tail, 100, 1, 0, 2)].join(', ')})`
+}
+
 export interface FeatherSizes {
-  /** Horizontal fade on each side, % of the slide width. */
-  x: number
   /** Fade at the top, % of the slide height. */
   top: number
   /** Fade at the bottom, % of the slide height. */
@@ -121,7 +125,7 @@ export interface FeatherSizes {
 /** Maps the single `fadeStrength` setting (0–1) to the fade widths of each edge. */
 export function featherSizes(strength: number): FeatherSizes {
   const s = clamp(strength, 0, 1)
-  return { x: 4 + 22 * s, top: 3 + 18 * s, bottom: 3 + 14 * s }
+  return { top: 3 + 18 * s, bottom: 3 + 14 * s }
 }
 
 /**

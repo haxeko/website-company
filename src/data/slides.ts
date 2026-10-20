@@ -5,14 +5,12 @@ type MediaId = keyof typeof media.images
 export interface SlideImageSet {
   /** srcset strings for the landscape (desktop) variants. */
   landscape: { avif: string; webp: string }
-  /** srcset strings for the 4:5 portrait (mobile) crops. */
+  /** srcset strings for the portrait (mobile) panels. */
   portrait: { avif: string; webp: string }
   /** Plain WebP used by the <img> fallback. */
   fallback: string
   /** Tiny blurred colour wash used as the room light behind the slides. */
   ambient: string
-  /** object-position for the landscape frame. */
-  focus: string
 }
 
 export interface Slide {
@@ -36,7 +34,6 @@ const srcset = (name: string, widths: number[], ext: 'avif' | 'webp') =>
 const fallbackWidth = media.landscapeWidths.find((w) => w >= 1400) ?? media.landscapeWidths.at(-1)
 
 function imageSet(id: MediaId): SlideImageSet {
-  const [x, y] = media.images[id].focus
   return {
     landscape: {
       avif: srcset(id, media.landscapeWidths, 'avif'),
@@ -48,7 +45,6 @@ function imageSet(id: MediaId): SlideImageSet {
     },
     fallback: `${assetBase}/${id}-${fallbackWidth}.webp`,
     ambient: `${assetBase}/${id}-ambient.webp`,
-    focus: `${x * 100}% ${y * 100}%`,
   }
 }
 

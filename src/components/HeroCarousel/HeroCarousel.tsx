@@ -3,6 +3,7 @@ import {
   useEffectEvent,
   useImperativeHandle,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
   type Ref,
@@ -34,6 +35,8 @@ interface HeroCarouselProps {
 
 /** Never keep the visitor waiting longer than this for slow images. */
 const IMAGE_TIMEOUT = 8000
+/** Panels needed around the ring so both screen edges always show a neighbour. */
+const MIN_RING_PANELS = 5
 
 function Chevron({ direction }: { direction: 'left' | 'right' }) {
   return (
@@ -57,6 +60,16 @@ export function HeroCarousel({
   const ambientRefs = useRef<(HTMLDivElement | null)[]>([])
   const engineRef = useRef<CarouselEngine | null>(null)
   const [active, setActive] = useState(carouselConfig.initialIndex)
+  // With only three images each one is placed twice around the ring (panel k shows image
+  // k % n): the panorama continues past both screen edges even while it rotates.
+  const ring = useMemo(() => {
+    const copies = Math.max(1, Math.ceil(MIN_RING_PANELS / slides.length))
+    return Array.from({ length: slides.length * copies }, (_, k) => ({
+      slide: slides[k % slides.length],
+      index: k % slides.length,
+      copy: Math.floor(k / slides.length),
+    }))
+  }, [slides])
 
   const handleActive = useEffectEvent((index: number) => {
     setActive(index)
@@ -69,15 +82,15 @@ export function HeroCarousel({
   useLayoutEffect(() => {
     const root = rootRef.current
     const stage = stageRef.current
-    const slideEls = slideRefs.current.slice(0, slides.length).filter((el) => el !== null)
-    if (!root || !stage || slideEls.length !== slides.length) return
+    const slideEls = slideRefs.current.slice(0, ring.length).filter((el) => el !== null)
+    if (!root || !stage || slideEls.length !== ring.length) return
 
     const quality = getQualityHint()
     const engine = new CarouselEngine({
       root,
       stage,
       slides: slideEls,
-      inner: slideEls.map((el) => Array.from(el.querySelectorAll<HTMLElement>('[data-inner]'))),
+      period: slides.length,
       ambient: ambientRefs.current.slice(0, slides.length).filter((el) => el !== null),
       config: carouselConfig,
       initialIndex: carouselConfig.initialIndex,
@@ -94,6 +107,7 @@ export function HeroCarousel({
     let cancelled = false
     let loaded = 0
     const images = slideEls
+      .slice(0, slides.length)
       .map((el) => el.querySelector<HTMLImageElement>('[data-frame] img'))
       .filter((img) => img !== null)
     const decoded = Promise.all(
@@ -118,7 +132,7 @@ export function HeroCarousel({
       engine.destroy()
       engineRef.current = null
     }
-  }, [slides])
+  }, [slides, ring])
 
   useEffect(() => {
     engineRef.current?.setEnabled(interactive)
@@ -154,29 +168,25 @@ export function HeroCarousel({
       </div>
 
       <div ref={stageRef} className="hc-stage">
-        {slides.map((slide, i) => (
+        {ring.map(({ slide, index, copy }, k) => (
           <div
-            key={slide.id}
+            key={`${slide.id}-${copy}`}
             ref={(el) => {
-              slideRefs.current[i] = el
+              slideRefs.current[k] = el
             }}
             className="hc-slide"
-            data-slide-index={i}
+            data-slide-index={k}
             role="group"
             aria-roledescription="slide"
-            aria-label={`${slide.title} (${i + 1} / ${slides.length})`}
+            aria-label={`${slide.title} (${index + 1} / ${slides.length})`}
           >
             <div className="hc-slide__reveal" data-reveal>
               <div className="hc-slide__frame" data-frame>
-                <div className="hc-slide__inner" data-inner>
-                  <SlideImage slide={slide} priority={i === carouselConfig.initialIndex} />
-                </div>
+                <SlideImage slide={slide} priority={copy === 0 && index === carouselConfig.initialIndex} />
               </div>
               <div className="hc-slide__reflection" aria-hidden="true">
                 <div className="hc-slide__mirror">
-                  <div className="hc-slide__inner" data-inner>
-                    <SlideImage slide={slide} decorative />
-                  </div>
+                  <SlideImage slide={slide} decorative />
                 </div>
               </div>
             </div>

@@ -1,10 +1,10 @@
-import type { CSSProperties } from 'react'
 import { carouselConfig } from '../../config/animation'
 import type { Slide } from '../../data/slides'
 
 const { portrait, landscape } = carouselConfig.layouts
-const PORTRAIT_SIZES = `${Math.round(portrait.slideWidth * 100)}vw`
-const LANDSCAPE_SIZES = `${Math.round(landscape.slideWidth * 100)}vw`
+// Each panel element is its own share of the panorama plus the cross-fade strip.
+const PORTRAIT_SIZES = `${Math.round(portrait.slideWidth * (1 + carouselConfig.seam) * 100)}vw`
+const LANDSCAPE_SIZES = `${Math.round(landscape.slideWidth * (1 + carouselConfig.seam) * 100)}vw`
 
 interface SlideImageProps {
   slide: Slide
@@ -14,8 +14,9 @@ interface SlideImageProps {
 }
 
 /**
- * Art-directed, responsive image: 4:5 crops on portrait screens, landscape variants
- * elsewhere, AVIF first with a WebP fallback.
+ * Art-directed, responsive image: portrait panels on portrait screens, landscape panels
+ * elsewhere, AVIF first with a WebP fallback. The files are already cropped to the exact
+ * panel shape, so the seams line up with the neighbouring panels.
  */
 export function SlideImage({ slide, decorative = false, priority = false }: SlideImageProps) {
   const { image } = slide
@@ -32,7 +33,6 @@ export function SlideImage({ slide, decorative = false, priority = false }: Slid
         draggable={false}
         decoding="async"
         fetchPriority={priority ? 'high' : 'auto'}
-        style={{ '--focus': image.focus } as CSSProperties}
       />
     </picture>
   )

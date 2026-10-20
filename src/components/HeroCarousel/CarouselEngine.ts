@@ -8,6 +8,7 @@ import {
   featherSizes,
   mod,
   reflectionGradient,
+  seamGradient,
   wrapOffset,
   type VisualParams,
 } from './carouselMath'
@@ -17,11 +18,14 @@ export interface CarouselEngineOptions {
   root: HTMLElement
   /** Drag surface that contains the slides. */
   stage: HTMLElement
-  /** One element per slide (data order). */
+  /**
+   * Panel elements around the ring. With few images every image is rendered more than
+   * once (panel k shows image k % period), so both screen edges always have a neighbour.
+   */
   slides: HTMLElement[]
-  /** Per slide: elements that receive the inner (image-in-frame) parallax transform. */
-  inner: HTMLElement[][]
-  /** Per slide: ambient light layer (cross-faded with the slide's distance from the centre). */
+  /** Number of distinct images. */
+  period: number
+  /** Per image: ambient light layer (cross-faded with the image's distance from the centre). */
   ambient: HTMLElement[]
   config: CarouselConfig
   initialIndex: number
@@ -52,8 +56,6 @@ interface SlideCache {
   zIndex: string
   filter: string
   visibility: string
-  inner: string
-  ambient: string
   position: string
 }
 
@@ -83,7 +85,10 @@ function listen(
  */
 export class CarouselEngine {
   private readonly o: CarouselEngineOptions
+  /** Number of panels around the ring. */
   private readonly count: number
+  /** Number of distinct images (the visual state repeats every `period` steps). */
+  private readonly period: number
   private readonly state: { progress: number }
   private target: number
   private activeIndex = -1
@@ -114,12 +119,14 @@ export class CarouselEngine {
   private ticking = false
   private idleFrames = 0
   private readonly cache: SlideCache[]
+  private readonly ambientCache: string[] = []
   private perf = { frames: 0, time: 0, last: 0, strikes: 0 }
   private readonly cleanups: (() => void)[] = []
 
   constructor(options: CarouselEngineOptions) {
     this.o = options
     this.count = options.slides.length
+    this.period = options.period
     this.state = { progress: options.initialIndex }
     this.target = options.initialIndex
     this.hover = options.slides.map(() => ({ value: 0 }))
@@ -129,8 +136,6 @@ export class CarouselEngine {
       zIndex: '',
       filter: '',
       visibility: '',
-      inner: '',
-      ambient: '',
       position: '',
     }))
     this.reducedMotion = window.matchMedia(REDUCED_MOTION_QUERY).matches
@@ -230,26 +235,35 @@ export class CarouselEngine {
       tl.to(atmosphere, { opacity: 1, duration: d * 0.9, ease: 'power2.inOut', stagger: 0.15, clearProps: 'opacity' }, 0)
       reveals.forEach((el, i) => {
         if (!el) return
-        const offset = Math.round(wrapOffset(i, this.state.progress, this.count))
-        if (offset === 0) {
+        const offset = wrapOffset(i, this.target, this.count)
+        if (Math.abs(offset) < 0.5) {
           // Centre: the lights come up while the lens pulls focus.
-          const soft = this.lowPower ? {} : { filter: 'blur(18px) brightness(0.35)' }
+          const soft = this.lowPower ? {} : { filter: 'blur(16px) brightness(0.35)' }
           const sharp = this.lowPower ? {} : { filter: 'blur(0px) brightness(1)' }
-          gsap.set(el, { opacity: 0, scale: 1.12, ...soft })
-          tl.to(el, { opacity: 1, duration: d * 0.6, ease: 'power2.out' }, 0.1).to(
+          gsap.set(el, { opacity: 0, ...soft })
+          tl.to(el, { opacity: 1, duration: d * 0.55, ease: 'power2.out' }, 0.1).to(
             el,
-            { scale: 1, ...sharp, duration: d, ease: 'expo.out', clearProps: 'opacity,transform,filter' },
+            { ...sharp, duration: d, ease: 'expo.out', clearProps: 'opacity,filter' },
             0.1,
           )
         } else {
-          // Sides glide in from the walls of the room.
-          gsap.set(el, { opacity: 0, xPercent: offset * 24, scale: 0.92 })
-          tl.to(
-            el,
-            { opacity: 1, xPercent: 0, scale: 1, duration: d * 0.9, ease: 'expo.out', clearProps: 'opacity,transform' },
-            0.5,
-          )
+          // The rest of the panorama appears a beat later, from the centre outwards.
+          gsap.set(el, { opacity: 0 })
+          tl.to(el, { opacity: 1, duration: d * 0.7, ease: 'power2.out', clearProps: 'opacity' }, 0.35 + Math.abs(offset) * 0.12)
         }
+      })
+      // The camera pans across the panorama and settles on the first space.
+      this.state.progress = this.target - 0.45
+      this.render()
+      this.tween = gsap.to(this.state, {
+        progress: this.target,
+        duration: d * 1.15,
+        ease: 'expo.out',
+        delay: 0.05,
+        onUpdate: this.markDirty,
+        onComplete: () => {
+          this.tween = null
+        },
       })
     }
     this.intro = tl
@@ -269,8 +283,8 @@ export class CarouselEngine {
   /** Brings slide `index` to the centre along the shortest way round the ring. */
   goTo(index: number) {
     const base = Math.round(this.target)
-    let delta = mod(index - mod(base, this.count), this.count)
-    if (delta > this.count / 2) delta -= this.count
+    let delta = mod(index - mod(base, this.period), this.period)
+    if (delta > this.period / 2) delta -= this.period
     if (delta !== 0) this.animateTo(base + delta)
   }
 
@@ -353,7 +367,7 @@ export class CarouselEngine {
   }
 
   private updateActive(position: number) {
-    const index = mod(Math.round(position), this.count)
+    const index = mod(Math.round(position), this.period)
     if (index === this.activeIndex) return
     this.activeIndex = index
     this.o.onActiveChange(index)
@@ -383,26 +397,29 @@ export class CarouselEngine {
   }
 
   private render() {
-    const { slides, inner, ambient, config } = this.o
+    const { slides, ambient, config } = this.o
     const { progress } = this.state
     const camera = this.tilt
       ? `rotateX(${fmt(-this.pointer.y * this.tilt * 0.55, 3)}deg) rotateY(${fmt(this.pointer.x * this.tilt, 3)}deg) `
       : ''
+    const light = new Array<number>(this.period).fill(0)
 
     for (let i = 0; i < this.count; i++) {
       const offset = wrapOffset(i, progress, this.count)
       const v = computeSlideVisual(offset, this.hover[i].value, this.params)
       const cache = this.cache[i]
       const el = slides[i]
+      light[i % this.period] += clamp(1 - Math.abs(offset), 0, 1)
 
-      const transform = `perspective(${this.metrics.perspective}px) ${camera}translate3d(${fmt(v.x)}px, ${fmt(v.y)}px, 0) rotateY(${fmt(v.rotateY, 3)}deg) scale(${fmt(v.scale, 4)})`
+      const visibility = v.visible && v.opacity > 0.002 ? 'visible' : 'hidden'
+      if (visibility !== cache.visibility) el.style.visibility = cache.visibility = visibility
+      if (visibility === 'hidden') continue
+
+      const transform = `perspective(${this.metrics.perspective}px) ${camera}translate3d(${fmt(v.x)}px, 0, ${fmt(v.z)}px) rotateY(${fmt(v.rotateY, 3)}deg)`
       if (transform !== cache.transform) el.style.transform = cache.transform = transform
 
       const opacity = fmt(v.opacity, 3)
       if (opacity !== cache.opacity) el.style.opacity = cache.opacity = opacity
-
-      const visibility = v.opacity < 0.002 ? 'hidden' : 'visible'
-      if (visibility !== cache.visibility) el.style.visibility = cache.visibility = visibility
 
       const zIndex = String(v.zIndex)
       if (zIndex !== cache.zIndex) el.style.zIndex = cache.zIndex = zIndex
@@ -413,15 +430,6 @@ export class CarouselEngine {
       const filter = parts.length ? parts.join(' ') : 'none'
       if (filter !== cache.filter) el.style.filter = cache.filter = filter
 
-      const innerTransform = `translate3d(${fmt(v.innerShift, 3)}%, 0, 0) scale(${fmt(v.innerScale, 4)})`
-      if (innerTransform !== cache.inner) {
-        cache.inner = innerTransform
-        for (const node of inner[i]) node.style.transform = innerTransform
-      }
-
-      const light = fmt(config.ambientLight * clamp(1 - Math.abs(offset), 0, 1), 3)
-      if (light !== cache.ambient && ambient[i]) ambient[i].style.opacity = cache.ambient = light
-
       const distance = Math.abs(offset)
       const position = distance < 0.5 ? 'center' : distance < 1.5 ? 'side' : 'hidden'
       if (position !== cache.position) {
@@ -429,6 +437,11 @@ export class CarouselEngine {
         el.setAttribute('aria-hidden', String(position !== 'center'))
       }
     }
+
+    light.forEach((weight, i) => {
+      const value = fmt(config.ambientLight * clamp(weight, 0, 1), 3)
+      if (ambient[i] && value !== this.ambientCache[i]) ambient[i].style.opacity = this.ambientCache[i] = value
+    })
   }
 
   /* ── Layout ────────────────────────────────────────────────────────────── */
@@ -450,17 +463,11 @@ export class CarouselEngine {
 
     this.metrics = { width, height, perspective: layout.perspective ?? config.perspective }
     this.params = {
-      spacing: slideW * layout.sideOffset,
-      exitDistance: slideW * 0.35,
-      slideHeight: slideH,
-      sideScale: config.sideScale,
-      sideRotate: layout.sideRotate ?? config.sideRotate,
+      pitch: slideW,
+      angle: ((layout.sideRotate ?? config.sideRotate) * Math.PI) / 180,
       sideOpacity: config.sideOpacity,
       sideBlur: this.lowPower ? 0 : (layout.sideBlur ?? config.sideBlur),
       sideBrightness: config.sideBrightness,
-      floorAlign: config.floorAlign,
-      innerParallax: this.reducedMotion || this.lowPower ? 0 : config.innerParallax,
-      hoverNudge: this.reducedMotion ? 0 : config.hover.nudge,
       hoverBrighten: config.hover.brighten,
       hoverUnblur: this.lowPower ? 0 : config.hover.unblur,
     }
@@ -471,7 +478,8 @@ export class CarouselEngine {
     }
 
     const style = root.style
-    style.setProperty('--hc-w', `${slideW}px`)
+    // Each element is its own share of the panorama plus half a seam on either side.
+    style.setProperty('--hc-w', `${Math.round(slideW * (1 + config.seam))}px`)
     style.setProperty('--hc-h', `${slideH}px`)
     style.setProperty('--hc-cy', `${Math.round(height * layout.centerY)}px`)
     root.dataset.layout = name
@@ -482,7 +490,7 @@ export class CarouselEngine {
     const { root, config } = this.o
     const fade = featherSizes(config.fadeStrength)
     const style = root.style
-    style.setProperty('--hc-mask-x', featherGradient('right', fade.x, fade.x))
+    style.setProperty('--hc-mask-x', seamGradient(config.seam / (1 + config.seam)))
     style.setProperty('--hc-mask-y', featherGradient('bottom', fade.top, fade.bottom))
     style.setProperty('--hc-mask-reflection', reflectionGradient(fade.bottom, config.reflectionHeight))
     style.setProperty('--hc-reflection-h', `${config.reflectionHeight * 100}%`)
@@ -619,7 +627,7 @@ export class CarouselEngine {
   }
 
   private get dragDistance() {
-    return Math.max(80, this.params.spacing) / Math.max(0.1, this.o.config.dragSensitivity)
+    return Math.max(80, this.params.pitch) / Math.max(0.1, this.o.config.dragSensitivity)
   }
 
   private onClick = (e: MouseEvent) => {
