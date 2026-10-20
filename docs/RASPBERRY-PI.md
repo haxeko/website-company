@@ -83,6 +83,17 @@ cd ~/villa-nest
 bash deploy/install-pi.sh --no-build
 ```
 
+### Pi đã có website khác (ví dụ một dashboard)
+
+Script không động vào các site khác trong `/etc/nginx/sites-enabled/`, chỉ gỡ trang "Welcome to nginx" mặc định.
+Nếu cổng 80 đã có site khác làm trang mặc định, script sẽ báo — khi đó cài VILLA NEST ở cổng riêng:
+
+```bash
+PORT=8080 bash deploy/install-pi.sh      # → http://<IP-của-Pi>:8080/
+```
+
+Nếu cấu hình mới bị lỗi, script tự gỡ `villa-nest` ra để các site khác vẫn chạy bình thường.
+
 ## Mở website
 
 - Trên chính Pi: `http://localhost/`
@@ -125,7 +136,7 @@ sudo reboot
 
 | Hiện tượng                                  | Cách xử lý                                                                         |
 | ------------------------------------------- | ---------------------------------------------------------------------------------- |
-| Vẫn thấy trang "Welcome to nginx"           | `sudo rm /etc/nginx/sites-enabled/default && sudo systemctl reload nginx`          |
+| Vẫn thấy trang "Welcome to nginx"           | Thường do script dừng sớm (chưa có Node.js → chưa có `dist/`). Cài Node.js (bước 2) rồi chạy lại script; xoá cache trình duyệt (Ctrl + F5) |
 | Máy khác không vào được                     | Kiểm tra cùng mạng; thử bằng IP thay cho `.local`; nếu có bật tường lửa: `sudo ufw allow 80` |
 | `npm ci` báo hết bộ nhớ (Pi 2 GB)           | Tăng swap: sửa `CONF_SWAPSIZE=1024` trong `/etc/dphys-swapfile`, rồi `sudo systemctl restart dphys-swapfile` — hoặc dùng Cách B |
 | Script báo Node.js quá cũ                   | Làm lại bước 2 (NodeSource 22.x)                                                   |
