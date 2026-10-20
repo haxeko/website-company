@@ -13,7 +13,17 @@ import { carouselConfig } from '../../config/animation'
 import type { Slide } from '../../data/slides'
 import { useI18n } from '../../i18n/context'
 import { getQualityHint } from '../../utils/device'
-import { ControlScreen, HomeSheet, SceneEffects, useHomeState } from '../SmartHome'
+import {
+  ControlScreen,
+  Curtain,
+  HomeSheet,
+  HomeWall,
+  SceneEffects,
+  snowDensity,
+  useHomeAtmosphere,
+  useHomeState,
+  windStrength,
+} from '../SmartHome'
 import { CarouselEngine } from './CarouselEngine'
 import { HeroCopy } from './HeroCopy'
 import { SlideImage } from './SlideImage'
@@ -71,7 +81,8 @@ export function HeroCarousel({
   const engineRef = useRef<CarouselEngine | null>(null)
   const [active, setActive] = useState(initialIndex)
   const [ready, setReady] = useState(false)
-  const { home, toggle, nudgeTemp } = useHomeState()
+  const { home, toggle, setLevel, nudgeTemp } = useHomeState()
+  useHomeAtmosphere(rootRef, home)
   const homeIndex = slides.findIndex((slide) => slide.screen)
   const homeInView = ready && active === homeIndex
   const [sheetOpen, setSheetOpen] = useState(false)
@@ -171,7 +182,14 @@ export function HeroCarousel({
   )
 
   return (
-    <section ref={rootRef} className="hc" aria-roledescription="carousel" aria-label={t.carousel}>
+    <section
+      ref={rootRef}
+      className="hc"
+      data-wind={home.fan.on || undefined}
+      data-sheet={(sheetOpen && homeInView) || undefined}
+      aria-roledescription="carousel"
+      aria-label={t.carousel}
+    >
       <div className="hc-atmosphere" aria-hidden="true">
         <div className="hc-ambient" data-atmosphere>
           {slides.map((slide, i) => (
@@ -186,7 +204,9 @@ export function HeroCarousel({
           ))}
         </div>
         <div className="hc-light" data-atmosphere />
-        <div className="sh-room" data-on={(home.lights && homeInView) || undefined} />
+        <div className="sh-room" data-on={homeInView || undefined}>
+          <i />
+        </div>
         <div className="hc-floor" data-atmosphere />
       </div>
 
@@ -203,29 +223,28 @@ export function HeroCarousel({
             aria-roledescription="slide"
             aria-label={`${slide.copy[lang].title} (${index + 1} / ${slides.length})`}
           >
-            <div className="hc-slide__reveal" data-reveal>
-              <div className="hc-slide__frame" data-frame data-lights={(slide.screen && home.lights) || undefined}>
+            <div className="hc-slide__reveal" data-reveal data-home={slide.screen ? true : undefined}>
+              <div className="hc-slide__frame" data-frame>
                 <SlideImage
                   slide={slide}
                   alt={slide.copy[lang].alt}
                   priority={copy === 0 && index === initialIndex}
                 />
                 {slide.screen && (
-                  <>
-                    <div className="sh-warm" data-on={home.lights || undefined} />
-                    <ControlScreen
-                      home={home}
-                      onToggle={toggle}
-                      onNudgeTemp={nudgeTemp}
-                      rect={slide.screen}
-                      onExpand={openSheet}
-                    />
-                  </>
+                  <HomeWall
+                    rect={slide.screen}
+                    home={home}
+                    onToggle={toggle}
+                    onSetLevel={setLevel}
+                    onNudgeTemp={nudgeTemp}
+                    onExpand={openSheet}
+                  />
                 )}
               </div>
               <div className="hc-slide__reflection" aria-hidden="true">
                 <div className="hc-slide__mirror">
                   <SlideImage slide={slide} alt="" />
+                  {slide.screen && <Curtain />}
                 </div>
               </div>
             </div>
@@ -241,9 +260,15 @@ export function HeroCarousel({
 
       {homeIndex >= 0 && (
         <>
-          <SceneEffects snow={home.ac} wind={home.fan} visible={homeInView} />
+          <SceneEffects snow={snowDensity(home)} wind={windStrength(home)} visible={homeInView} />
           <HomeSheet open={sheetOpen && homeInView} onClose={closeSheet}>
-            <ControlScreen home={home} onToggle={toggle} onNudgeTemp={nudgeTemp} />
+            <ControlScreen
+              variant="sheet"
+              home={home}
+              onToggle={toggle}
+              onSetLevel={setLevel}
+              onNudgeTemp={nudgeTemp}
+            />
           </HomeSheet>
         </>
       )}

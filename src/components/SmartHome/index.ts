@@ -1,4 +1,6 @@
 export { ControlScreen } from './ControlScreen'
-export { SceneEffects } from './SceneEffects'
-export { useHomeState } from './homeState'
 export { HomeSheet } from './HomeSheet'
+export { Curtain, HomeWall } from './HomeWall'
+export { SceneEffects } from './SceneEffects'
+export { snowDensity, useHomeState, windStrength } from './homeState'
+export { useHomeAtmosphere } from './useHomeAtmosphere'

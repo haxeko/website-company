@@ -10,7 +10,7 @@ phòng — cuối ảnh này ăn khớp với đầu ảnh kia — và xoay đ�
 
 <img src="docs/screenshot-mobile.jpg" width="260" alt="VILLA NEST — iPhone">
 
-![Smart Home — đèn, máy lạnh và quạt đang bật](docs/screenshot-smart-home.jpg)
+![Smart Home — đèn, máy lạnh, quạt và rèm đang bật](docs/screenshot-smart-home.jpg)
 
 ## Điểm nổi bật
 
@@ -24,16 +24,22 @@ phòng — cuối ảnh này ăn khớp với đầu ảnh kia — và xoay đ�
   mỗi lĩnh vực có tiêu đề serif lớn với dòng nghiêng màu vàng, mô tả và nút "Khám phá"; chữ đổi theo hiệu ứng khi
   chuyển cảnh; thanh điều hướng 01 · 02 · 03 kèm phụ đề; nút mũi tên dọc với bộ đếm; gợi ý "Click · Vuốt · Phím mũi tên".
 - **Song ngữ**: tiếng Việt mặc định, chọn tiếng Anh bằng cờ (trình duyệt nhớ lựa chọn), hoặc mở `?lang=en`.
-- **Bảng điều khiển nhà thông minh bấm được** (cảnh Smart Home): màn hình trên tường là giao diện thật, giờ chạy theo
-  đồng hồ máy, gồm các thẻ **Đèn**, **Máy lạnh**, **Quạt** và **Máy giặt** (đang giặt, đếm ngược số phút còn lại):
-  - bật **đèn** → cả bức tường sáng lên trong ánh sáng ấm, có quầng sáng hắt từ trên xuống;
-  - bật **máy lạnh** → nhiệt độ hiện bằng số 7 thanh như màn hình máy lạnh (nút − / + chỉnh 16–30 °C) và bông tuyết
-    mờ nhẹ rơi khắp màn hình;
-  - bật **quạt** → lá cây bay ngang qua màn hình; nếu máy lạnh đang bật thì không có lá mà bông tuyết bị gió thổi
-    sang phải.
-  Hiệu ứng tuyết / lá chỉ chạy khi Smart Home đang ở giữa (canvas, dừng hẳn khi tắt hết). Trên điện thoại màn hình
-  trên tường quá nhỏ để bấm, nên chạm vào nó sẽ mở bảng điều khiển phóng to ở cuối màn hình. Người dùng bật
-  "giảm chuyển động" chỉ thấy bảng đổi trạng thái và ánh sáng, không có tuyết / lá.
+- **Bảng điều khiển nhà thông minh bấm được** (cảnh Smart Home): màn hình trên tường là giao diện thật (giờ chạy theo
+  đồng hồ máy), phía trên có dòng **"Chạm để trải nghiệm"** nhấp nhô mời bấm. Bốn thẻ **Đèn**, **Máy lạnh**, **Quạt**,
+  **Rèm cửa**: chạm vào thẻ để bật / tắt nhanh; đèn, quạt, rèm có **thanh kéo** chỉnh mức 1–100 % (kéo thanh cũng tự
+  bật thiết bị). Lần đầu bật ở mức **69 %**; tắt rồi bật lại thì về đúng mức trước khi tắt — các mức và nhiệt độ được
+  trình duyệt nhớ cả cho lần truy cập sau (mỗi lần mở trang mọi thiết bị đều đang tắt).
+  - **Đèn**: bức tường sáng dần lên / tối dần đi (~2 giây) trong ánh sáng ấm, độ sáng theo thanh kéo.
+  - **Máy lạnh**: nhiệt độ hiện bằng số 7 thanh, nút − / + chỉnh 16–30 °C; bông tuyết mờ nhẹ rơi khắp màn hình —
+    **càng lạnh tuyết càng dày**.
+  - **Quạt**: lá cây bay ngang màn hình; nếu máy lạnh đang bật thì không có lá mà bông tuyết bị gió thổi sang phải —
+    **quạt càng mạnh, lá và tuyết bay càng nhanh** (cánh quạt trên thẻ cũng quay nhanh hơn). Tắt quạt thì lá rơi xuống.
+  - **Rèm cửa**: hai tấm rèm voan kéo vào từ hai bên (chạy chậm như rèm motor), mức trên thanh là độ đóng. Trên máy
+    tính rèm che cả bảng điều khiển nhưng vẫn **thấy bảng mờ mờ** qua lớp vải và vẫn bấm xuyên qua được; trên điện
+    thoại rèm nằm phía sau, **không che bảng điều khiển**.
+  Tuyết / lá chỉ chạy khi Smart Home đang ở giữa (canvas, dừng hẳn khi tắt hết). Trên điện thoại màn hình trên tường
+  quá nhỏ để bấm, nên chạm vào nó sẽ mở bảng điều khiển phóng to ở cuối màn hình. Người dùng bật "giảm chuyển động"
+  chỉ thấy bảng đổi trạng thái, ánh sáng và rèm, không có tuyết / lá.
 - **Âm thanh chuyển cảnh**: không có nhạc nền; mỗi lần chuyển cảnh có một tiếng "xẹt" nhẹ như gió thổi, âm lượng
   nhỏ, lướt theo hướng chuyển (trái → phải hoặc ngược lại). Tổng hợp ngay trong trình duyệt bằng Web Audio (không cần
   file âm thanh, chạy offline). Mặc định bật, kêu từ lần bấm / chạm đầu tiên (trình duyệt không cho phát âm thanh
@@ -132,7 +138,7 @@ static server nào); mở trực tiếp `dist/index.html` bằng `file://` sẽ 
     │   │   ├── HeroCopy.tsx        Khối chữ: số thứ tự, tiêu đề serif, mô tả, nút "Khám phá"
     │   │   ├── SlideImage.tsx      <picture> AVIF/WebP, art-direction ngang/dọc
     │   │   └── HeroCarousel.css
-    │   ├── SmartHome/          Bảng điều khiển trên tường (ControlScreen), số 7 thanh, tuyết / lá (SceneEffects)
+    │   ├── SmartHome/          Bảng điều khiển (ControlScreen), tường: ánh sáng, rèm, lời mời (HomeWall), tuyết / lá (SceneEffects)
     │   ├── Header/             Logo, slogan, nút âm thanh, chọn ngôn ngữ
     │   └── Loader/             Vạch tiến trình tối giản khi ảnh đang tải
     ├── styles/                 tokens.css (màu, font, khoảng cách) · global.css

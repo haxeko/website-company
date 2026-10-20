@@ -551,7 +551,8 @@ export class CarouselEngine {
   private onPointerDown = (e: PointerEvent) => {
     if (!this.enabled || !this.started || !e.isPrimary) return
     if (e.pointerType === 'mouse' && e.button !== 0) return
-    if ((e.target as Element | null)?.closest('button, a')) return
+    // Controls handle their own pointer (e.g. a slider in the Smart Home screen).
+    if ((e.target as Element | null)?.closest('button, a, input, select, textarea, [data-no-drag]')) return
     this.drag = {
       pointerId: e.pointerId,
       startX: e.clientX,
@@ -620,8 +621,11 @@ export class CarouselEngine {
     const moved = p - origin
     let target = Math.round(p)
     if (Math.abs(velocity) > this.o.config.flickVelocity) {
-      // A flick goes to the next slide in the flick direction.
-      target = velocity > 0 ? Math.ceil(p) : Math.floor(p)
+      // A flick goes on to the next slide in the flick direction — but never further than
+      // the distance actually dragged, rounded: a long fast swipe on a phone (wider than
+      // one slide) still moves one slide, not two.
+      const reach = Math.max(1, Math.round(Math.abs(moved)))
+      target = clamp(velocity > 0 ? Math.ceil(p) : Math.floor(p), origin - reach, origin + reach)
     } else if (Math.abs(moved) >= SNAP_THRESHOLD && Math.abs(moved) < 1) {
       // A slow but deliberate drag past the threshold still changes slide.
       target = origin + Math.sign(moved)
