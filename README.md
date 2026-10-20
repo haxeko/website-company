@@ -10,6 +10,8 @@ phòng — cuối ảnh này ăn khớp với đầu ảnh kia — và xoay đ�
 
 <img src="docs/screenshot-mobile.jpg" width="260" alt="VILLA NEST — iPhone">
 
+![Smart Home — đèn, máy lạnh và quạt đang bật](docs/screenshot-smart-home.jpg)
+
 ## Điểm nổi bật
 
 - **Ba ảnh hòa làm một**: các tấm ảnh được "bản lề" vào nhau trên một đa giác nhìn từ bên trong (tường cong), nên
@@ -22,6 +24,16 @@ phòng — cuối ảnh này ăn khớp với đầu ảnh kia — và xoay đ�
   mỗi lĩnh vực có tiêu đề serif lớn với dòng nghiêng màu vàng, mô tả và nút "Khám phá"; chữ đổi theo hiệu ứng khi
   chuyển cảnh; thanh điều hướng 01 · 02 · 03 kèm phụ đề; nút mũi tên dọc với bộ đếm; gợi ý "Click · Vuốt · Phím mũi tên".
 - **Song ngữ**: tiếng Việt mặc định, chọn tiếng Anh bằng cờ (trình duyệt nhớ lựa chọn), hoặc mở `?lang=en`.
+- **Bảng điều khiển nhà thông minh bấm được** (cảnh Smart Home): màn hình trên tường là giao diện thật, giờ chạy theo
+  đồng hồ máy, gồm các thẻ **Đèn**, **Máy lạnh**, **Quạt** và **Máy giặt** (đang giặt, đếm ngược số phút còn lại):
+  - bật **đèn** → cả bức tường sáng lên trong ánh sáng ấm, có quầng sáng hắt từ trên xuống;
+  - bật **máy lạnh** → nhiệt độ hiện bằng số 7 thanh như màn hình máy lạnh (nút − / + chỉnh 16–30 °C) và bông tuyết
+    mờ nhẹ rơi khắp màn hình;
+  - bật **quạt** → lá cây bay ngang qua màn hình; nếu máy lạnh đang bật thì không có lá mà bông tuyết bị gió thổi
+    sang phải.
+  Hiệu ứng tuyết / lá chỉ chạy khi Smart Home đang ở giữa (canvas, dừng hẳn khi tắt hết). Trên điện thoại màn hình
+  trên tường quá nhỏ để bấm, nên chạm vào nó sẽ mở bảng điều khiển phóng to ở cuối màn hình. Người dùng bật
+  "giảm chuyển động" chỉ thấy bảng đổi trạng thái và ánh sáng, không có tuyết / lá.
 - **Âm thanh chuyển cảnh**: không có nhạc nền; mỗi lần chuyển cảnh có một tiếng "xẹt" nhẹ như gió thổi, âm lượng
   nhỏ, lướt theo hướng chuyển (trái → phải hoặc ngược lại). Tổng hợp ngay trong trình duyệt bằng Web Audio (không cần
   file âm thanh, chạy offline). Mặc định bật, kêu từ lần bấm / chạm đầu tiên (trình duyệt không cho phát âm thanh
@@ -118,6 +130,7 @@ static server nào); mở trực tiếp `dist/index.html` bằng `file://` sẽ 
     │   │   ├── HeroCopy.tsx        Khối chữ: số thứ tự, tiêu đề serif, mô tả, nút "Khám phá"
     │   │   ├── SlideImage.tsx      <picture> AVIF/WebP, art-direction ngang/dọc
     │   │   └── HeroCarousel.css
+    │   ├── SmartHome/          Bảng điều khiển trên tường (ControlScreen), số 7 thanh, tuyết / lá (SceneEffects)
     │   ├── Header/             Logo, slogan, nút âm thanh, chọn ngôn ngữ
     │   └── Loader/             Vạch tiến trình tối giản khi ảnh đang tải
     ├── styles/                 tokens.css (màu, font, khoảng cách) · global.css
@@ -167,6 +180,10 @@ trong suốt) vào `src/assets/brand/` với tên `logo.svg`, `logo.png` hoặc 
 - Nút "Khám phá" hiện trỏ tới link riêng của lĩnh vực đó (`#construction`…); thay `ctaHref` bằng trang dự án thật khi có.
 
 ## Thay ảnh
+
+> Ảnh Smart Home chỉ có mặt kính tối ở chỗ màn hình; vị trí màn hình (pixel trên ảnh gốc) nằm ở
+> `images.smart-home.screen` trong `src/data/media.json`, website tự quy đổi theo cách cắt ảnh ngang / dọc. Nếu thay
+> ảnh này, cập nhật lại `sourceSize` và `screen` (hoặc xoá `screen` để không hiện bảng điều khiển).
 
 1. Đặt ảnh gốc chất lượng cao vào `assets-src/`. Có hai loại nguồn:
    - **Ảnh riêng** cho một lĩnh vực (`images.<id>.source`), ví dụ `smart-home.jpg`;

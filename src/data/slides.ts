@@ -30,12 +30,25 @@ export interface SlideCopy {
   alt: string
 }
 
+/** A rectangle inside the slide image, in % of the panel (left, top, width, height). */
+export interface PanelRect {
+  left: number
+  top: number
+  width: number
+  height: number
+  /** Corner radius, in % of the rectangle's own width and height. */
+  radiusX: number
+  radiusY: number
+}
+
 export interface Slide {
   id: MediaId
   copy: Record<Lang, SlideCopy>
   /** Where the call-to-action leads (replace with the real project page when it exists). */
   ctaHref: string
   image: SlideImageSet
+  /** Live screen drawn over the photo (Smart Home), per layout. */
+  screen?: { landscape: PanelRect; portrait: PanelRect }
   credit: { author: string; url: string }
 }
 
@@ -59,6 +72,48 @@ function imageSet(id: MediaId): SlideImageSet {
     fallback: `${assetBase}/${id}-${fallbackWidth}.webp`,
     ambient: `${assetBase}/${id}-ambient.webp`,
   }
+}
+
+/**
+ * Maps a rectangle given in source-image pixels onto the delivered panel, using the same
+ * crop as scripts/optimize-images.mjs (coverCrop), so the live screen lands exactly on the
+ * dark glass in the photo.
+ */
+function placeOnPanel(id: MediaId, layout: 'landscape' | 'portrait'): PanelRect | undefined {
+  const cfg = media.images[id] as {
+    sourceSize?: number[]
+    focus: number[]
+    portraitFocusX?: number
+    screen?: { x: number; y: number; width: number; height: number; radius: number }
+  }
+  if (!cfg.screen || !cfg.sourceSize) return undefined
+  const [width, height] = cfg.sourceSize
+  const { landscapeAspect, portraitAspect, seam } = media.geometry
+  const aspect = (layout === 'landscape' ? landscapeAspect : portraitAspect) * (1 + seam)
+  const [fx, fy] = layout === 'landscape' ? cfg.focus : [cfg.portraitFocusX ?? 0.5, 0.5]
+  let crop
+  if (width / height > aspect) {
+    const w = Math.round(height * aspect)
+    crop = { left: Math.round((width - w) * fx), top: 0, width: w, height }
+  } else {
+    const h = Math.round(width / aspect)
+    crop = { left: 0, top: Math.round((height - h) * fy), width, height: h }
+  }
+  const { x, y, width: sw, height: sh, radius } = cfg.screen
+  return {
+    left: ((x - crop.left) / crop.width) * 100,
+    top: ((y - crop.top) / crop.height) * 100,
+    width: (sw / crop.width) * 100,
+    height: (sh / crop.height) * 100,
+    radiusX: (radius / sw) * 100,
+    radiusY: (radius / sh) * 100,
+  }
+}
+
+function screenOf(id: MediaId): Slide['screen'] {
+  const landscape = placeOnPanel(id, 'landscape')
+  const portrait = placeOnPanel(id, 'portrait')
+  return landscape && portrait ? { landscape, portrait } : undefined
 }
 
 export const slides: Slide[] = [
@@ -90,6 +145,7 @@ export const slides: Slide[] = [
       },
     },
     image: imageSet('smart-home'),
+    screen: screenOf('smart-home'),
     credit: {
       author: 'HUUM (stone wall) + VILLA NEST (control screen)',
       url: 'https://unsplash.com/photos/smart-thermostat-on-stone-wall-eJAWSL_0L98',

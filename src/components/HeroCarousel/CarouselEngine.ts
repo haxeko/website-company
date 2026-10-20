@@ -178,7 +178,11 @@ export class CarouselEngine {
     this.cleanups.push(
       listen(stage, 'pointerdown', this.onPointerDown),
       listen(stage, 'click', this.onClick, true),
-      listen(stage, 'lostpointercapture', this.onPointerUp),
+      // Only the stage losing capture ends a drag: the image that held the touch's implicit
+      // capture also reports a loss when the drag moves capture to the stage.
+      listen(stage, 'lostpointercapture', (e: PointerEvent) => {
+        if (e.target === stage) this.onPointerUp(e)
+      }),
       listen(window, 'pointermove', this.onPointerMove, { passive: true }),
       listen(window, 'pointerup', this.onPointerUp),
       listen(window, 'pointercancel', this.onPointerUp),
@@ -355,9 +359,23 @@ export class CarouselEngine {
     })
   }
 
+  /**
+   * True while the centre panel holds live controls (the Smart Home screen). The camera
+   * then stops tilting with the mouse: any 3D rotation makes the browser resample the
+   * panel, which softens the small type on the screen.
+   */
+  private liveInCentre() {
+    const centre = this.o.slides[mod(Math.round(this.state.progress), this.count)]
+    return Boolean(centre?.querySelector('[data-live]'))
+  }
+
   private onSettled = () => {
     this.tween = null
     this.evaluatePerformance()
+    if (this.tilt && this.liveInCentre()) {
+      this.pointerTo.x(0)
+      this.pointerTo.y(0)
+    }
     // Keep the numbers small; the visual state is identical modulo `count`.
     const shift = Math.floor(this.state.progress / this.count) * this.count
     if (shift !== 0 && !this.drag?.active) {
@@ -435,6 +453,9 @@ export class CarouselEngine {
       if (position !== cache.position) {
         el.dataset.position = cache.position = position
         el.setAttribute('aria-hidden', String(position !== 'center'))
+        // Live controls inside a panel (the Smart Home screen) only work in the centre;
+        // elsewhere a click goes to the panel and turns the carousel instead.
+        for (const live of el.querySelectorAll<HTMLElement>('[data-live]')) live.inert = position !== 'center'
       }
     }
 
@@ -543,8 +564,9 @@ export class CarouselEngine {
 
   private onPointerMove = (e: PointerEvent) => {
     if (this.tilt && e.pointerType === 'mouse' && !this.drag?.active) {
-      this.pointerTo.x(clamp((e.clientX / this.metrics.width) * 2 - 1, -1, 1))
-      this.pointerTo.y(clamp((e.clientY / this.metrics.height) * 2 - 1, -1, 1))
+      const still = this.liveInCentre()
+      this.pointerTo.x(still ? 0 : clamp((e.clientX / this.metrics.width) * 2 - 1, -1, 1))
+      this.pointerTo.y(still ? 0 : clamp((e.clientY / this.metrics.height) * 2 - 1, -1, 1))
     }
 
     const drag = this.drag

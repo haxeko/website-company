@@ -1,4 +1,5 @@
 import {
+  useCallback,
   useEffect,
   useEffectEvent,
   useImperativeHandle,
@@ -12,6 +13,7 @@ import { carouselConfig } from '../../config/animation'
 import type { Slide } from '../../data/slides'
 import { useI18n } from '../../i18n/context'
 import { getQualityHint } from '../../utils/device'
+import { ControlScreen, HomeSheet, SceneEffects, useHomeState } from '../SmartHome'
 import { CarouselEngine } from './CarouselEngine'
 import { HeroCopy } from './HeroCopy'
 import { SlideImage } from './SlideImage'
@@ -69,6 +71,12 @@ export function HeroCarousel({
   const engineRef = useRef<CarouselEngine | null>(null)
   const [active, setActive] = useState(initialIndex)
   const [ready, setReady] = useState(false)
+  const { home, toggle, nudgeTemp } = useHomeState()
+  const homeIndex = slides.findIndex((slide) => slide.screen)
+  const homeInView = ready && active === homeIndex
+  const [sheetOpen, setSheetOpen] = useState(false)
+  const closeSheet = useCallback(() => setSheetOpen(false), [])
+  const openSheet = useCallback(() => setSheetOpen(true), [])
   // With only three images each one is placed twice around the ring (panel k shows image
   // k % n): the panorama continues past both screen edges even while it rotates.
   const ring = useMemo(() => {
@@ -82,6 +90,7 @@ export function HeroCarousel({
 
   const handleActive = useEffectEvent((index: number) => {
     setActive(index)
+    setSheetOpen(false)
     onActiveChange?.(index)
   })
   const handleProgress = useEffectEvent((ratio: number) => onLoadProgress?.(ratio))
@@ -177,6 +186,7 @@ export function HeroCarousel({
           ))}
         </div>
         <div className="hc-light" data-atmosphere />
+        <div className="sh-room" data-on={(home.lights && homeInView) || undefined} />
         <div className="hc-floor" data-atmosphere />
       </div>
 
@@ -194,12 +204,24 @@ export function HeroCarousel({
             aria-label={`${slide.copy[lang].title} (${index + 1} / ${slides.length})`}
           >
             <div className="hc-slide__reveal" data-reveal>
-              <div className="hc-slide__frame" data-frame>
+              <div className="hc-slide__frame" data-frame data-lights={(slide.screen && home.lights) || undefined}>
                 <SlideImage
                   slide={slide}
                   alt={slide.copy[lang].alt}
                   priority={copy === 0 && index === initialIndex}
                 />
+                {slide.screen && (
+                  <>
+                    <div className="sh-warm" data-on={home.lights || undefined} />
+                    <ControlScreen
+                      home={home}
+                      onToggle={toggle}
+                      onNudgeTemp={nudgeTemp}
+                      rect={slide.screen}
+                      onExpand={openSheet}
+                    />
+                  </>
+                )}
               </div>
               <div className="hc-slide__reflection" aria-hidden="true">
                 <div className="hc-slide__mirror">
@@ -216,6 +238,15 @@ export function HeroCarousel({
         <div className="hc-scrim" />
         <div className="hc-grain" />
       </div>
+
+      {homeIndex >= 0 && (
+        <>
+          <SceneEffects snow={home.ac} wind={home.fan} visible={homeInView} />
+          <HomeSheet open={sheetOpen && homeInView} onClose={closeSheet}>
+            <ControlScreen home={home} onToggle={toggle} onNudgeTemp={nudgeTemp} />
+          </HomeSheet>
+        </>
+      )}
 
       <HeroCopy slides={slides} active={active} ready={ready} />
 

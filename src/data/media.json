@@ -54,6 +54,10 @@
   "images": {
     "smart-home": {
       "source": "smart-home.jpg",
+      "sourceSize": [
+        7008,
+        4672
+      ],
       "focus": [
         0.5,
         0.5
@@ -65,6 +69,14 @@
         "saturation": 0.92,
         "greens": 1,
         "warmth": 0.004
+      },
+      "screen": {
+        "$comment": "Where the live control screen (src/components/SmartHome) sits on the wall, in source-image pixels: the photo only has dark glass there.",
+        "x": 3239,
+        "y": 1691,
+        "width": 2122,
+        "height": 1278,
+        "radius": 14
       }
     },
     "construction": {

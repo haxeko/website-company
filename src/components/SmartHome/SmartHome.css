@@ -1,0 +1,663 @@
+/*
+ * Live control screen on the wall panel of the Smart Home photo. All sizes are in cqw
+ * (1% of the screen's own width) so the interface scales with the photo on every device.
+ */
+
+.sh-screen {
+  position: absolute;
+  top: var(--sh-l-t);
+  left: var(--sh-l-l);
+  z-index: 1;
+  width: var(--sh-l-w);
+  height: var(--sh-l-h);
+  overflow: hidden;
+  border-radius: var(--sh-l-r);
+  background:
+    radial-gradient(120% 90% at 18% 0%, #27231d 0%, transparent 58%),
+    radial-gradient(90% 80% at 100% 100%, #191b20 0%, transparent 60%),
+    #0c0d0f;
+  color: var(--c-text);
+  font-family: var(--font-sans);
+  container-type: size;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.hc[data-layout='portrait'] .sh-screen:not(.sh-screen--sheet) {
+  top: var(--sh-p-t);
+  left: var(--sh-p-l);
+  width: var(--sh-p-w);
+  height: var(--sh-p-h);
+  border-radius: var(--sh-p-r);
+}
+
+/* Glass: a faint sheen from the ceiling light, above the interface. */
+.sh-screen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background: linear-gradient(128deg, rgb(255 255 255 / 0.07) 0%, rgb(255 255 255 / 0.015) 32%, transparent 46%);
+  pointer-events: none;
+}
+
+.sh-screen__inner {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 3.4cqw;
+  padding: 4cqw 4.4cqw 4.2cqw;
+}
+
+/* Phones: the wall screen is a few centimetres wide, so a tap opens the enlarged copy. */
+.sh-screen__zoom {
+  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  border-radius: inherit;
+  cursor: zoom-in;
+}
+
+.sh-screen__zoom:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 2px;
+}
+
+@container (max-width: 240px) {
+  .sh-screen__zoom {
+    display: block;
+  }
+}
+
+/* ── Top bar ──────────────────────────────────────────────────────────── */
+
+.sh-top {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 4cqw;
+}
+
+.sh-top__time {
+  margin: 0;
+  font-size: 10cqw;
+  font-weight: 200;
+  letter-spacing: -0.02em;
+  line-height: 0.85;
+  font-variant-numeric: tabular-nums;
+}
+
+.sh-top__date {
+  margin: 1.6cqw 0 0;
+  color: var(--c-text-2);
+  font-size: 1.6cqw;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.sh-top__right {
+  text-align: right;
+}
+
+.sh-top__hello {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 4.2cqw;
+  line-height: 1;
+}
+
+.sh-top__hint {
+  margin: 1.2cqw 0 0;
+  color: rgb(200 170 120 / 0.85);
+  font-size: 1.5cqw;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+/* ── Cards ────────────────────────────────────────────────────────────── */
+
+.sh-cards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1.8cqw;
+  min-height: 0;
+}
+
+.sh-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-height: 0;
+  padding: 2.4cqw 2.2cqw;
+  overflow: hidden;
+  border: 0.15cqw solid rgb(244 240 233 / 0.08);
+  border-radius: 1.8cqw;
+  background: rgb(244 240 233 / 0.05);
+  color: rgb(244 240 233 / 0.72);
+  transition:
+    background-color 0.5s ease,
+    border-color 0.5s ease,
+    color 0.5s ease;
+}
+
+.sh-card > :not(.sh-card__hit, .sh-ac__nudge) {
+  pointer-events: none;
+}
+
+.sh-card > :is(.sh-card__icon, .sh-card__text, .sh-ac) {
+  position: relative;
+}
+
+.sh-card__hit {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  cursor: pointer;
+}
+
+.sh-card__hit:focus-visible {
+  outline: 0.3cqw solid var(--c-accent);
+  outline-offset: -0.3cqw;
+}
+
+@media (hover: hover) {
+  .sh-card:has(.sh-card__hit:hover) {
+    border-color: rgb(244 240 233 / 0.2);
+    background-color: rgb(244 240 233 / 0.085);
+  }
+}
+
+.sh-card__icon {
+  width: 5.2cqw;
+  height: 5.2cqw;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition:
+    color 0.5s ease,
+    filter 0.5s ease;
+}
+
+.sh-card__text {
+  margin-top: auto;
+}
+
+.sh-card__text b {
+  display: block;
+  color: var(--c-text);
+  font-size: 2.5cqw;
+  font-weight: 500;
+  line-height: 1.15;
+}
+
+.sh-card__text small,
+.sh-card__text em {
+  display: block;
+  margin-top: 0.8cqw;
+  font-size: 1.4cqw;
+  font-style: normal;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.sh-card__text small {
+  color: var(--c-text-2);
+}
+
+.sh-card__text em {
+  color: var(--c-accent);
+}
+
+/* Small on/off switch, top right of the toggle cards. */
+.sh-card__switch {
+  position: absolute;
+  top: 2.4cqw;
+  right: 2.2cqw;
+  width: 4.6cqw;
+  height: 2.6cqw;
+  border-radius: 2cqw;
+  background: rgb(244 240 233 / 0.16);
+  transition: background-color 0.4s ease;
+}
+
+.sh-card__switch::after {
+  content: '';
+  position: absolute;
+  top: 0.35cqw;
+  left: 0.35cqw;
+  width: 1.9cqw;
+  height: 1.9cqw;
+  border-radius: 50%;
+  background: var(--c-text);
+  transition: translate 0.4s var(--ease-out);
+}
+
+.sh-card[data-on] .sh-card__switch {
+  background: var(--c-accent);
+}
+
+.sh-card[data-on] .sh-card__switch::after {
+  translate: 2cqw 0;
+}
+
+/* Lights */
+.sh-card[data-kind='lights'][data-on] {
+  border-color: rgb(236 196 136 / 0.6);
+  background: linear-gradient(160deg, rgb(255 196 120 / 0.36), rgb(200 170 120 / 0.1));
+  color: #ffdba6;
+}
+
+.sh-card[data-kind='lights'][data-on] .sh-card__icon {
+  filter: drop-shadow(0 0 1.2cqw rgb(255 196 120 / 0.9));
+}
+
+/* Air-con */
+.sh-card[data-kind='ac'][data-on] {
+  border-color: rgb(150 210 245 / 0.5);
+  background: linear-gradient(160deg, rgb(130 200 240 / 0.26), rgb(130 200 240 / 0.05));
+}
+
+.sh-ac {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5cqw;
+}
+
+.sh-seg {
+  display: inline-flex;
+  gap: 0.5cqw;
+}
+
+.sh-seg__digit {
+  width: 4.5cqw;
+  height: 7.5cqw;
+  overflow: visible;
+}
+
+.sh-seg__digit polygon {
+  fill: rgb(170 225 255 / 0.07);
+  transition:
+    fill 0.3s ease,
+    filter 0.3s ease;
+}
+
+.sh-seg__digit polygon[data-lit] {
+  fill: rgb(244 240 233 / 0.28);
+}
+
+.sh-card[data-on] .sh-seg__digit polygon[data-lit] {
+  fill: #c9ecff;
+  filter: drop-shadow(0 0 0.5cqw rgb(120 200 255 / 0.95));
+}
+
+.sh-ac__unit {
+  margin-top: 0.4cqw;
+  color: rgb(201 236 255 / 0.85);
+  font-size: 1.8cqw;
+}
+
+.sh-card:not([data-on]) .sh-ac__unit {
+  color: rgb(244 240 233 / 0.3);
+}
+
+.sh-ac__nudge {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  gap: 0.9cqw;
+  margin-top: 1.8cqw;
+  transition: opacity 0.4s ease;
+}
+
+.sh-ac__nudge button {
+  display: grid;
+  place-items: center;
+  width: 3.8cqw;
+  height: 3.8cqw;
+  border: 0.15cqw solid rgb(244 240 233 / 0.35);
+  border-radius: 50%;
+  color: var(--c-text);
+  font-size: 2.4cqw;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.sh-ac__nudge button:focus-visible {
+  outline: 0.3cqw solid var(--c-accent);
+}
+
+.sh-ac__nudge button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+@media (hover: hover) {
+  .sh-ac__nudge button:not(:disabled):hover {
+    border-color: rgb(201 236 255 / 0.9);
+    background: rgb(201 236 255 / 0.14);
+  }
+}
+
+/* Off: the buttons fade and let a tap through to the card, which turns the air-con on. */
+.sh-card:not([data-on]) .sh-ac__nudge {
+  opacity: 0.25;
+  pointer-events: none;
+}
+
+/* Fan */
+.sh-card[data-kind='fan'][data-on] {
+  border-color: rgb(200 170 120 / 0.5);
+  background: linear-gradient(160deg, rgb(200 170 120 / 0.24), rgb(200 170 120 / 0.06));
+  color: #f0dcb4;
+}
+
+.sh-fan,
+.sh-drum {
+  transform-box: view-box;
+}
+
+.sh-fan {
+  transform-origin: 24px 24px;
+}
+
+.sh-card[data-on] .sh-fan {
+  animation: sh-spin 0.9s linear infinite;
+}
+
+/* Washer: status only (not a button). */
+.sh-drum {
+  transform-origin: 24px 28px;
+}
+
+.sh-card[data-kind='washer'][data-on] .sh-drum {
+  animation: sh-spin 2.2s linear infinite;
+}
+
+.sh-card[data-kind='washer'] .sh-card__text {
+  margin-bottom: 1.6cqw;
+}
+
+.sh-card__bar {
+  position: absolute;
+  right: 2.2cqw;
+  bottom: 2.1cqw;
+  left: 2.2cqw;
+  height: 0.5cqw;
+  overflow: hidden;
+  border-radius: 0.5cqw;
+  background: rgb(244 240 233 / 0.12);
+}
+
+.sh-card__bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--c-accent);
+  transition: width 1s ease;
+}
+
+@keyframes sh-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+/* ── Warm light over the room when the lights are on ─────────────────── */
+
+/*
+ * The photo itself is lifted and warmed with a filter on the <img> only (a blend mode over
+ * the whole panel would flatten the live screen into a low-resolution surface)…
+ */
+.hc-slide__frame .hc-slide__img {
+  transition: filter 1.4s var(--ease-out);
+}
+
+.hc-slide__frame[data-lights] .hc-slide__img {
+  filter: brightness(1.32) sepia(0.22) saturate(1.12);
+}
+
+/* …and a pool of warm light falls from the wall-washers above the panel. */
+.sh-warm {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(40% 60% at 61% 6%, rgb(255 196 130 / 0.32), transparent 72%),
+    radial-gradient(70% 90% at 52% 30%, rgb(255 176 104 / 0.1), transparent 75%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1.4s var(--ease-out);
+}
+
+.sh-warm[data-on] {
+  opacity: 1;
+}
+
+/* Room-scale glow behind the panorama, so the light seems to spill into the space. */
+.sh-room {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(60% 55% at 50% 40%, rgb(255 176 100 / 0.16), transparent 70%);
+  opacity: 0;
+  transition: opacity 1.6s var(--ease-out);
+}
+
+.sh-room[data-on] {
+  opacity: 1;
+}
+
+/* ── Enlarged copy for phones ─────────────────────────────────────────── */
+
+.sh-sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+}
+
+.sh-sheet[data-open] {
+  pointer-events: auto;
+}
+
+.sh-sheet__backdrop {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgb(10 10 12 / 0.82), rgb(10 10 12 / 0.12) 62%, transparent);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.sh-sheet__panel {
+  position: absolute;
+  bottom: max(16px, env(safe-area-inset-bottom, 0px));
+  left: 50%;
+  width: min(92vw, 440px);
+  opacity: 0;
+  translate: -50% 28px;
+  transition:
+    opacity 0.45s var(--ease-out),
+    translate 0.6s var(--ease-out);
+}
+
+.sh-sheet[data-open] .sh-sheet__backdrop {
+  opacity: 1;
+}
+
+.sh-sheet[data-open] .sh-sheet__panel {
+  opacity: 1;
+  translate: -50% 0;
+}
+
+.sh-sheet__close {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  margin: 0 0 6px auto;
+  color: rgb(244 240 233 / 0.85);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.sh-sheet__close svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+}
+
+.sh-sheet__screen {
+  position: relative;
+  aspect-ratio: 1 / 1.05;
+  padding: 7px;
+  border-radius: 18px;
+  background: linear-gradient(160deg, #3a332a, #121214 40%, #0a0a0b);
+  box-shadow:
+    0 30px 80px rgb(0 0 0 / 0.6),
+    0 0 0 1px rgb(244 240 233 / 0.1);
+}
+
+.sh-screen.sh-screen--sheet {
+  top: 7px;
+  left: 7px;
+  width: calc(100% - 14px);
+  height: calc(100% - 14px);
+  border-radius: 12px;
+}
+
+.sh-screen--sheet .sh-screen__inner {
+  gap: 3.4cqw;
+  padding: 5cqw;
+}
+
+.sh-screen--sheet .sh-top__time {
+  font-size: 13cqw;
+}
+
+.sh-screen--sheet .sh-top__date {
+  margin-top: 2cqw;
+  font-size: 2.6cqw;
+  letter-spacing: 0.14em;
+}
+
+.sh-screen--sheet .sh-top__hello {
+  font-size: 6.2cqw;
+}
+
+.sh-screen--sheet .sh-top__hint {
+  display: none;
+}
+
+.sh-screen--sheet .sh-cards {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: 2.4cqw;
+}
+
+.sh-screen--sheet .sh-card {
+  padding: 3.4cqw;
+  border-radius: 3.4cqw;
+}
+
+.sh-screen--sheet .sh-card__icon {
+  width: 8.5cqw;
+  height: 8.5cqw;
+}
+
+.sh-screen--sheet .sh-card__text b {
+  font-size: 4.4cqw;
+}
+
+.sh-screen--sheet .sh-card__text small,
+.sh-screen--sheet .sh-card__text em {
+  margin-top: 1cqw;
+  font-size: 2.7cqw;
+  letter-spacing: 0.1em;
+}
+
+.sh-screen--sheet .sh-card__switch {
+  top: 3.4cqw;
+  right: 3.4cqw;
+  width: 8.4cqw;
+  height: 4.8cqw;
+  border-radius: 4cqw;
+}
+
+.sh-screen--sheet .sh-card__switch::after {
+  top: 0.6cqw;
+  left: 0.6cqw;
+  width: 3.6cqw;
+  height: 3.6cqw;
+}
+
+.sh-screen--sheet .sh-card[data-on] .sh-card__switch::after {
+  translate: 3.6cqw 0;
+}
+
+.sh-screen--sheet .sh-seg__digit {
+  width: 6cqw;
+  height: 10cqw;
+}
+
+.sh-screen--sheet .sh-ac__unit {
+  font-size: 3cqw;
+}
+
+.sh-screen--sheet .sh-ac__nudge {
+  gap: 2cqw;
+  margin-top: 1.6cqw;
+}
+
+.sh-screen--sheet .sh-ac__nudge button {
+  width: 8cqw;
+  height: 8cqw;
+  border-width: 1px;
+  font-size: 4.6cqw;
+}
+
+.sh-screen--sheet .sh-card__bar {
+  right: 3.4cqw;
+  bottom: 3cqw;
+  left: 3.4cqw;
+  height: 0.9cqw;
+}
+
+.sh-screen--sheet .sh-card[data-kind='washer'] .sh-card__text {
+  margin-bottom: 2.6cqw;
+}
+
+/* ── Particles (snow, leaves) ─────────────────────────────────────────── */
+
+.sh-effects {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sh-card[data-on] .sh-fan,
+  .sh-card[data-kind='washer'][data-on] .sh-drum {
+    animation: none;
+  }
+
+  .sh-warm,
+  .sh-room,
+  .sh-sheet__backdrop,
+  .sh-sheet__panel,
+  .hc-slide__frame .hc-slide__img {
+    transition-duration: 0.3s;
+  }
+}
