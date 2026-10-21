@@ -1,4 +1,4 @@
-import { useLayoutEffect, type CSSProperties, type ReactNode, type RefObject } from 'react'
+import { Fragment, useLayoutEffect, type CSSProperties, type ReactNode, type RefObject } from 'react'
 import { MultiLine } from '../../components/HeroCarousel/HeroCopy'
 import { useLineSwap } from '../../components/HeroCarousel/useLineSwap'
 import '../../components/HeroCarousel/editorial.css'
@@ -214,6 +214,21 @@ interface DeckNavProps {
   onSelect: (index: number) => void
 }
 
+/** A theme's title in its tab: at a `\n` it breaks on phones (CSS), and reads as one line elsewhere. */
+function TabTitle({ text }: { text: string }) {
+  return text.split('\n').map((part, i) => (
+    <Fragment key={i}>
+      {i > 0 && (
+        <>
+          {' '}
+          <br className="hc-nav__break" />
+        </>
+      )}
+      {part}
+    </Fragment>
+  ))
+}
+
 export function DeckNav({ label, items, active, onSelect }: DeckNavProps) {
   const { t } = useI18n()
   return (
@@ -223,7 +238,9 @@ export function DeckNav({ label, items, active, onSelect }: DeckNavProps) {
           <li key={title}>
             <button type="button" className="hc-nav__item" aria-current={i === active ? 'true' : undefined} onClick={() => onSelect(i)}>
               <span className="hc-nav__index">{pad(i + 1)}</span>
-              <span className="hc-nav__title">{title}</span>
+              <span className="hc-nav__title">
+                <TabTitle text={title} />
+              </span>
               <span className="hc-nav__subtitle">{note}</span>
             </button>
           </li>

@@ -70,15 +70,16 @@ riêng** cùng một phong cách: [`/smart-home/`](#trang-smart-home), [`/constr
     kế, chưa tới ngưỡng thì mọi thứ trượt về chỗ. Vuốt dọc vẫn cuộn trang, chạm vẫn là chạm (bật đèn, chọn vật liệu…);
     thanh trượt, tia laser và công tắc ánh sáng giữ cử chỉ của riêng chúng.
   - **Trên điện thoại** (bố cục như trang chủ): dải biểu tượng thành **một dòng chạy chậm** dưới header, **ảnh "sống" ngay
-    đầu trang**, bốn chủ đề thành **một hàng thẻ ngay dưới ảnh**, rồi đến chữ của chủ đề; thẻ vật liệu, công tắc ánh
-    sáng, thẻ tiến độ / bàn giao hiện ngay dưới hàng thẻ. Bấm **"Xem …"** thì trang **trôi tới ảnh** và mở **kịch bản ngay
-    dưới ảnh** (từng bước, bước đang chạy có vạch thời gian): ảnh và cả khối kịch bản cùng nằm trong màn hình, không bị
-    nút Zalo che (máy thấp: ảnh thu lại một chút; máy hẹp: kịch bản gọn lại — tên các bước một hàng, lời của bước đang
-    chạy ở dưới).
+    đầu trang**, bốn chủ đề thành **một hàng 4 thẻ ngay dưới ảnh, dàn đều hết chiều ngang** (tên ngắn gọn, cùng số dòng:
+    Smart Home và Nội thất một dòng, Xây dựng hai dòng), rồi đến những gì chủ đề mở ra — kịch bản, thẻ vật liệu, công tắc
+    ánh sáng, thẻ tiến độ / bàn giao — và chữ của chủ đề. Bấm **"Xem …"** thì trang **trôi tới ảnh** và mở **kịch bản ngay
+    dưới hàng thẻ** (từng bước, bước đang chạy có vạch thời gian): ảnh, hàng thẻ và cả khối kịch bản cùng nằm trong màn
+    hình, không bị nút Zalo che (máy thấp: ảnh thu lại một chút; máy hẹp: kịch bản gọn lại — tên các bước một hàng, lời
+    của bước đang chạy ở dưới; màn hình dưới 600 px thì phần trên của ảnh nằm dưới header).
 - <a id="trang-smart-home"></a>**Trang Smart Home** (`/smart-home/`, nút **"Khám phá giải pháp"** ở trang chủ): logo chính
   thức của Matter, Zigbee, Thread, Wi-Fi, Home Assistant, HomeKit; ảnh tường đá với bảng điều khiển lớn gắn tường và căn
   biệt thự sáng đèn phía sau.
-  - Bốn chủ đề *Kịch bản sống · An ninh thông minh · Tiết kiệm năng lượng · Hệ mở*, mỗi chủ đề mở một màn hình của bảng
+  - Bốn chủ đề *Kịch bản · An ninh · Năng lượng · Hệ thống*, mỗi chủ đề mở một màn hình của bảng
     (lướt ngang). Màn hình được "dán" vào mặt kính trong ảnh bằng phép chiếu phối cảnh (`matrix3d`), luôn nét và bấm được:
     **Trang chủ** (Đèn, Rèm cửa, Điều hòa, Chế độ về nhà / ngủ, An ninh — tắt đèn căn phòng tối đi, rèm voan kéo ngang
     vách kính, điều hòa có tuyết rơi nhẹ), **Kịch bản**, **An ninh** (**hai camera trực tiếp**: sân trong ban đêm và cổng
@@ -93,10 +94,10 @@ riêng** cùng một phong cách: [`/smart-home/`](#trang-smart-home), [`/constr
   than chì có lưới, cao độ +7.20 / +3.60 / ±0.00, trục A–E, chuỗi kích thước). Một **tia laser** dọc chia đôi: bên trái là
   bản vẽ, bên phải là công trình — **kéo tia laser** (hoặc phím ← → khi chọn tay nắm) để so sánh, phần trăm "đã xây" chạy
   theo.
-  - Bốn chủ đề là bốn giai đoạn: **Thiết kế & BIM** (các nét ghi chú tự vẽ ra) · **Kết cấu** (chú thích trên khung bê tông
-    thật: cột 400 × 400, dầm 300 × 600, sàn 150 mm, giàn chống) · **Tiến độ minh bạch** (thẻ công trường: % hoàn thành,
-    tuần, bốn hạng mục, nhật ký hôm nay — đổi theo tia laser) · **Bàn giao** (cả ngôi nhà hoàn thiện, đèn ấm lên, thẻ
-    bảo hành).
+  - Bốn chủ đề là bốn giai đoạn: **Thiết kế & BIM** (các nét ghi chú tự vẽ ra) · **Kết cấu vững chắc** (chú thích trên khung
+    bê tông thật: cột 400 × 400, dầm 300 × 600, sàn 150 mm, giàn chống — trên điện thoại nhãn gần mép ảnh tự mở sang phía
+    còn chỗ) · **Tiến độ minh bạch** (thẻ công trường: % hoàn thành, tuần, bốn hạng mục, nhật ký hôm nay — đổi theo tia
+    laser) · **Bàn giao kỹ càng** (cả ngôi nhà hoàn thiện, đèn ấm lên, thẻ bảo hành).
   - **"Khám phá …"**: tia laser quét một lượt từ bản vẽ sang công trình rồi về chỗ; **"Xem quá trình xây dựng"** đi qua
     bốn giai đoạn, tia laser chạy theo.
 - <a id="trang-nội-thất"></a>**Trang Nội thất** (`/interior/`, nút **"Khám phá dự án"** ở cảnh Interior) — *"Chất liệu &
@@ -285,7 +286,8 @@ trong suốt) vào `src/assets/brand/` với tên `logo.svg`, `logo.png` hoặc 
 - Nút "Khám phá" của mỗi lĩnh vực mở trang riêng của nó: `smart-home/`, `construction/`, `interior/` (`ctaHref`).
 - Số Zalo của nút chat ở góc dưới phải: `src/config/contact.ts`.
 - Chữ của từng trang (dải dưới header, bốn chủ đề, bảng điều khiển, kịch bản, thẻ, vật liệu, kích thước) nằm trong
-  `src/pages/<trang>/content.ts`, bản `vi` và `en`.
+  `src/pages/<trang>/content.ts`, bản `vi` và `en`. Trong tên chủ đề (`features`), `\n` là chỗ thẻ xuống dòng trên điện
+  thoại (trang Xây dựng: "Kết cấu\nvững chắc"); ở chỗ khác tên vẫn liền một dòng.
 
 ## Thay ảnh
 
@@ -364,7 +366,8 @@ Kiểm thử tự động bằng Playwright (Chromium) trên bản build:
   thanh chủ đề), bánh xe (một cử chỉ = một chủ đề), phím, thẻ; vuốt bằng sự kiện cảm ứng thật — trên ảnh, trên chữ,
   trên các nút của bảng điều khiển, hất nhanh, kéo ngắn trượt về, chạm vẫn bật thiết bị, vuốt dọc cuộn trang, kéo chuột
   không tính là bấm; điện thoại: ảnh + hàng thẻ ở màn hình đầu, nút "Xem …" đưa ảnh + kịch bản vào màn hình (iPhone SE
-  320×568, SE 3, 12 mini, 14 Pro, Galaxy S8, Pixel 7: kịch bản nằm trọn, không bị nút Zalo che, tên thẻ không tràn);
+  320×568, SE 3, 12 mini, 14 Pro, Galaxy S8, Pixel 7, 15 Plus: kịch bản nằm trọn, không bị nút Zalo che; 4 thẻ dàn đều hết
+  chiều ngang, tên không tràn, cùng số dòng; chú thích kết cấu không lấn nhau, không ra ngoài ảnh);
   không có âm thanh khi chuyển cảnh; nút Zalo cố định ở góc dưới phải, không đè lên thẻ / nhãn nào; camera chạy giờ; kéo tia laser (không đổi chủ đề), phím trên tay nắm; thẻ tiến độ,
   chú thích kết cấu; điểm vật liệu đều nằm trong khung, thẻ vật liệu, ánh sáng buổi tối, nét kích thước.
 - Không có lỗi console, không có request ra ngoài Internet, không có thanh cuộn ngang; chạy đúng sau Nginx với cấu hình

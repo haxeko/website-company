@@ -14,6 +14,7 @@ export interface ConstructionCopy {
   stop: string
   /** After "Explore": the laser line can be dragged. */
   tryIt: string
+  /** `\n` in a title: where the theme's tab breaks on phones (one line elsewhere). */
   features: Record<PhaseId, { title: string; note: string }>
   themes: Record<PhaseId, DeckText & { cta: string }>
   /** The two sides of the laser line, and its handle. */
@@ -57,10 +58,10 @@ const vi: ConstructionCopy = {
   stop: 'Dừng',
   tryIt: 'Kéo đường laser để xem bản vẽ trở thành công trình.',
   features: {
-    design: { title: 'Thiết kế & BIM', note: 'Bản vẽ trước, công trình sau.' },
-    structure: { title: 'Kết cấu', note: 'Vững từ móng đến mái.' },
-    progress: { title: 'Tiến độ minh bạch', note: 'Theo dõi từng tuần.' },
-    handover: { title: 'Bàn giao', note: 'Hoàn công & bảo hành.' },
+    design: { title: 'Thiết kế\n& BIM', note: 'Bản vẽ trước, công trình sau.' },
+    structure: { title: 'Kết cấu\nvững chắc', note: 'Từ móng đến mái.' },
+    progress: { title: 'Tiến độ\nminh bạch', note: 'Theo dõi từng tuần.' },
+    handover: { title: 'Bàn giao\nkỹ càng', note: 'Hoàn công & bảo hành.' },
   },
   themes: {
     design: {
@@ -159,10 +160,10 @@ const en: ConstructionCopy = {
   stop: 'Stop',
   tryIt: 'Drag the laser line to watch the drawing become a building.',
   features: {
-    design: { title: 'Design & BIM', note: 'Drawn first, then built.' },
-    structure: { title: 'Structure', note: 'Solid from footing to roof.' },
-    progress: { title: 'Transparent progress', note: 'Followed week by week.' },
-    handover: { title: 'Handover', note: 'As-built files & warranty.' },
+    design: { title: 'Design\n& BIM', note: 'Drawn first, then built.' },
+    structure: { title: 'Solid\nstructure', note: 'From footing to roof.' },
+    progress: { title: 'Transparent\nprogress', note: 'Followed week by week.' },
+    handover: { title: 'Thorough\nhandover', note: 'As-built files & warranty.' },
   },
   themes: {
     design: {

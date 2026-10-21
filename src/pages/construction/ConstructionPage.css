@@ -683,12 +683,38 @@
     left: 22px;
   }
 
+  /* (near the photo's edge, a label opens the other way) */
+  .cp-callout[data-side~='left'] .cp-callout__label {
+    right: 22px;
+    left: auto;
+  }
+
+  .cp-callout[data-side~='down'] .cp-callout__label {
+    top: 20px;
+    bottom: auto;
+  }
+
+  .cp-callout[data-side='down']::before {
+    rotate: 42deg;
+  }
+
+  .cp-callout[data-side='down left']::before {
+    rotate: 138deg;
+  }
+
+  /* (the narrowest phones: the part only, so the labels keep clear of each other) */
+  @media (max-width: 340px) {
+    .cp-callout__label small {
+      display: none;
+    }
+  }
+
   /* The cards under the tabs, in the page's flow. */
   .cp-card {
     position: relative;
     top: auto;
     right: auto;
-    order: 4;
+    order: 3;
     display: none;
     width: auto;
     margin: 0 var(--gutter);

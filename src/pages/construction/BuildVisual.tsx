@@ -42,12 +42,15 @@ const AXES: [string, number][] = [
 const DIM_Y = 1885
 /** 179 px to the metre (one storey of 3.6 m is 644 px in the photo). */
 const PX_PER_MM = 644 / 3600
-/** What the callouts point at, on the photographed frame. */
-const CALLOUTS: [number, number][] = [
-  [3299, 1560],
-  [4146, 1025],
-  [3950, 420],
-  [4700, 1387],
+/**
+ * What the callouts point at, on the photographed frame — and, on phones, which way a label
+ * opens where the photo's edge is near (otherwise up and to the right).
+ */
+const CALLOUTS: [number, number, ('left' | 'down')[]][] = [
+  [3299, 1560, []],
+  [4146, 1025, []],
+  [3950, 420, ['down', 'left']],
+  [4700, 1387, ['down', 'left']],
 ]
 
 const srcSet = (name: string, widths: number[], format: string) => widths.map((w) => `${BASE}/${name}-${w}.${format} ${w}w`).join(', ')
@@ -275,8 +278,13 @@ export function BuildVisual({ visualRef, copy, phase, sweep, overlay, storyOpen,
           </div>
 
           <div className="cp-callouts" aria-hidden={phase !== 1}>
-            {CALLOUTS.map(([x, y], i) => (
-              <div key={i} className="cp-callout" style={{ ...pct(x, y), '--i': i } as CSSProperties}>
+            {CALLOUTS.map(([x, y, side], i) => (
+              <div
+                key={i}
+                className="cp-callout"
+                style={{ ...pct(x, y), '--i': i } as CSSProperties}
+                data-side={(portrait && side.join(' ')) || undefined}
+              >
                 <i className="cp-callout__dot" />
                 <span className="cp-callout__label">
                   <b>{copy.callouts[i][0]}</b>

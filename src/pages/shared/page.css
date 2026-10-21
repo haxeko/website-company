@@ -283,6 +283,11 @@
   height: 22px;
 }
 
+/* (a title's break, for the phones' tabs) */
+.pg-nav .hc-nav__break {
+  display: none;
+}
+
 /* The themes along the bottom, with the hint: the home page's navigation (editorial.css). */
 .pg-nav {
   position: relative;
@@ -341,9 +346,9 @@
 
 @media (max-width: 760px), (orientation: portrait) and (max-width: 1024px) {
   /*
-   * As the home page on a phone: the photo first — with the story it plays right under it,
-   * once opened — then the themes as tabs, what a theme shows (a card) and its text. The stage
-   * gives its parts to the hero's column, so they can be ordered round the tabs.
+   * As the home page on a phone: the photo first, the four themes right under it as tabs
+   * across the whole width, then what a theme opens (the story, a card) and its text. The
+   * stage gives its parts to the hero's column, so they can be ordered round the tabs.
    */
   .pg-hero {
     height: auto;
@@ -409,7 +414,7 @@
 
   /* (the home page's phone sizes) */
   .pg-copy {
-    order: 5;
+    order: 4;
     width: auto;
     padding: 24px var(--gutter) 8px;
   }
@@ -470,16 +475,12 @@
     display: none;
   }
 
-  /* The four themes as tabs under the photo (and its story), in one row — short of the Zalo
-     button's corner, should the row reach the foot of the screen. */
+  /* The four themes as tabs right under the photo, side by side across the width (that high
+     up, the Zalo button never reaches them). */
   .pg-nav {
-    order: 3;
+    order: 2;
     margin: 6px var(--gutter) 0;
-    padding: 0 56px 0 0;
-  }
-
-  .pg-hero:has(.pg-story[data-open]) .pg-nav {
-    margin-top: 18px;
+    padding: 0;
   }
 
   /* Short phones: while the story plays, the photo gives it room, so both are in view. */
@@ -511,6 +512,10 @@
     text-wrap: balance;
   }
 
+  .pg-nav .hc-nav__break {
+    display: inline;
+  }
+
   @media (max-width: 340px) {
     .pg-nav .hc-nav__list {
       gap: 7px;
@@ -525,15 +530,15 @@
     display: none;
   }
 
-  /* The story the demo plays comes under the photo; what a theme shows (a card), under the tabs. */
+  /* What a theme opens (the story the demo plays, a card) comes under the tabs. */
   .pg-stage > :is([data-open], [data-on]) {
-    order: 4;
+    order: 3;
     margin-top: 16px;
   }
 
   .pg-story[data-open] {
     display: grid;
-    order: 2;
+    order: 3;
     gap: 14px;
     margin-right: var(--gutter);
     margin-left: var(--gutter);

@@ -91,10 +91,10 @@ const vi: PageCopy = {
   tryIt: 'Chạm vào bảng điều khiển để thử: đèn, rèm, điều hòa, an ninh.',
   story: { title: 'Một buổi tối ở Villa Nest', replay: 'Xem lại kịch bản' },
   features: {
-    scenes: { title: 'Kịch bản sống', note: 'Về nhà, thư giãn, ngủ ngon.' },
-    security: { title: 'An ninh thông minh', note: 'Theo dõi và kiểm soát từ xa.' },
-    energy: { title: 'Tiết kiệm năng lượng', note: 'Thông minh trong từng chuyển động.' },
-    open: { title: 'Hệ mở', note: 'Matter • Zigbee • Thread • Wi-Fi.' },
+    scenes: { title: 'Kịch bản', note: 'Về nhà, thư giãn, ngủ ngon.' },
+    security: { title: 'An ninh', note: 'Theo dõi và kiểm soát từ xa.' },
+    energy: { title: 'Năng lượng', note: 'Thông minh trong từng chuyển động.' },
+    open: { title: 'Hệ thống', note: 'Matter • Zigbee • Thread • Wi-Fi.' },
   },
   themes: {
     scenes: {
@@ -205,10 +205,10 @@ const en: PageCopy = {
   tryIt: 'Touch the panel to try it: lights, curtains, air con, security.',
   story: { title: 'An evening at Villa Nest', replay: 'Watch again' },
   features: {
-    scenes: { title: 'Living scenes', note: 'Home, unwind, sleep well.' },
-    security: { title: 'Smart security', note: 'Watch and control from anywhere.' },
-    energy: { title: 'Energy saving', note: 'Smart in every movement.' },
-    open: { title: 'Open system', note: 'Matter • Zigbee • Thread • Wi-Fi.' },
+    scenes: { title: 'Scenes', note: 'Home, unwind, sleep well.' },
+    security: { title: 'Security', note: 'Watch and control from anywhere.' },
+    energy: { title: 'Energy', note: 'Smart in every movement.' },
+    open: { title: 'System', note: 'Matter • Zigbee • Thread • Wi-Fi.' },
   },
   themes: {
     scenes: {

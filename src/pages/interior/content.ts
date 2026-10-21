@@ -113,7 +113,7 @@ const en: InteriorCopy = {
     space: { title: 'Space', note: 'Calm in every line.' },
     materials: { title: 'Materials', note: 'Stone, wood, cloth, brass.' },
     light: { title: 'Light', note: 'Morning, golden hour, evening.' },
-    bespoke: { title: 'Made to measure', note: 'Fitted to the centimetre.' },
+    bespoke: { title: 'Bespoke', note: 'Fitted to the centimetre.' },
   },
   themes: {
     space: {
