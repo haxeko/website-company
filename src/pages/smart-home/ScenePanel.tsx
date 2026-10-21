@@ -1,6 +1,7 @@
 import { useEffect, useState, type ComponentType, type CSSProperties, type ReactNode } from 'react'
 import media from '../../data/media.json'
 import { useI18n } from '../../i18n/context'
+import { pageAsset } from '../shared/pageAsset'
 import type { PageCopy, SceneId } from './content'
 import {
   AirConIcon,
@@ -250,9 +251,8 @@ const CAMS = [
   { file: 'cam-garden', mode: 'colour' },
   { file: 'cam-gate', mode: 'ir', box: { left: 3, top: 37, width: 37, height: 19 } },
 ] as const
-const CAM_BASE = `../${media.pages.publicPath}`
 const CAM_WIDTHS = Object.fromEntries(media.pages['smart-home'].extras.map(({ name, widths }) => [name, widths]))
-const camSet = (file: string, format: string) => CAM_WIDTHS[file].map((w) => `${CAM_BASE}/${file}-${w}.${format} ${w}w`).join(', ')
+const camSet = (file: string, format: string) => CAM_WIDTHS[file].map((w) => `${pageAsset(`${file}-${w}.${format}`)} ${w}w`).join(', ')
 
 /** A camera's own clock, to the second (the scene's time while the demo plays). */
 function CamClock({ clock }: { clock?: string }) {
@@ -272,7 +272,7 @@ function SecurityView({ home, copy: p, clock, onToggleArmed }: ScenePanelProps) 
           <picture>
             <source type="image/avif" srcSet={camSet(cam.file, 'avif')} sizes="(min-width: 761px) 22vw, 40vw" />
             <img
-              src={`${CAM_BASE}/${cam.file}-${CAM_WIDTHS[cam.file][0]}.webp`}
+              src={pageAsset(`${cam.file}-${CAM_WIDTHS[cam.file][0]}.webp`)}
               srcSet={camSet(cam.file, 'webp')}
               sizes="(min-width: 761px) 22vw, 40vw"
               alt=""

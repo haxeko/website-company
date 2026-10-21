@@ -1,4 +1,6 @@
+import versions from 'virtual:asset-versions/assets/slides'
 import type { Lang } from '../i18n/strings'
+import { assetUrl } from './assetUrl'
 import media from './media.json'
 
 type MediaId = keyof typeof media.images
@@ -58,10 +60,11 @@ export interface Slide {
   credit: { author: string; url: string }
 }
 
-const assetBase = `${import.meta.env.BASE_URL}${media.publicPath}`
+/** A slide photo (public/assets/slides), by file name, with its content version. */
+const asset = (file: string) => assetUrl(`${import.meta.env.BASE_URL}${media.publicPath}`, file, versions)
 
 const srcset = (name: string, widths: number[], ext: 'avif' | 'webp') =>
-  widths.map((w) => `${assetBase}/${name}-${w}.${ext} ${w}w`).join(', ')
+  widths.map((w) => `${asset(`${name}-${w}.${ext}`)} ${w}w`).join(', ')
 
 const fallbackWidth = media.landscapeWidths.find((w) => w >= 1400) ?? media.landscapeWidths.at(-1)
 
@@ -75,8 +78,8 @@ function imageSet(id: MediaId): SlideImageSet {
       avif: srcset(`${id}-portrait`, media.portraitWidths, 'avif'),
       webp: srcset(`${id}-portrait`, media.portraitWidths, 'webp'),
     },
-    fallback: `${assetBase}/${id}-${fallbackWidth}.webp`,
-    ambient: `${assetBase}/${id}-ambient.webp`,
+    fallback: asset(`${id}-${fallbackWidth}.webp`),
+    ambient: asset(`${id}-ambient.webp`),
   }
 }
 

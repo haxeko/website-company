@@ -177,7 +177,9 @@ sudo certbot --nginx -d ten-mien-cua-ban.vn      # (tuỳ chọn) bật HTTPS
 
 File [`deploy/nginx.conf`](deploy/nginx.conf) đã cấu hình sẵn: gzip, cache 1 năm cho JS/CSS/font có hash, cache 30
 ngày cho ảnh, `no-cache` cho `index.html` (triển khai bản mới là thấy ngay), header bảo mật cơ bản, và chuyển mọi URL
-lạ về trang chủ. Nếu Nginx của bạn cũ hơn 1.24 và chưa biết định dạng AVIF, thêm dòng `image/avif avif;` vào
+lạ về trang chủ. Ảnh giữ tên cố định nhưng đường dẫn có kèm mã theo nội dung file (`?v=…`, tính lúc build — xem
+`assetVersions` trong `vite.config.ts`): ảnh nào thay đổi thì địa chỉ đổi theo, nên trình duyệt hay Cloudflare không
+bao giờ ghép ảnh cũ với giao diện mới (màn hình điều khiển luôn nằm đúng trên mặt kính của ảnh). Nếu Nginx của bạn cũ hơn 1.24 và chưa biết định dạng AVIF, thêm dòng `image/avif avif;` vào
 `/etc/nginx/mime.types`.
 
 **Raspberry Pi:** xem hướng dẫn riêng [`docs/RASPBERRY-PI.md`](docs/RASPBERRY-PI.md) — có script cài tự động
@@ -219,7 +221,8 @@ static server nào); mở trực tiếp `dist/index.html` bằng `file://` sẽ 
     ├── i18n/                   Ngôn ngữ: strings.ts (chữ giao diện VI/EN), LanguageProvider
     ├── data/
     │   ├── slides.ts           ★ Nội dung song ngữ của 3 lĩnh vực (tiêu đề, mô tả, nút, link)
-    │   └── media.json          Cấu hình ảnh: kích thước, điểm lấy nét, chỉnh màu (dùng chung với script)
+    │   ├── media.json          Cấu hình ảnh: kích thước, điểm lấy nét, chỉnh màu (dùng chung với script)
+    │   └── assetUrl.ts         Đường dẫn ảnh kèm mã theo nội dung file (?v=…), để không bao giờ dính ảnh cũ trong cache
     ├── components/
     │   ├── HeroCarousel/
     │   │   ├── HeroCarousel.tsx    Markup + nạp trước ảnh + nối React với engine
@@ -311,7 +314,8 @@ trong suốt) vào `src/assets/brand/` với tên `logo.svg`, `logo.png` hoặc 
    - `grade` — chỉnh màu: `exposure`, `contrast`, `saturation`, `greens` (giảm xanh lá), `warmth`,
    - `geometry` — tỉ lệ tấm (`landscapeAspect`, `portraitAspect`) và `seam` (bề rộng dải hòa trộn),
    - `harmonize` — mức kéo màu hai mép chạm nhau về cùng tông (`strength` 0–1) và độ sâu vào trong ảnh (`reach`).
-3. Chạy `npm run images` (luôn xử lý cả ba ảnh vì các mép phụ thuộc lẫn nhau; mất vài phút).
+3. Chạy `npm run images` (luôn xử lý cả ba ảnh vì các mép phụ thuộc lẫn nhau; mất vài phút). Không cần xoá cache
+   trình duyệt hay Cloudflare: lần build sau, đường dẫn của ảnh đã đổi tự mang mã mới (`?v=…`).
    Muốn xem nhanh đường nối trước: `PANORAMA_PREVIEW=preview.jpg node scripts/optimize-images.mjs` sẽ ghép ba ảnh
    thành một tấm `preview.jpg` rồi dừng.
 4. Cập nhật mô tả `alt`, nhãn và thông tin tác giả trong `src/data/slides.ts`.

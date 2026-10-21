@@ -1,9 +1,9 @@
 import { useEffect, useRef, type CSSProperties, type PointerEvent, type ReactNode, type RefObject } from 'react'
 import media from '../../data/media.json'
+import { pageAsset } from '../shared/pageAsset'
 import { MOODS, type InteriorCopy, type MoodId } from './content'
 
 const PAGE = media.pages.interior
-const BASE = `../${media.pages.publicPath}`
 const [W, H] = PAGE.sourceSize
 const WIDTHS = PAGE.landscapeWidths
 
@@ -30,13 +30,13 @@ const DIMS: { from: [number, number]; to: [number, number] }[] = [
   { from: [1290, 1095], to: [1290, 1605] },
 ]
 
-const srcSet = (name: string, format: string) => WIDTHS.map((w) => `${BASE}/${name}-${w}.${format} ${w}w`).join(', ')
+const srcSet = (name: string, format: string) => WIDTHS.map((w) => `${pageAsset(`${name}-${w}.${format}`)} ${w}w`).join(', ')
 const at = (x: number, y: number) => ({ left: `${(x / W) * 100}%`, top: `${(y / H) * 100}%` })
 
 export function Swatch({ index, className }: { index: number; className: string }) {
   const name = SWATCHES[index]
   return name ? (
-    <img className={className} src={`${BASE}/swatch-${name}-160.webp`} alt="" decoding="async" />
+    <img className={className} src={pageAsset(`swatch-${name}-160.webp`)} alt="" decoding="async" />
   ) : (
     <i className={`${className} ip-swatch--brass`} aria-hidden="true" />
   )
@@ -97,7 +97,7 @@ export function RoomVisual({ visualRef, copy, facet, mood, selected, onSelect, w
             <source type="image/avif" srcSet={srcSet(IMAGE[m], 'avif')} sizes="100vw" />
             <source type="image/webp" srcSet={srcSet(IMAGE[m], 'webp')} sizes="100vw" />
             <img
-              src={`${BASE}/${IMAGE[m]}-1920.webp`}
+              src={pageAsset(`${IMAGE[m]}-1920.webp`)}
               alt={m === 'golden' ? alt : ''}
               decoding="async"
               fetchPriority={m === 'golden' ? 'high' : 'low'}

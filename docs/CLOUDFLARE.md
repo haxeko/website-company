@@ -103,9 +103,10 @@ Lưu lại. Cloudflare tự tạo bản ghi DNS (`CNAME … .cfargotunnel.com`, 
 - **www → tên miền chính** (để chỉ có một địa chỉ): **Rules → Redirect Rules → Create rule** → chọn mẫu
   *Redirect from WWW to Root* → Deploy.
 - **Speed → Optimization → Rocket Loader: Off** — tính năng này viết lại JavaScript, có thể làm hỏng hiệu ứng.
-- **Caching**: để mặc định. Nginx đã gửi sẵn header: `index.html` không bị cache (cập nhật là thấy ngay), file JS/CSS
-  có tên băm (cache 1 năm), ảnh slide cache 30 ngày. Khi **thay ảnh slide** (cùng tên file): **Caching →
-  Configuration → Purge Everything**.
+- **Caching**: để mặc định (*Caching Level: Standard* — đừng chọn *Ignore Query String*). Nginx đã gửi sẵn header:
+  `index.html` không bị cache (cập nhật là thấy ngay), file JS/CSS có tên băm (cache 1 năm), ảnh cache 30 ngày — đường
+  dẫn ảnh có kèm mã theo nội dung file (`…/smart-home-1920.avif?v=91ccea55f4`), nên ảnh nào thay đổi thì địa chỉ đổi
+  theo: không cần Purge sau khi cập nhật.
 
 ## Bước 6 — Kiểm tra
 
@@ -141,7 +142,7 @@ email của bạn. Khi mở trang, Cloudflare gửi mã đăng nhập vào email
 | Lỗi **1033** / tunnel *Down* | `sudo systemctl restart cloudflared`; xem log: `sudo journalctl -u cloudflared -n 50` |
 | Hiện **Welcome to nginx** | Site mặc định của Nginx còn bật: `sudo rm /etc/nginx/sites-enabled/default && sudo systemctl reload nginx` (hoặc chạy lại `deploy/install-pi.sh`) |
 | Tên miền chưa vào được, Cloudflare báo *Pending* | Nameserver chưa đổi xong ở nơi mua tên miền (bước 1.5); kiểm tra bằng `nslookup -type=ns tenmien.vn` |
-| Vẫn thấy bản cũ sau khi cập nhật | **Purge Everything** trong Cloudflare, rồi Ctrl + F5 trên trình duyệt |
+| Vẫn thấy bản cũ sau khi cập nhật | Kiểm tra Pi đã chạy bản mới (`git log -1` trong `~/villa-nest`); nếu vẫn cũ: **Purge Everything** trong Cloudflare, rồi Ctrl + F5 trên trình duyệt |
 
 ---
 

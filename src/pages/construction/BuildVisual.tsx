@@ -12,12 +12,12 @@ import {
   type RefObject,
 } from 'react'
 import media from '../../data/media.json'
+import { pageAsset } from '../shared/pageAsset'
 import { PORTRAIT_QUERY, usePortrait } from '../shared/useDeck'
 import type { ConstructionCopy } from './content'
 import { KeyIcon, TickIcon } from './icons'
 
 const PAGE = media.pages.construction
-const BASE = `../${media.pages.publicPath}`
 const [PX, , PW, PH] = PAGE.portrait.crop
 const [LW, LH] = PAGE.sourceSize
 
@@ -60,7 +60,8 @@ const CALLOUTS: [number, number, ('left' | 'down')[]][] = [
   [4700, 1387, ['down', 'left']],
 ]
 
-const srcSet = (name: string, widths: number[], format: string) => widths.map((w) => `${BASE}/${name}-${w}.${format} ${w}w`).join(', ')
+const srcSet = (name: string, widths: number[], format: string) =>
+  widths.map((w) => `${pageAsset(`${name}-${w}.${format}`)} ${w}w`).join(', ')
 
 interface LayersProps {
   name: string
@@ -78,7 +79,7 @@ function Layers({ name, widths, portraitWidths, alt, className, priority }: Laye
       <source media={PORTRAIT_QUERY} type="image/webp" srcSet={srcSet(`${name}-portrait`, portraitWidths, 'webp')} sizes="100vw" />
       <source type="image/avif" srcSet={srcSet(name, widths, 'avif')} sizes="100vw" />
       <source type="image/webp" srcSet={srcSet(name, widths, 'webp')} sizes="100vw" />
-      <img src={`${BASE}/${name}-1920.webp`} alt={alt} decoding="async" fetchPriority={priority ? 'high' : 'auto'} />
+      <img src={pageAsset(`${name}-1920.webp`)} alt={alt} decoding="async" fetchPriority={priority ? 'high' : 'auto'} />
     </picture>
   )
 }

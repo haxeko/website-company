@@ -5,12 +5,12 @@ import { SceneEffects } from '../../components/SmartHome/SceneEffects'
 import { useCurtainMotor } from '../../components/SmartHome/useHomeAtmosphere'
 import '../../components/SmartHome/linen.css'
 import media from '../../data/media.json'
+import { pageAsset } from '../shared/pageAsset'
 import { PORTRAIT_QUERY } from '../shared/useDeck'
 import { coverMapper, quadSize, quadToMatrix3d, type Point, type Quad } from './projection'
 import type { PageHome } from './usePageHome'
 
 const PAGE = media.pages['smart-home']
-const BASE = `../${media.pages.publicPath}/smart-home`
 
 interface View {
   natural: Point
@@ -29,7 +29,7 @@ const CLEARANCE = 28
 const PANEL_ASPECT = 1.5
 
 const srcSet = (name: string, widths: number[], format: string) =>
-  widths.map((w) => `${BASE}${name}-${w}.${format} ${w}w`).join(', ')
+  widths.map((w) => `${pageAsset(`smart-home${name}-${w}.${format}`)} ${w}w`).join(', ')
 
 interface HeroVisualProps {
   visualRef: RefObject<HTMLDivElement | null>
@@ -139,7 +139,7 @@ export function HeroVisual({ visualRef: ref, home, copyRef, children, visible, o
         <img
           ref={imgRef}
           className="shp-visual__img"
-          src={`${BASE}-1920.webp`}
+          src={pageAsset('smart-home-1920.webp')}
           alt={alt}
           decoding="async"
           fetchPriority="high"
