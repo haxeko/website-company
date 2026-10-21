@@ -280,7 +280,8 @@
   width: 44px;
   margin-left: -22px;
   cursor: ew-resize;
-  touch-action: none;
+  /* A finger drags it sideways; up or down, the page scrolls. */
+  touch-action: pan-y;
   /* Gone once all is built. */
   opacity: clamp(0, calc(var(--line) * 30), 1);
 }
@@ -630,10 +631,6 @@
 /* ── Phones and portrait tablets ──────────────────────────────────────── */
 
 @media (max-width: 760px), (orientation: portrait) and (max-width: 1024px) {
-  .cp {
-    --pg-visual-aspect: 3070 / 2668;
-  }
-
   .cp-ink {
     -webkit-mask-image: none;
     mask-image: none;
@@ -686,12 +683,12 @@
     left: 22px;
   }
 
-  /* The cards under the photo, in the page's flow. */
+  /* The cards under the tabs, in the page's flow. */
   .cp-card {
     position: relative;
     top: auto;
     right: auto;
-    order: 3;
+    order: 4;
     display: none;
     width: auto;
     margin: 0 var(--gutter);

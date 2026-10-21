@@ -5,8 +5,8 @@ Website cao cấp cho thương hiệu **VILLA NEST** — *Design · Build · Liv
 **xây dựng** với giáo chống, ván khuôn → **nội thất** hoàn thiện, nối tiếp nhau như những bức tường cong của một căn
 phòng — cuối ảnh này ăn khớp với đầu ảnh kia — và xoay để chuyển cảnh khi bấm, kéo hay vuốt. Mỗi lĩnh vực có **trang
 riêng** cùng một phong cách: [`/smart-home/`](#trang-smart-home), [`/construction/`](#trang-xây-dựng),
-[`/interior/`](#trang-nội-thất). Song ngữ Việt / Anh (mặc định tiếng Việt), âm thanh nhẹ khi chuyển cảnh và tiếng "tít"
-của máy lạnh (tắt được), link riêng cho từng lĩnh vực.
+[`/interior/`](#trang-nội-thất). Song ngữ Việt / Anh (mặc định tiếng Việt), tiếng "tít" của máy lạnh khi điều khiển
+(tắt được), nút **Zalo** ở góc dưới phải mọi trang, link riêng cho từng lĩnh vực.
 
 ![VILLA NEST — desktop](docs/screenshot-desktop.jpg)
 
@@ -20,7 +20,7 @@ của máy lạnh (tắt được), link riêng cho từng lĩnh vực.
 
 ![Trang Nội thất — /interior/](docs/screenshot-interior.jpg)
 
-<img src="docs/screenshot-pages-mobile.jpg" width="780" alt="Ba trang trên iPhone: kịch bản dưới ảnh">
+<img src="docs/screenshot-pages-mobile.jpg" width="780" alt="Ba trang trên iPhone: ảnh, hàng thẻ chủ đề ngay dưới ảnh, rồi chữ">
 
 ## Điểm nổi bật
 
@@ -34,9 +34,8 @@ của máy lạnh (tắt được), link riêng cho từng lĩnh vực.
   mỗi lĩnh vực có tiêu đề serif lớn với dòng nghiêng màu vàng, mô tả và nút "Khám phá"; chữ đổi theo hiệu ứng khi
   chuyển cảnh; thanh điều hướng 01 · 02 · 03 kèm phụ đề; nút mũi tên dọc với bộ đếm; gợi ý "Click · Vuốt · Phím mũi tên".
 - **Song ngữ**: tiếng Việt mặc định, chọn tiếng Anh bằng cờ (trình duyệt nhớ lựa chọn), hoặc mở `?lang=en`.
-- **Bảng điều khiển nhà thông minh bấm được** (cảnh Smart Home): bảng điều khiển **gắn nổi trên tường đá, nhìn nghiêng**
-  như ở trang Smart Home — bức tường xoay xa dần sang phải, bảng nghiêng theo (34°), thấy rõ **cạnh dày** bên trái và
-  **bóng đổ** xuống tường dưới ánh đèn hắt — màn hình là giao diện thật, nghiêng đúng phối cảnh của ảnh. Phía trên có
+- **Bảng điều khiển nhà thông minh bấm được** (cảnh Smart Home): bảng điều khiển được **lắp âm vào tường đá**, hơi
+  nghiêng theo mặt tường (10°, vẫn dễ bấm) — màn hình là giao diện thật, nghiêng đúng phối cảnh của ảnh. Phía trên có
   dòng **"Chạm để trải nghiệm"** nhấp nhô mời bấm. Đầu màn hình là giờ (theo đồng hồ máy), ngày và ba chỉ số phòng:
   **Nhiệt độ**, **Bụi mịn PM2.5** và **CO₂**, kèm chấm màu chất lượng không khí (xanh tốt · vàng trung bình · đỏ kém) —
   số liệu mô phỏng: bật máy lạnh thì phòng mát dần về nhiệt độ cài đặt và bụi mịn giảm, tắt thì ấm dần trở lại.
@@ -65,11 +64,17 @@ của máy lạnh (tắt được), link riêng cho từng lĩnh vực.
   chữ và hiệu ứng đổi chữ của trang chủ), phần ảnh "sống" bên phải, bốn chủ đề ở hàng dưới cùng với gợi ý *"Click · Vuốt ·
   Phím mũi tên"*. Trên máy tính mỗi trang **vừa đúng một màn hình** (không có nội dung bên dưới) và chuyển chủ đề bằng
   **bánh xe chuột / trackpad** (một cử chỉ = một chủ đề), phím ← →, nút ← → bên phải, bấm thẻ ở hàng dưới hoặc kéo
-  ngang. Nút **"Khám phá …"** cùng kiểu với nút "Khám phá dự án" của trang chủ (chữ in hoa + vòng tròn mũi tên). Trên
-  điện thoại: dải biểu tượng 3 × 2, chữ, ảnh, bốn thẻ 2 × 2; chuyển chủ đề bằng **vuốt ngang** hoặc mũi tên; bấm nút
-  **"Xem …"** thì trang **trôi xuống** ảnh và mở **kịch bản** ngay bên dưới (từng bước, bước đang chạy có vạch thời gian),
-  ngoài ra không còn nội dung nào khác. Cả khối kịch bản luôn nằm trọn trong màn hình; trên máy nhỏ kịch bản gọn lại
-  (tên các bước một hàng, lời của bước đang chạy ở dưới).
+  ngang. Nút **"Khám phá …"** cùng kiểu với nút "Khám phá dự án" của trang chủ (chữ in hoa + vòng tròn mũi tên).
+  - **Vuốt như trang chủ**: vuốt / kéo ngang ở bất kỳ đâu trên trang — ảnh, chữ, cả trên các nút của bảng điều khiển —
+    chữ đi theo ngón tay, ảnh nhích theo, qua ngưỡng thì mũi tên sẽ tới sáng lên; thả tay (hoặc hất nhanh) là sang chủ đề
+    kế, chưa tới ngưỡng thì mọi thứ trượt về chỗ. Vuốt dọc vẫn cuộn trang, chạm vẫn là chạm (bật đèn, chọn vật liệu…);
+    thanh trượt, tia laser và công tắc ánh sáng giữ cử chỉ của riêng chúng.
+  - **Trên điện thoại** (bố cục như trang chủ): dải biểu tượng thành **một dòng chạy chậm** dưới header, **ảnh "sống" ngay
+    đầu trang**, bốn chủ đề thành **một hàng thẻ ngay dưới ảnh**, rồi đến chữ của chủ đề; thẻ vật liệu, công tắc ánh
+    sáng, thẻ tiến độ / bàn giao hiện ngay dưới hàng thẻ. Bấm **"Xem …"** thì trang **trôi tới ảnh** và mở **kịch bản ngay
+    dưới ảnh** (từng bước, bước đang chạy có vạch thời gian): ảnh và cả khối kịch bản cùng nằm trong màn hình, không bị
+    nút Zalo che (máy thấp: ảnh thu lại một chút; máy hẹp: kịch bản gọn lại — tên các bước một hàng, lời của bước đang
+    chạy ở dưới).
 - <a id="trang-smart-home"></a>**Trang Smart Home** (`/smart-home/`, nút **"Khám phá giải pháp"** ở trang chủ): logo chính
   thức của Matter, Zigbee, Thread, Wi-Fi, Home Assistant, HomeKit; ảnh tường đá với bảng điều khiển lớn gắn tường và căn
   biệt thự sáng đèn phía sau.
@@ -105,13 +110,17 @@ của máy lạnh (tắt được), link riêng cho từng lĩnh vực.
   - **"Xem một ngày trong nhà"**: sáng → hoàng hôn → tối trên chính căn phòng.
   Chữ, số liệu (tiêu chuẩn, bảo hành, vật liệu, kích thước) trên hai trang này là **nội dung minh họa** — sửa lại theo
   dự án thật trong `content.ts` của từng trang.
-- **Âm thanh nhẹ nhàng**: không có nhạc nền. Mỗi lần chuyển cảnh / chủ đề là một **hơi gió rất khẽ** (dải tần thấp, không
-  có tiếng rít, lên xuống mềm, lướt theo hướng chuyển). **Máy lạnh và quạt kêu "tít" như máy thật** khi nhận lệnh: bật —
+- **Âm thanh**: không có nhạc nền, chuyển cảnh / chủ đề (vuốt, bấm, cuộn) **không phát âm thanh**. Chỉ có **máy lạnh và
+  quạt kêu "tít" như máy thật** khi nhận lệnh: bật —
   hai tiếng "tít tít" lên giọng, tắt — một tiếng trầm hơn, đổi nhiệt độ / tốc độ — một tiếng ngắn (kéo thanh nhanh vẫn
   chỉ một tiếng mỗi nấc); là âm sạch, tròn, có chút vang phòng để nghe như phát ra từ máy trên tường chứ không chói
   tai. Tổng hợp ngay trong trình duyệt bằng Web Audio (không cần file âm thanh, chạy offline). Mặc định bật, kêu từ lần
-  bấm / chạm đầu tiên (trình duyệt không cho phát âm thanh trước đó); nút âm thanh trên header tắt / bật lại cho cả
-  website và trình duyệt nhớ lựa chọn.
+  bấm / chạm đầu tiên (trình duyệt không cho phát âm thanh trước đó); nút âm thanh trên header tắt / bật lại tiếng
+  "tít" và trình duyệt nhớ lựa chọn.
+- **Nút Zalo**: biểu tượng Zalo nhỏ (màu xanh của Zalo) cố định ở **góc dưới bên phải** mọi trang — trang chủ và ba
+  trang riêng — luôn ở đó khi vuốt, cuộn hay chuyển cảnh; hàng điều hướng dưới cùng chừa chỗ cho nút nên không che gì.
+  Bấm là mở khung chat Zalo (`https://zalo.me/<số>`): **điền số điện thoại (hoặc Zalo OA)** vào
+  [`src/config/contact.ts`](src/config/contact.ts) — để trống thì nút mở trang zalo.me.
 - **Link riêng từng lĩnh vực**: `/#smart-home`, `/#construction`, `/#interior` (vị trí trên bức toàn cảnh, tự cập nhật
   khi chuyển cảnh) và các trang `/smart-home/`, `/construction/`, `/interior/`.
 - **Chiều sâu điện ảnh**: ảnh hai bên nghiêng ±12°, nhoè và tối dần ra mép màn hình; mép trên/dưới tan vào bóng tối;
@@ -201,8 +210,9 @@ static server nào); mở trực tiếp `dist/index.html` bằng `file://` sẽ 
 └── src/
     ├── App.tsx                 Ghép Header, Loader, HeroCarousel; âm thanh; link #lĩnh-vực
     ├── config/animation.ts     ★ Toàn bộ thông số hiệu ứng / chuyển động / bố cục
+    ├── config/contact.ts       ★ Số Zalo của nút chat ở góc dưới phải
     ├── assets/brand/           (tuỳ chọn) logo công ty: logo.svg / logo.png / logo.webp
-    ├── audio/sound.ts          Âm thanh của cả website (Web Audio): hơi gió khi chuyển cảnh, tiếng "tít" của máy lạnh / quạt
+    ├── audio/sound.ts          Âm thanh của website (Web Audio): tiếng "tít" của máy lạnh / quạt
     ├── audio/useApplianceBeep.ts  Máy lạnh, quạt kêu khi nhận lệnh (bật, tắt, đổi mức)
     ├── i18n/                   Ngôn ngữ: strings.ts (chữ giao diện VI/EN), LanguageProvider
     ├── data/
@@ -219,7 +229,8 @@ static server nào); mở trực tiếp `dist/index.html` bằng `file://` sẽ 
     │   │   ├── SlideImage.tsx      <picture> AVIF/WebP, art-direction ngang/dọc
     │   │   └── HeroCarousel.css
     │   ├── SmartHome/          Bảng điều khiển (ControlScreen), tường: ánh sáng, lời mời (HomeWall), rèm (Curtains), tuyết / lá (SceneEffects)
-    │   ├── Header/             Logo, slogan, nút âm thanh, chọn ngôn ngữ
+    │   ├── Header/             Logo, slogan, nút âm thanh, chọn ngôn ngữ (kèm nút Zalo)
+    │   ├── Zalo/               Nút chat Zalo ở góc dưới phải (logo: Simple Icons, CC0)
     │   └── Loader/             Vạch tiến trình tối giản khi ảnh đang tải
     ├── pages/shared/           Khung chung của ba trang: Deck.tsx (dải biểu tượng, chữ chủ đề, nút, mũi tên, thanh chủ
     │                           đề, kịch bản trên điện thoại) · useDeck (chuột, phím, vuốt, bánh xe) · useDemo · page.css
@@ -272,15 +283,16 @@ trong suốt) vào `src/assets/brand/` với tên `logo.svg`, `logo.png` hoặc 
   có bản `vi` và `en`.
 - Chữ giao diện (slogan, nút âm thanh, gợi ý thao tác…) nằm trong `src/i18n/strings.ts`.
 - Nút "Khám phá" của mỗi lĩnh vực mở trang riêng của nó: `smart-home/`, `construction/`, `interior/` (`ctaHref`).
+- Số Zalo của nút chat ở góc dưới phải: `src/config/contact.ts`.
 - Chữ của từng trang (dải dưới header, bốn chủ đề, bảng điều khiển, kịch bản, thẻ, vật liệu, kích thước) nằm trong
   `src/pages/<trang>/content.ts`, bản `vi` và `en`.
 
 ## Thay ảnh
 
-> Ảnh Smart Home chỉ có mặt kính tối ở chỗ màn hình; vị trí màn hình (pixel trên ảnh gốc, là hình chữ nhật phẳng
-> trước khi xoay) nằm ở `images.smart-home.screen` trong `src/data/media.json` — `bezel` là từ mép màn hình tới mép
-> ngoài của bảng như nhìn thấy, gồm cả cạnh dày (rèm dừng trước đó), `tilt` là góc xoay của bảng và khoảng nhìn của phép
-> chiếu đã dùng khi ghép ảnh (`scripts/art/smart-home-wall.py`; màn hình trên web xoay đúng như vậy). Website tự quy đổi theo cách cắt ảnh ngang / dọc. Nếu thay ảnh này, cập nhật lại `sourceSize` và `screen`
+> Ảnh Smart Home chỉ có mặt kính tối ở chỗ màn hình; vị trí màn hình (pixel trên ảnh gốc, trước khi nghiêng) nằm ở
+> `images.smart-home.screen` trong `src/data/media.json` — `bezel` là bề rộng viền khung (rèm dừng trước viền này),
+> `tilt` là góc nghiêng của bảng và khoảng nhìn của phép chiếu đã dùng khi ghép ảnh (màn hình trên web nghiêng đúng
+> như vậy). Website tự quy đổi theo cách cắt ảnh ngang / dọc. Nếu thay ảnh này, cập nhật lại `sourceSize` và `screen`
 > (bỏ `tilt` nếu bảng trong ảnh mới nhìn thẳng; xoá `screen` để không hiện bảng điều khiển).
 
 1. Đặt ảnh gốc chất lượng cao vào `assets-src/`. Có hai loại nguồn:
@@ -321,8 +333,9 @@ lại rồi chạy `npm run images`:
 | Cảm ứng     | Vuốt trái/phải (vuốt dọc không bị chặn), chạm ảnh bên, chạm nhãn                           |
 | Bàn phím    | ← → chuyển slide; Tab tới nhãn / mũi tên / âm thanh / ngôn ngữ, Enter để chọn              |
 
-Trên ba trang riêng: bánh xe chuột / trackpad, phím ← →, nút ← →, thẻ chủ đề và kéo / vuốt ngang đổi chủ đề; tia laser
-của trang Xây dựng kéo được bằng chuột / ngón tay, hoặc chọn tay nắm (Tab) rồi dùng ← → (Shift + ← → bước lớn, Home / End).
+Trên ba trang riêng: bánh xe chuột / trackpad, phím ← →, nút ← →, thẻ chủ đề và kéo / vuốt ngang ở bất kỳ đâu trên trang
+(kể cả trên bảng điều khiển) đổi chủ đề; tia laser của trang Xây dựng kéo ngang được bằng chuột / ngón tay (vuốt dọc
+trên tia vẫn cuộn trang), hoặc chọn tay nắm (Tab) rồi dùng ← → (Shift + ← → bước lớn, Home / End).
 
 ## Hiệu năng & khả năng tiếp cận
 
@@ -348,9 +361,11 @@ Kiểm thử tự động bằng Playwright (Chromium) trên bản build:
   dập qua điểm lặp vòng), bánh xe / trackpad (một cử chỉ = một slide), mũi tên, nhãn, logo, đổi ngôn ngữ VI/EN, bật/tắt âm thanh, link #lĩnh-vực.
 - Kiểm tra từng khung hình 60 fps bằng đồng hồ giả lập: không có ảnh nào nhảy vị trí hay nhấp nháy khi lặp vòng.
 - Ba trang riêng ở 1672×941, 1440×900, 1280×633, 1024×700 và iPhone 14 Pro, VI / EN: vừa một màn hình (chữ không chạm
-  thanh chủ đề), bánh xe (một cử chỉ = một chủ đề), phím, thẻ, vuốt; nút "Xem …" trên điện thoại trôi xuống đúng ảnh +
-  kịch bản (kịch bản nằm trọn trong màn hình, kiểm cả iPhone SE 320×568, Galaxy S8, Pixel 7) và bên dưới không còn gì;
-  camera chạy giờ; kéo tia laser (không đổi chủ đề), phím trên tay nắm; thẻ tiến độ,
+  thanh chủ đề), bánh xe (một cử chỉ = một chủ đề), phím, thẻ; vuốt bằng sự kiện cảm ứng thật — trên ảnh, trên chữ,
+  trên các nút của bảng điều khiển, hất nhanh, kéo ngắn trượt về, chạm vẫn bật thiết bị, vuốt dọc cuộn trang, kéo chuột
+  không tính là bấm; điện thoại: ảnh + hàng thẻ ở màn hình đầu, nút "Xem …" đưa ảnh + kịch bản vào màn hình (iPhone SE
+  320×568, SE 3, 12 mini, 14 Pro, Galaxy S8, Pixel 7: kịch bản nằm trọn, không bị nút Zalo che, tên thẻ không tràn);
+  không có âm thanh khi chuyển cảnh; nút Zalo cố định ở góc dưới phải, không đè lên thẻ / nhãn nào; camera chạy giờ; kéo tia laser (không đổi chủ đề), phím trên tay nắm; thẻ tiến độ,
   chú thích kết cấu; điểm vật liệu đều nằm trong khung, thẻ vật liệu, ánh sáng buổi tối, nét kích thước.
 - Không có lỗi console, không có request ra ngoài Internet, không có thanh cuộn ngang; chạy đúng sau Nginx với cấu hình
   trong `deploy/nginx.conf`.
@@ -373,7 +388,8 @@ Thay bằng ảnh dự án thật của VILLA NEST trước khi ra mắt chính 
   sở hữu (Connectivity Standards Alliance, Thread Group, Wi-Fi Alliance, Home Assistant / Open Home Foundation, Apple);
   việc dùng logo chính thức thường kèm điều kiện của chủ sở hữu (thiết bị / chương trình được chứng nhận) — nên kiểm
   tra trước khi ra mắt.
+- Logo Zalo của nút chat (`src/components/Zalo/ZaloButton.tsx`) — [Simple Icons](https://simpleicons.org) (CC0), màu
+  thương hiệu #0068FF; là nhãn hiệu của Zalo / VNG, dùng để dẫn khách tới khung chat Zalo của VILLA NEST.
 - Smart Home — nền tường đá travertine từ ảnh của [HUUM](https://unsplash.com/photos/smart-thermostat-on-stone-wall-eJAWSL_0L98)
   ([Unsplash License](https://unsplash.com/license), miễn phí cho mục đích thương mại; thiết bị gốc đã được xoá),
-  bức tường được xoay nghiêng thêm, ánh sáng buổi tối và bảng điều khiển gắn tường (giao diện VILLA NEST) được dựng
-  thêm.
+  ánh sáng buổi tối và màn hình điều khiển trung tâm (giao diện VILLA NEST) được dựng thêm.

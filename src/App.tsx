@@ -19,15 +19,11 @@ export default function App() {
   const { t } = useI18n()
   const carouselRef = useRef<HeroCarouselHandle>(null)
   const [initialIndex] = useState(() => indexFromHash() ?? carouselConfig.initialIndex)
-  const activeRef = useRef(initialIndex)
   const [loadProgress, setLoadProgress] = useState(0)
   const [ready, setReady] = useState(false)
   const soundOn = useSoundOn()
 
   const handleActiveChange = useCallback((index: number) => {
-    const forward = (index - activeRef.current + slides.length) % slides.length === 1
-    activeRef.current = index
-    getSound().whoosh(forward ? 1 : -1)
     const hash = `#${slides[index].id}`
     if (window.location.hash !== hash) window.history.replaceState(null, '', hash)
   }, [])

@@ -41,8 +41,7 @@ export function InteriorPage() {
   const { ready, scrolled } = usePageChrome(rootRef, copy.description)
   const soundOn = useSoundOn()
 
-  const onFacetChange = useCallback((_: number, direction: 1 | -1) => getSound().whoosh(direction), [])
-  const deck = useDeck(FACETS.length, { heroRef, onChange: onFacetChange })
+  const deck = useDeck(FACETS.length, { heroRef })
   const { active, show, portrait } = deck
 
   const [mood, setMood] = useState<MoodId>('golden')
@@ -52,11 +51,8 @@ export function InteriorPage() {
   const [walk, setWalk] = useState(0)
   const [redraw, setRedraw] = useState(0)
   const changeMood = useCallback((next: MoodId) => {
-    const current = moodRef.current
-    if (current === next) return
     moodRef.current = next
     setMood(next)
-    getSound().whoosh(MOODS.indexOf(next) > MOODS.indexOf(current) ? 1 : -1)
   }, [])
 
   const onStep = useCallback(
@@ -115,7 +111,7 @@ export function InteriorPage() {
             items={copy.materials.map(({ name, origin }, i) => ({ icon: <Swatch index={i} className="ip-swatch" />, name, note: origin }))}
           />
 
-          <div className="pg-stage" {...deck.swipe}>
+          <div className="pg-stage">
             <RoomVisual
               visualRef={visualRef}
               copy={copy}

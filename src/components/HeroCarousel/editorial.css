@@ -189,6 +189,8 @@
   display: flex;
   align-items: flex-end;
   gap: 4vw;
+  /* (the corner at the end of the row is the Zalo button's: src/components/Zalo) */
+  padding-right: 66px;
 }
 
 .hc-nav__list {

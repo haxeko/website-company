@@ -134,7 +134,7 @@ export function ScenePanel(props: ScenePanelProps) {
   const date = now.toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'long' })
 
   return (
-    <div className="shp-panel__ui" role="group" aria-label={p.label} data-no-drag>
+    <div className="shp-panel__ui" role="group" aria-label={p.label}>
       <nav className="shp-panel__nav">
         <span className="shp-panel__chevron" aria-hidden="true" />
         {NAV.map(({ view: v, Icon, label }) => (

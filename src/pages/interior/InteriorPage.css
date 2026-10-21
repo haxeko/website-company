@@ -389,13 +389,9 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* ── Phones and portrait tablets: the whole room, cards under it ──────── */
+/* ── Phones and portrait tablets: the whole room, its cards under the tabs ─ */
 
 @media (max-width: 760px), (orientation: portrait) and (max-width: 1024px) {
-  .ip {
-    --pg-visual-aspect: 2850 / 2668;
-  }
-
   .ip-shade {
     display: none;
   }
@@ -430,7 +426,7 @@
     position: relative;
     right: auto;
     bottom: auto;
-    order: 3;
+    order: 4;
     display: none;
     width: auto;
     margin: 0 var(--gutter);

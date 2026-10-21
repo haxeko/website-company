@@ -1,6 +1,7 @@
 import { useId, type MouseEvent } from 'react'
 import { useI18n } from '../../i18n/context'
 import type { Lang } from '../../i18n/strings'
+import { ZaloButton } from '../Zalo/ZaloButton'
 import './Header.css'
 
 /**
@@ -67,58 +68,62 @@ export function Header({ soundOn, onToggleSound, onLogoClick, homeHref = './' }:
     onLogoClick()
   }
 
+  // (every page has the header, so the Zalo button in the corner comes with it)
   return (
-    <header className="site-header">
-      <a className="site-header__logo" href={homeHref} onClick={handleLogo} aria-label={t.home}>
-        {logoUrl ? (
-          <img src={logoUrl} alt="VILLA NEST — Architecture & Construction" />
-        ) : (
-          <span className="site-header__wordmark">
-            VILLA NEST
-            <small>Architecture &amp; Construction</small>
-          </span>
-        )}
-      </a>
+    <>
+      <header className="site-header">
+        <a className="site-header__logo" href={homeHref} onClick={handleLogo} aria-label={t.home}>
+          {logoUrl ? (
+            <img src={logoUrl} alt="VILLA NEST — Architecture & Construction" />
+          ) : (
+            <span className="site-header__wordmark">
+              VILLA NEST
+              <small>Architecture &amp; Construction</small>
+            </span>
+          )}
+        </a>
 
-      <p className="site-header__slogan">{t.slogan}</p>
+        <p className="site-header__slogan">{t.slogan}</p>
 
-      <div className="site-header__tools">
-        <button
-          type="button"
-          className="site-header__sound"
-          aria-pressed={soundOn}
-          aria-label={t.soundToggle}
-          data-on={soundOn || undefined}
-          onClick={onToggleSound}
-        >
-          <span className="site-header__bars" aria-hidden="true">
-            <i />
-            <i />
-            <i />
-            <i />
-          </span>
-          <span className="site-header__sound-label">{soundOn ? t.soundOn : t.soundOff}</span>
-        </button>
+        <div className="site-header__tools">
+          <button
+            type="button"
+            className="site-header__sound"
+            aria-pressed={soundOn}
+            aria-label={t.soundToggle}
+            data-on={soundOn || undefined}
+            onClick={onToggleSound}
+          >
+            <span className="site-header__bars" aria-hidden="true">
+              <i />
+              <i />
+              <i />
+              <i />
+            </span>
+            <span className="site-header__sound-label">{soundOn ? t.soundOn : t.soundOff}</span>
+          </button>
 
-        <div className="site-header__lang" role="group" aria-label={t.language}>
-          {(Object.keys(FLAGS) as Lang[]).map((code) => {
-            const Flag = FLAGS[code]
-            return (
-              <button
-                key={code}
-                type="button"
-                lang={code}
-                aria-pressed={lang === code}
-                aria-label={code === 'vi' ? 'Tiếng Việt' : 'English'}
-                onClick={() => setLang(code)}
-              >
-                <Flag />
-                <span>{code.toUpperCase()}</span>
-              </button>
-            )
-          })}
+          <div className="site-header__lang" role="group" aria-label={t.language}>
+            {(Object.keys(FLAGS) as Lang[]).map((code) => {
+              const Flag = FLAGS[code]
+              return (
+                <button
+                  key={code}
+                  type="button"
+                  lang={code}
+                  aria-pressed={lang === code}
+                  aria-label={code === 'vi' ? 'Tiếng Việt' : 'English'}
+                  onClick={() => setLang(code)}
+                >
+                  <Flag />
+                  <span>{code.toUpperCase()}</span>
+                </button>
+              )
+            })}
+          </div>
         </div>
-      </div>
-    </header>
+      </header>
+      <ZaloButton />
+    </>
   )
 }

@@ -822,10 +822,6 @@
 
 /* Phones and portrait tablets: the crop around the panel, under the text. */
 @media (max-width: 760px), (orientation: portrait) and (max-width: 1024px) {
-  .shp {
-    --pg-visual-aspect: 2000 / 1705;
-  }
-
   .shp-visual__shade {
     display: none;
   }

@@ -23,19 +23,28 @@ export interface StripItem {
   note: string
 }
 
+/**
+ * A row of equal parts on a computer; on phones a slow ticker under the header, which is why
+ * the items are listed twice (the echo is hidden from assistive technology and larger screens).
+ */
 export function PageStrip({ items, label }: { items: StripItem[]; label: string }) {
+  const row = (echo: boolean) =>
+    items.map(({ icon, name, note }) => (
+      <li key={echo ? `${name}-echo` : name} aria-hidden={echo || undefined}>
+        {icon}
+        <span>
+          <b>{name}</b>
+          <small>{note}</small>
+        </span>
+      </li>
+    ))
   return (
-    <ul className="pg-strip" aria-label={label} style={{ '--pg-strip-count': items.length } as CSSProperties}>
-      {items.map(({ icon, name, note }) => (
-        <li key={name}>
-          {icon}
-          <span>
-            <b>{name}</b>
-            <small>{note}</small>
-          </span>
-        </li>
-      ))}
-    </ul>
+    <div className="pg-strip">
+      <ul className="pg-strip__list" aria-label={label} style={{ '--pg-strip-count': items.length } as CSSProperties}>
+        {row(false)}
+        {row(true)}
+      </ul>
+    </div>
   )
 }
 

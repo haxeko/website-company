@@ -67,18 +67,43 @@
   flex-direction: column;
   height: 100svh;
   padding-top: var(--pg-header-h, 100px);
+  /* Sideways swipes change the theme (useDeck); the page still scrolls up and down. */
+  touch-action: pan-y pinch-zoom;
+}
+
+/* While dragging, nothing in the hero is selected; past the threshold the arrow it goes to lights up. */
+.pg-hero[data-dragging] {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.pg-hero[data-swipe='next'] .pg-controls .hc-controls__btn:last-child,
+.pg-hero[data-swipe='prev'] .pg-controls .hc-controls__btn:first-child {
+  border-color: var(--c-accent);
+  background: var(--c-accent);
+  color: var(--c-bg);
 }
 
 /* The strip under the header */
 .pg-strip {
+  margin: 0 var(--gutter);
+  padding: clamp(12px, 2.3vh, 26px) clamp(8px, 1.6vw, 34px);
+  border-bottom: 1px solid var(--line);
+}
+
+.pg-strip__list {
   display: grid;
   grid-template-columns: repeat(var(--pg-strip-count, 6), auto);
   justify-content: space-between;
   align-items: center;
-  margin: 0 var(--gutter);
-  padding: clamp(12px, 2.3vh, 26px) clamp(8px, 1.6vw, 34px);
-  border-bottom: 1px solid var(--line);
+  margin: 0;
+  padding: 0;
   list-style: none;
+}
+
+/* (the items' echo is for the phones' ticker) */
+.pg-strip li[aria-hidden] {
+  display: none;
 }
 
 .pg-strip li {
@@ -125,8 +150,6 @@
   flex: 1;
   align-items: center;
   min-height: 0;
-  /* Sideways swipes change the theme; the page still scrolls up and down. */
-  touch-action: pan-y pinch-zoom;
 }
 
 /* The page's photo with its live parts (each page styles its own). */
@@ -317,45 +340,78 @@
 /* ── Phones and portrait tablets: text, photo, story, themes ──────────── */
 
 @media (max-width: 760px), (orientation: portrait) and (max-width: 1024px) {
+  /*
+   * As the home page on a phone: the photo first — with the story it plays right under it,
+   * once opened — then the themes as tabs, what a theme shows (a card) and its text. The stage
+   * gives its parts to the hero's column, so they can be ordered round the tabs.
+   */
   .pg-hero {
     height: auto;
     min-height: 100svh;
-  }
-
-  .pg-strip {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    row-gap: 16px;
-    padding: 18px 0;
-  }
-
-  .pg-strip li,
-  .pg-strip li + li {
-    flex-direction: column;
-    gap: 8px;
-    padding: 0;
-    border: 0;
-    text-align: center;
-  }
-
-  .pg-strip span {
-    justify-items: center;
-  }
-
-  .pg-strip small {
-    font-size: 7.5px;
-    letter-spacing: 0.1em;
-    white-space: normal;
+    /* (room for the Zalo button at the end of the page) */
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 84px);
   }
 
   .pg-stage {
-    flex-direction: column;
-    align-items: stretch;
+    display: contents;
+  }
+
+  /* The strip: a slow ticker of names under the header. */
+  .pg-strip {
+    order: 0;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent);
+  }
+
+  .pg-strip__list {
+    display: flex;
+    width: max-content;
+    animation: pg-ticker 46s linear infinite;
+  }
+
+  .pg-strip li,
+  .pg-strip li + li,
+  .pg-strip li[aria-hidden] {
+    display: flex;
+    gap: 9px;
+    padding: 11px 18px 11px 0;
+    border: 0;
+  }
+
+  /* (a small gold dot between names) */
+  .pg-strip li::after {
+    content: '';
+    flex: none;
+    width: 3px;
+    height: 3px;
+    margin-left: 9px;
+    border-radius: 50%;
+    background: rgb(210 176 122 / 0.55);
+  }
+
+  .pg-strip li > svg,
+  .pg-strip .ip-swatch {
+    width: 18px;
+    height: 18px;
+  }
+
+  .pg-strip b {
+    font-size: 13.5px;
+    white-space: nowrap;
+  }
+
+  .pg-strip small {
+    display: none;
   }
 
   /* (the home page's phone sizes) */
   .pg-copy {
+    order: 5;
     width: auto;
-    padding: 26px var(--gutter) 8px;
+    padding: 24px var(--gutter) 8px;
   }
 
   .pg-copy .hc-copy__kicker {
@@ -389,9 +445,9 @@
   .pg-visual {
     position: relative;
     inset: auto;
-    order: 2;
-    aspect-ratio: var(--pg-visual-aspect, 2000 / 1705);
-    margin-top: 18px;
+    order: 1;
+    /* (each page's photo covers it, framed on what matters) */
+    height: clamp(240px, min(82vw, 46svh), 640px);
     -webkit-mask-image: linear-gradient(to bottom, transparent, #000 8%, #000 86%, transparent);
     mask-image: linear-gradient(to bottom, transparent, #000 8%, #000 86%, transparent);
   }
@@ -414,36 +470,73 @@
     display: none;
   }
 
-  /* Four themes in a 2 × 2 grid, as the home page's navigation on phones. */
+  /* The four themes as tabs under the photo (and its story), in one row — short of the Zalo
+     button's corner, should the row reach the foot of the screen. */
   .pg-nav {
-    margin-top: 12px;
+    order: 3;
+    margin: 6px var(--gutter) 0;
+    padding: 0 56px 0 0;
+  }
+
+  .pg-hero:has(.pg-story[data-open]) .pg-nav {
+    margin-top: 18px;
+  }
+
+  /* Short phones: while the story plays, the photo gives it room, so both are in view. */
+  @media (max-height: 700px) {
+    .pg-hero:has(.pg-story[data-open]) .pg-visual {
+      height: clamp(215px, 36svh, 640px);
+    }
   }
 
   .pg-nav .hc-nav__list {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 4px 14px;
+    gap: 10px;
   }
 
   .pg-nav .hc-nav__item {
     grid-template-columns: 1fr;
-    row-gap: 4px;
-    padding-top: 12px;
+    align-content: start;
+    row-gap: 3px;
+    height: 100%;
+    padding: 10px 0 2px;
+  }
+
+  .pg-nav .hc-nav__index {
+    font-size: 9.5px;
   }
 
   .pg-nav .hc-nav__title {
-    font-size: 14px;
+    font-size: 12.5px;
+    line-height: 1.25;
+    text-wrap: balance;
+  }
+
+  @media (max-width: 340px) {
+    .pg-nav .hc-nav__list {
+      gap: 7px;
+    }
+
+    .pg-nav .hc-nav__title {
+      font-size: 11px;
+    }
   }
 
   .pg-nav :is(.hc-nav__subtitle, .hc-nav__hint) {
     display: none;
   }
 
-  /* The story the demo plays, under the photo. */
+  /* The story the demo plays comes under the photo; what a theme shows (a card), under the tabs. */
+  .pg-stage > :is([data-open], [data-on]) {
+    order: 4;
+    margin-top: 16px;
+  }
+
   .pg-story[data-open] {
     display: grid;
-    order: 3;
+    order: 2;
     gap: 14px;
-    margin: 0 var(--gutter);
+    margin-right: var(--gutter);
+    margin-left: var(--gutter);
     padding: 16px 16px 18px;
     border: 1px solid rgb(244 240 233 / 0.1);
     border-radius: 18px;
@@ -457,6 +550,12 @@
   from {
     opacity: 0;
     translate: 0 18px;
+  }
+}
+
+@keyframes pg-ticker {
+  to {
+    translate: -50% 0;
   }
 }
 
@@ -610,6 +709,33 @@
   margin-top: 3px;
   font-size: 11px;
   line-height: 1.5;
+}
+
+/* Phones that ask for less motion: no ticker, the names wrap. */
+@media (prefers-reduced-motion: reduce) and (max-width: 760px),
+  (prefers-reduced-motion: reduce) and (orientation: portrait) and (max-width: 1024px) {
+  .pg-strip {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .pg-strip__list {
+    flex-wrap: wrap;
+    justify-content: center;
+    width: auto;
+    padding: 6px 0;
+    animation: none;
+  }
+
+  .pg-strip li,
+  .pg-strip li + li {
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+
+  .pg-strip li[aria-hidden] {
+    display: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

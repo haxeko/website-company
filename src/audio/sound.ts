@@ -1,27 +1,21 @@
 import { useSyncExternalStore } from 'react'
 
 /**
- * The site's sounds, synthesised with the Web Audio API (no audio files, works offline):
+ * The site's one sound, synthesised with the Web Audio API (no audio files, works offline):
+ * the short "beep" an air-conditioner or a fan gives when it takes a command — a pure tone
+ * with a soft attack, heard through a little room reverb so it sounds like the unit on the
+ * wall rather than a buzzer in the ear. Changing space or theme makes no sound.
  *
- * - a soft breath of air when the carousel or a page's themes move on — pink noise through
- *   a gentle low-pass sweep, panned in the direction of travel, with no hiss on top;
- * - the short "beep" an air-conditioner or a fan gives when it takes a command — a pure tone
- *   with a soft attack, heard through a little room reverb so it sounds like the unit on the
- *   wall rather than a buzzer in the ear.
- *
- * Quiet by design, and the visitor can turn them off (remembered). Browsers only allow audio
+ * Quiet by design, and the visitor can turn it off (remembered). Browsers only allow audio
  * after a user gesture, so the AudioContext is created (or resumed) on the first pointer or
  * key press; sounds before that stay silent.
  */
 
 const STORAGE_KEY = 'villa-nest-sound'
 
-/** Peak level of the breath of air… */
-const WHOOSH_LEVEL = 0.045
-const WHOOSH_DURATION = 1.1 // s
-/** …and of a beep (a tone near 2 kHz sounds louder than noise at the same level). */
+/** Peak level of a beep. */
 const BEEP_LEVEL = 0.032
-/** Share of each sound sent to the room. */
+/** Share of the beep sent to the room. */
 const ROOM_SEND = 0.22
 
 /** What an appliance answers: switched on (two rising beeps), off (one lower beep), a setting changed. */
@@ -50,8 +44,6 @@ class SiteSound {
   private ctx: AudioContext | null = null
   private out: AudioNode | null = null
   private room: AudioNode | null = null
-  private noise: AudioBuffer | null = null
-  private lastWhoosh = -Infinity
   private lastBeep = -Infinity
   private muted = !readSoundOn()
   private readonly listeners = new Set<() => void>()
@@ -81,43 +73,6 @@ class SiteSound {
     }
     if (on) this.unlock()
     this.listeners.forEach((listener) => listener())
-  }
-
-  /** @param direction 1 = towards the next space or theme (the air travels left → right), -1 = back. */
-  whoosh(direction: 1 | -1 = 1) {
-    const ctx = this.live()
-    if (!ctx || !this.noise) return
-    const now = ctx.currentTime
-    // Moves closer together than this are carried by the breath already playing.
-    if (now - this.lastWhoosh < 0.2) return
-    this.lastWhoosh = now
-
-    const src = ctx.createBufferSource()
-    src.buffer = this.noise
-    // A random start, so two breaths never sound the same.
-    const offset = Math.random() * (this.noise.duration - WHOOSH_DURATION - 0.1)
-
-    // No rumble below, and above a low-pass that opens and closes again: air, not hiss.
-    const highpass = filter(ctx, 'highpass', 150, 0.5)
-    const lowpass = [filter(ctx, 'lowpass', 420, 0.5), filter(ctx, 'lowpass', 420, 0.5)]
-    for (const lp of lowpass) {
-      lp.frequency.setValueAtTime(420, now)
-      lp.frequency.exponentialRampToValueAtTime(1250, now + 0.42)
-      lp.frequency.exponentialRampToValueAtTime(480, now + WHOOSH_DURATION)
-    }
-
-    // Swells and fades without a corner anywhere (a smooth bump, highest at 38 %).
-    const gain = ctx.createGain()
-    gain.gain.value = 0
-    gain.gain.setValueCurveAtTime(bump(0.38, WHOOSH_LEVEL), now, WHOOSH_DURATION)
-
-    const pan = ctx.createStereoPanner()
-    pan.pan.setValueAtTime(-0.32 * direction, now)
-    pan.pan.linearRampToValueAtTime(0.32 * direction, now + WHOOSH_DURATION)
-
-    src.connect(highpass).connect(lowpass[0]).connect(lowpass[1]).connect(gain).connect(pan)
-    this.send(pan, 0.6)
-    src.start(now, offset, WHOOSH_DURATION + 0.05)
   }
 
   /** The beep of the air-conditioner (or fan) taking a command from its remote. */
@@ -151,7 +106,7 @@ class SiteSound {
 
     const soft = filter(ctx, 'lowpass', 3400, 0.6)
     env.connect(soft)
-    this.send(soft, 1)
+    this.send(soft)
     for (const osc of [tone, octave]) {
       osc.start(start)
       osc.stop(end + 0.02)
@@ -159,11 +114,11 @@ class SiteSound {
   }
 
   /** To the speakers, and a share of it to the room. */
-  private send(node: AudioNode, room: number) {
+  private send(node: AudioNode) {
     if (!this.ctx || !this.out || !this.room) return
     node.connect(this.out)
     const wet = this.ctx.createGain()
-    wet.gain.value = ROOM_SEND * room
+    wet.gain.value = ROOM_SEND
     node.connect(wet).connect(this.room)
   }
 
@@ -195,7 +150,6 @@ class SiteSound {
       this.ctx = ctx
       this.out = limiter
       this.room = room
-      this.noise = makePinkNoise(ctx, 3)
     }
     if (this.ctx.state === 'suspended') void this.ctx.resume()
   }
@@ -207,34 +161,6 @@ function filter(ctx: AudioContext, type: BiquadFilterType, frequency: number, q:
   node.frequency.value = frequency
   node.Q.value = q
   return node
-}
-
-/** A smooth rise to `peak` at `at` (0–1 of the length) and a smooth fall back to silence. */
-function bump(at: number, peak: number) {
-  const curve = new Float32Array(96)
-  for (let i = 0; i < curve.length; i++) {
-    const t = i / (curve.length - 1)
-    const v = t < at ? Math.sin((Math.PI / 2) * (t / at)) : Math.cos((Math.PI / 2) * ((t - at) / (1 - at)))
-    curve[i] = peak * v * v
-  }
-  return curve
-}
-
-function makePinkNoise(ctx: AudioContext, seconds: number) {
-  const buffer = ctx.createBuffer(1, Math.round(ctx.sampleRate * seconds), ctx.sampleRate)
-  const data = buffer.getChannelData(0)
-  // Paul Kellet's economy pink filter: softer and more "windy" than white noise.
-  let b0 = 0
-  let b1 = 0
-  let b2 = 0
-  for (let i = 0; i < data.length; i++) {
-    const white = Math.random() * 2 - 1
-    b0 = 0.99765 * b0 + white * 0.099046
-    b1 = 0.963 * b1 + white * 0.2965164
-    b2 = 0.57 * b2 + white * 1.0526913
-    data[i] = (b0 + b1 + b2 + white * 0.1848) * 0.2
-  }
-  return buffer
 }
 
 /** A small, soft room: decaying noise, a little darker as it fades, slightly different per ear. */

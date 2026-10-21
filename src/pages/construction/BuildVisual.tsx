@@ -148,18 +148,37 @@ export function BuildVisual({ visualRef, copy, phase, sweep, overlay, storyOpen,
     line.current.v = Math.min(1, Math.max(0, (clientX - box.left) / box.width))
     apply()
   }
+  // A finger on the line may only be scrolling the page: the line follows once it moves sideways.
+  const pending = useRef<{ id: number; x: number; y: number } | null>(null)
   const onPointerDown = (e: PointerEvent<HTMLElement>) => {
     if (e.button !== 0) return
     // (no text selection, no native drag of the photo under it: either would cancel the pointer)
     e.preventDefault()
+    if (e.pointerType !== 'mouse') {
+      pending.current = { id: e.pointerId, x: e.clientX, y: e.clientY }
+      return
+    }
     e.currentTarget.setPointerCapture(e.pointerId)
     setDragging(true)
     fromPointer(e.clientX)
   }
   const onPointerMove = (e: PointerEvent<HTMLElement>) => {
-    if (dragging) fromPointer(e.clientX)
+    const start = pending.current
+    if (start?.id === e.pointerId) {
+      const dx = e.clientX - start.x
+      const dy = e.clientY - start.y
+      if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return
+      pending.current = null
+      if (Math.abs(dy) >= Math.abs(dx)) return // up or down: the page scrolls (touch-action: pan-y)
+      e.currentTarget.setPointerCapture(e.pointerId)
+      setDragging(true)
+    }
+    if (dragging || start) fromPointer(e.clientX)
   }
-  const onPointerUp = () => setDragging(false)
+  const onPointerUp = () => {
+    pending.current = null
+    setDragging(false)
+  }
   const onKeyDown = (e: KeyboardEvent<HTMLElement>) => {
     const step = e.shiftKey ? 0.1 : 0.04
     let v = line.current.v

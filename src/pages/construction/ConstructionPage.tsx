@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { getSound, useSoundOn } from '../../audio/sound'
 import { Header } from '../../components/Header'
 import { useI18n } from '../../i18n/context'
@@ -37,8 +37,7 @@ export function ConstructionPage() {
   const { ready, scrolled } = usePageChrome(rootRef, copy.description)
   const soundOn = useSoundOn()
 
-  const onPhaseChange = useCallback((_: number, direction: 1 | -1) => getSound().whoosh(direction), [])
-  const deck = useDeck(PHASES.length, { heroRef, onChange: onPhaseChange })
+  const deck = useDeck(PHASES.length, { heroRef })
   const { active, show, portrait } = deck
   const demo = useDemo(PHASES.length, STEP_MS, show)
   const playing = demo.step !== null
@@ -89,7 +88,7 @@ export function ConstructionPage() {
             items={copy.strip.map(({ name, note }, i) => ({ icon: <StripIcon index={i} />, name, note }))}
           />
 
-          <div className="pg-stage" {...deck.swipe}>
+          <div className="pg-stage">
             <BuildVisual
               visualRef={visualRef}
               copy={copy}

@@ -18,7 +18,6 @@ const rectVars = (r: PanelRect, prefix: 'l' | 'p') => ({
   [`--sh-${prefix}-w`]: `${r.width}%`,
   [`--sh-${prefix}-h`]: `${r.height}%`,
   [`--sh-${prefix}-r`]: `${r.radiusX}% / ${r.radiusY}%`,
-  [`--sh-${prefix}-cx`]: `${r.centerX}%`,
   [`--sh-${prefix}-tf`]: tiltTransform(r),
 })
 

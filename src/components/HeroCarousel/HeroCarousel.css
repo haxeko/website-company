@@ -323,6 +323,7 @@
 
 .hc[data-layout='portrait'] .hc-nav {
   left: var(--gutter);
+  padding-right: 58px;
 }
 
 .hc[data-layout='portrait'] .hc-nav__list {
@@ -337,6 +338,17 @@
 
 .hc[data-layout='portrait'] .hc-nav__title {
   font-size: 14px;
+}
+
+/* (the narrowest phones: the three titles beside the Zalo button) */
+@media (max-width: 340px) {
+  .hc[data-layout='portrait'] .hc-nav__list {
+    gap: 10px;
+  }
+
+  .hc[data-layout='portrait'] .hc-nav__title {
+    font-size: 12.5px;
+  }
 }
 
 .hc[data-layout='portrait'] .hc-nav__subtitle,

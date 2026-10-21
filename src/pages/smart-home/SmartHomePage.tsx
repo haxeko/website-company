@@ -54,23 +54,12 @@ export function SmartHomePage() {
   const onThemeChange = useCallback((index: number, direction: 1 | -1) => {
     setView(VIEW_OF[index])
     setViewDir(direction)
-    getSound().whoosh(direction)
   }, [])
   const deck = useDeck(THEMES.length, { heroRef, onChange: onThemeChange })
   const { active, show, portrait } = deck
 
-  const onStep = useCallback(
-    (i: number) => {
-      applyScene(STEPS[i])
-      getSound().whoosh()
-    },
-    [applyScene],
-  )
-  const onEnd = useCallback(() => {
-    reset()
-    getSound().whoosh(-1)
-  }, [reset])
-  const demo = useDemo(STEPS.length, STEP_MS, onStep, onEnd)
+  const onStep = useCallback((i: number) => applyScene(STEPS[i]), [applyScene])
+  const demo = useDemo(STEPS.length, STEP_MS, onStep, reset)
   const { stop: stopDemo } = demo
   const playing = demo.step !== null
 
@@ -114,7 +103,6 @@ export function SmartHomePage() {
     onScene: (scene: SceneId) => {
       stopDemo()
       applyScene(scene)
-      getSound().whoosh()
     },
     onToggleArmed: () => {
       stopDemo()
@@ -155,7 +143,7 @@ export function SmartHomePage() {
             items={copy.protocols.map(({ name, note }, i) => ({ icon: <ProtocolIcon index={i} />, name, note }))}
           />
 
-          <div className="pg-stage" {...deck.swipe}>
+          <div className="pg-stage">
             <HeroVisual
               visualRef={visualRef}
               home={home}
