@@ -35,7 +35,8 @@ riêng** cùng một phong cách: [`/smart-home/`](#trang-smart-home), [`/constr
   chuyển cảnh; thanh điều hướng 01 · 02 · 03 kèm phụ đề; nút mũi tên dọc với bộ đếm; gợi ý "Click · Vuốt · Phím mũi tên".
 - **Song ngữ**: tiếng Việt mặc định, chọn tiếng Anh bằng cờ (trình duyệt nhớ lựa chọn), hoặc mở `?lang=en`.
 - **Bảng điều khiển nhà thông minh bấm được** (cảnh Smart Home): bảng điều khiển được **lắp âm vào tường đá**, hơi
-  nghiêng theo mặt tường (10°, vẫn dễ bấm) — màn hình là giao diện thật, nghiêng đúng phối cảnh của ảnh. Phía trên có
+  nghiêng theo mặt tường (10°, vẫn dễ bấm), **nằm chính giữa thẻ** — màn hình là giao diện thật, nghiêng đúng phối cảnh
+  của ảnh. Phía trên có
   dòng **"Chạm để trải nghiệm"** nhấp nhô mời bấm. Đầu màn hình là giờ (theo đồng hồ máy), ngày và ba chỉ số phòng:
   **Nhiệt độ**, **Bụi mịn PM2.5** và **CO₂**, kèm chấm màu chất lượng không khí (xanh tốt · vàng trung bình · đỏ kém) —
   số liệu mô phỏng: bật máy lạnh thì phòng mát dần về nhiệt độ cài đặt và bụi mịn giảm, tắt thì ấm dần trở lại.
@@ -61,14 +62,13 @@ riêng** cùng một phong cách: [`/smart-home/`](#trang-smart-home), [`/constr
   thẻ 2 × 2), để vẫn thấy gần hết căn phòng và rèm kéo vào; xoay ngang điện thoại thì bảng dùng bố cục 4 thẻ một hàng như
   trên tường. Người dùng bật "giảm chuyển động" chỉ thấy bảng đổi trạng thái, ánh sáng và rèm, không có tuyết / lá.
 - **Ba trang riêng, cùng một khung**: header cố định, một dải biểu tượng dưới header, chữ của chủ đề bên trái (đúng cỡ
-  chữ và hiệu ứng đổi chữ của trang chủ), phần ảnh "sống" bên phải, bốn chủ đề ở hàng dưới cùng với gợi ý *"Click · Vuốt ·
-  Phím mũi tên"*. Trên máy tính mỗi trang **vừa đúng một màn hình** (không có nội dung bên dưới) và chuyển chủ đề bằng
-  **bánh xe chuột / trackpad** (một cử chỉ = một chủ đề), phím ← →, nút ← → bên phải, bấm thẻ ở hàng dưới hoặc kéo
-  ngang. Nút **"Khám phá …"** cùng kiểu với nút "Khám phá dự án" của trang chủ (chữ in hoa + vòng tròn mũi tên).
-  - **Vuốt như trang chủ**: vuốt / kéo ngang ở bất kỳ đâu trên trang — ảnh, chữ, cả trên các nút của bảng điều khiển —
-    chữ đi theo ngón tay, ảnh nhích theo, qua ngưỡng thì mũi tên sẽ tới sáng lên; thả tay (hoặc hất nhanh) là sang chủ đề
-    kế, chưa tới ngưỡng thì mọi thứ trượt về chỗ. Vuốt dọc vẫn cuộn trang, chạm vẫn là chạm (bật đèn, chọn vật liệu…);
-    thanh trượt, tia laser và công tắc ánh sáng giữ cử chỉ của riêng chúng.
+  chữ và hiệu ứng đổi chữ của trang chủ), phần ảnh "sống" bên phải, bốn chủ đề ở hàng dưới cùng với gợi ý *"Click · Cuộn
+  chuột · Phím mũi tên"*. Trên máy tính mỗi trang **vừa đúng một màn hình** (không có nội dung bên dưới) và chuyển chủ đề
+  bằng **bánh xe chuột / trackpad** (một cử chỉ = một chủ đề), phím ← →, nút ← → bên phải hoặc bấm thẻ ở hàng dưới. Nút
+  **"Khám phá …"** cùng kiểu với nút "Khám phá dự án" của trang chủ (chữ in hoa + vòng tròn mũi tên).
+  - **Không vuốt ngang**: ba trang riêng không đổi chủ đề khi vuốt hay kéo ngang (trên điện thoại trang chỉ cuộn dọc);
+    đổi chủ đề bằng hàng thẻ, mũi tên ← → trên ảnh, phím ← → hoặc bánh xe chuột trên máy tính. Chạm vẫn là chạm (bật
+    đèn, chọn vật liệu…); thanh trượt và tia laser vẫn kéo được.
   - **Trên điện thoại** (bố cục như trang chủ): dải biểu tượng thành **một dòng chạy chậm** dưới header, **ảnh "sống" ngay
     đầu trang**, bốn chủ đề thành **một hàng 4 thẻ ngay dưới ảnh, dàn đều hết chiều ngang** (tên ngắn gọn, cùng số dòng:
     Smart Home và Nội thất một dòng, Xây dựng hai dòng), rồi đến những gì chủ đề mở ra — kịch bản, thẻ vật liệu, công tắc
@@ -97,7 +97,8 @@ riêng** cùng một phong cách: [`/smart-home/`](#trang-smart-home), [`/constr
   - Bốn chủ đề là bốn giai đoạn: **Thiết kế & BIM** (các nét ghi chú tự vẽ ra) · **Kết cấu vững chắc** (chú thích trên khung
     bê tông thật: cột 400 × 400, dầm 300 × 600, sàn 150 mm, giàn chống — trên điện thoại nhãn gần mép ảnh tự mở sang phía
     còn chỗ) · **Tiến độ minh bạch** (thẻ công trường: % hoàn thành, tuần, bốn hạng mục, nhật ký hôm nay — đổi theo tia
-    laser) · **Bàn giao kỹ càng** (cả ngôi nhà hoàn thiện, đèn ấm lên, thẻ bảo hành).
+    laser) · **Bàn giao kỹ càng** (cả ngôi nhà hoàn thiện, đèn ấm lên, thẻ bảo hành; ngày nhận chìa khóa — và ngày
+    "bàn giao dự kiến" trên thẻ tiến độ — = hôm nay + 8 tháng, tự tính theo ngày người xem mở trang).
   - **"Khám phá …"**: tia laser quét một lượt từ bản vẽ sang công trình rồi về chỗ; **"Xem quá trình xây dựng"** đi qua
     bốn giai đoạn, tia laser chạy theo.
 - <a id="trang-nội-thất"></a>**Trang Nội thất** (`/interior/`, nút **"Khám phá dự án"** ở cảnh Interior) — *"Chất liệu &
@@ -120,8 +121,8 @@ riêng** cùng một phong cách: [`/smart-home/`](#trang-smart-home), [`/constr
   "tít" và trình duyệt nhớ lựa chọn.
 - **Nút Zalo**: biểu tượng Zalo nhỏ (màu xanh của Zalo) cố định ở **góc dưới bên phải** mọi trang — trang chủ và ba
   trang riêng — luôn ở đó khi vuốt, cuộn hay chuyển cảnh; hàng điều hướng dưới cùng chừa chỗ cho nút nên không che gì.
-  Bấm là mở khung chat Zalo (`https://zalo.me/<số>`): **điền số điện thoại (hoặc Zalo OA)** vào
-  [`src/config/contact.ts`](src/config/contact.ts) — để trống thì nút mở trang zalo.me.
+  Bấm là mở khung chat Zalo với số **0981584328** (`https://zalo.me/0981584328`); đổi số (hoặc dùng Zalo OA) trong
+  [`src/config/contact.ts`](src/config/contact.ts).
 - **Link riêng từng lĩnh vực**: `/#smart-home`, `/#construction`, `/#interior` (vị trí trên bức toàn cảnh, tự cập nhật
   khi chuyển cảnh) và các trang `/smart-home/`, `/construction/`, `/interior/`.
 - **Chiều sâu điện ảnh**: ảnh hai bên nghiêng ±12°, nhoè và tối dần ra mép màn hình; mép trên/dưới tan vào bóng tối;
@@ -304,8 +305,9 @@ trong suốt) vào `src/assets/brand/` với tên `logo.svg`, `logo.png` hoặc 
      `panorama-construction-interior.jpg` (ảnh concept 2000 px đã phóng to ×4 bằng Real-ESRGAN).
 2. Chỉnh `src/data/media.json` nếu cần:
    - `order` — thứ tự ảnh trên bức toàn cảnh (ảnh cuối nối vòng về ảnh đầu),
-   - `focus` — điểm canh khi cắt ảnh cho tấm ngang `[x, y]` (0–1),
-   - `portraitFocusX` — vị trí cắt ngang cho tấm dọc trên điện thoại,
+   - `focus` — điểm canh khi cắt ảnh cho tấm ngang `[x, y]` (0–1), `zoom` — cắt gần hơn bao nhiêu lần (tấm ngang; ảnh
+     Smart Home dùng `zoom` 1.294 + `focus` [0.9643, 0.496] để bảng điều khiển — tính cả độ nghiêng — nằm chính giữa thẻ),
+   - `portraitFocusX` — vị trí cắt ngang cho tấm dọc trên điện thoại (Smart Home: 0.802, bảng điều khiển ở giữa),
    - `grade` — chỉnh màu: `exposure`, `contrast`, `saturation`, `greens` (giảm xanh lá), `warmth`,
    - `geometry` — tỉ lệ tấm (`landscapeAspect`, `portraitAspect`) và `seam` (bề rộng dải hòa trộn),
    - `harmonize` — mức kéo màu hai mép chạm nhau về cùng tông (`strength` 0–1) và độ sâu vào trong ảnh (`reach`).
@@ -335,9 +337,9 @@ lại rồi chạy `npm run images`:
 | Cảm ứng     | Vuốt trái/phải (vuốt dọc không bị chặn), chạm ảnh bên, chạm nhãn                           |
 | Bàn phím    | ← → chuyển slide; Tab tới nhãn / mũi tên / âm thanh / ngôn ngữ, Enter để chọn              |
 
-Trên ba trang riêng: bánh xe chuột / trackpad, phím ← →, nút ← →, thẻ chủ đề và kéo / vuốt ngang ở bất kỳ đâu trên trang
-(kể cả trên bảng điều khiển) đổi chủ đề; tia laser của trang Xây dựng kéo ngang được bằng chuột / ngón tay (vuốt dọc
-trên tia vẫn cuộn trang), hoặc chọn tay nắm (Tab) rồi dùng ← → (Shift + ← → bước lớn, Home / End).
+Trên ba trang riêng: bánh xe chuột / trackpad, phím ← →, nút ← → và thẻ chủ đề đổi chủ đề (vuốt / kéo ngang thì không);
+tia laser của trang Xây dựng kéo ngang được bằng chuột / ngón tay (vuốt dọc trên tia vẫn cuộn trang), hoặc chọn tay nắm
+(Tab) rồi dùng ← → (Shift + ← → bước lớn, Home / End).
 
 ## Hiệu năng & khả năng tiếp cận
 
@@ -363,13 +365,13 @@ Kiểm thử tự động bằng Playwright (Chromium) trên bản build:
   dập qua điểm lặp vòng), bánh xe / trackpad (một cử chỉ = một slide), mũi tên, nhãn, logo, đổi ngôn ngữ VI/EN, bật/tắt âm thanh, link #lĩnh-vực.
 - Kiểm tra từng khung hình 60 fps bằng đồng hồ giả lập: không có ảnh nào nhảy vị trí hay nhấp nháy khi lặp vòng.
 - Ba trang riêng ở 1672×941, 1440×900, 1280×633, 1024×700 và iPhone 14 Pro, VI / EN: vừa một màn hình (chữ không chạm
-  thanh chủ đề), bánh xe (một cử chỉ = một chủ đề), phím, thẻ; vuốt bằng sự kiện cảm ứng thật — trên ảnh, trên chữ,
-  trên các nút của bảng điều khiển, hất nhanh, kéo ngắn trượt về, chạm vẫn bật thiết bị, vuốt dọc cuộn trang, kéo chuột
-  không tính là bấm; điện thoại: ảnh + hàng thẻ ở màn hình đầu, nút "Xem …" đưa ảnh + kịch bản vào màn hình (iPhone SE
-  320×568, SE 3, 12 mini, 14 Pro, Galaxy S8, Pixel 7, 15 Plus: kịch bản nằm trọn, không bị nút Zalo che; 4 thẻ dàn đều hết
-  chiều ngang, tên không tràn, cùng số dòng; chú thích kết cấu không lấn nhau, không ra ngoài ảnh);
-  không có âm thanh khi chuyển cảnh; nút Zalo cố định ở góc dưới phải, không đè lên thẻ / nhãn nào; camera chạy giờ; kéo tia laser (không đổi chủ đề), phím trên tay nắm; thẻ tiến độ,
-  chú thích kết cấu; điểm vật liệu đều nằm trong khung, thẻ vật liệu, ánh sáng buổi tối, nét kích thước.
+  thanh chủ đề), bánh xe (một cử chỉ = một chủ đề), phím, thẻ; vuốt ngang bằng sự kiện cảm ứng thật không đổi chủ đề,
+  vuốt dọc cuộn trang, chạm vẫn bật thiết bị; điện thoại: ảnh + hàng thẻ ở màn hình đầu, nút "Xem …" đưa ảnh + kịch bản
+  vào màn hình (iPhone SE 320×568, SE 3, 12 mini, 14 Pro, Galaxy S8, Pixel 7, 15 Plus: kịch bản nằm trọn, không bị nút
+  Zalo che; 4 thẻ dàn đều hết chiều ngang, tên không tràn, cùng số dòng; chú thích kết cấu không lấn nhau, không ra
+  ngoài ảnh); không có âm thanh khi chuyển cảnh; nút Zalo cố định ở góc dưới phải, không đè lên thẻ / nhãn nào; camera
+  chạy giờ; kéo tia laser (không đổi chủ đề), phím trên tay nắm; thẻ tiến độ, chú thích kết cấu; điểm vật liệu đều nằm
+  trong khung, thẻ vật liệu, ánh sáng buổi tối, nét kích thước.
 - Không có lỗi console, không có request ra ngoài Internet, không có thanh cuộn ngang; chạy đúng sau Nginx với cấu hình
   trong `deploy/nginx.conf`.
 

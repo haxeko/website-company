@@ -89,6 +89,8 @@ function placeOnPanel(id: MediaId, layout: 'landscape' | 'portrait'): PanelRect 
   const cfg = media.images[id] as {
     sourceSize?: number[]
     focus: number[]
+    /** Landscape only: the crop this many times closer (on the panel, with the focus). */
+    zoom?: number
     portraitFocusX?: number
     screen?: {
       x: number
@@ -105,14 +107,12 @@ function placeOnPanel(id: MediaId, layout: 'landscape' | 'portrait'): PanelRect 
   const { landscapeAspect, portraitAspect, seam } = media.geometry
   const aspect = (layout === 'landscape' ? landscapeAspect : portraitAspect) * (1 + seam)
   const [fx, fy] = layout === 'landscape' ? cfg.focus : [cfg.portraitFocusX ?? 0.5, 0.5]
-  let crop
-  if (width / height > aspect) {
-    const w = Math.round(height * aspect)
-    crop = { left: Math.round((width - w) * fx), top: 0, width: w, height }
-  } else {
-    const h = Math.round(width / aspect)
-    crop = { left: 0, top: Math.round((height - h) * fy), width, height: h }
-  }
+  const zoom = layout === 'landscape' ? (cfg.zoom ?? 1) : 1
+  // (as the image pipeline cuts it: scripts/optimize-images.mjs, coverCrop)
+  const fullWidth = width / height > aspect ? height * aspect : width
+  const w = Math.round(fullWidth / zoom)
+  const h = Math.round(Math.round(fullWidth / aspect) / zoom)
+  const crop = { left: Math.round((width - w) * fx), top: Math.round((height - h) * fy), width: w, height: h }
   const { x, y, width: sw, height: sh, radius, bezel = 0, tilt } = cfg.screen
   return {
     left: ((x - crop.left) / crop.width) * 100,
@@ -141,7 +141,7 @@ export const slides: Slide[] = [
     copy: {
       vi: {
         title: 'Smart Home',
-        subtitle: 'Sống thông minh',
+        subtitle: 'Nhà thông minh',
         kicker: 'Ngôi nhà biết lắng nghe',
         headline: 'Chạm nhẹ, cả ngôi nhà\nchuyển động.',
         accent: 'Công nghệ ẩn mình, trải nghiệm lên tiếng.',
@@ -179,7 +179,7 @@ export const slides: Slide[] = [
         subtitle: 'Xây dựng có chủ đích',
         kicker: 'Từ bản vẽ đến công trình',
         headline: 'Vững từ móng.',
-        accent: 'Chuẩn đến từng mạch bê tông.',
+        accent: 'Chuẩn đến từng chi tiết.',
         description:
           'Kết cấu, giáo chống và ván khuôn được tổ chức chặt chẽ — mỗi giai đoạn thi công đều minh bạch, an toàn và đúng tiến độ.',
         cta: 'Khám phá dự án',
@@ -190,7 +190,7 @@ export const slides: Slide[] = [
         subtitle: 'Built with purpose',
         kicker: 'From drawing to structure',
         headline: 'Solid from the ground up.',
-        accent: 'Precise to every pour.',
+        accent: 'Precise in every detail.',
         description:
           'Structure, shoring and formwork, organised with rigour — every phase of the build transparent, safe and on schedule.',
         cta: 'Explore projects',

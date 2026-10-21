@@ -248,7 +248,7 @@ export function DeckNav({ label, items, active, onSelect }: DeckNavProps) {
       </ul>
       <p className="hc-nav__hint" aria-hidden="true">
         <span className="hc-nav__mouse" />
-        {t.hint}
+        {t.pageHint}
       </p>
     </nav>
   )

@@ -49,7 +49,7 @@ const vi: InteriorCopy = {
       headline: 'Tĩnh trong đường nét.',
       accent: 'Ấm trong từng chạm.',
       description: 'Đá, gỗ và ánh sáng tự nhiên gặp nhau trong một nội thất đủ tinh giản để đời sống được lên tiếng.',
-      cta: 'Khám phá dự án',
+      cta: 'Khám phá',
     },
     materials: {
       kicker: 'Vật liệu tự nhiên',
@@ -121,7 +121,7 @@ const en: InteriorCopy = {
       headline: 'Calm in every line.',
       accent: 'Warm in every touch.',
       description: 'Stone, timber and daylight meet in an interior pared back enough to let life speak.',
-      cta: 'Explore projects',
+      cta: 'Explore',
     },
     materials: {
       kicker: 'Natural materials',

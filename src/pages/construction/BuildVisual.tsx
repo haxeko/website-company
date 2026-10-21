@@ -30,6 +30,13 @@ const LINE = { landscape: [0.66, 0.46, 0.36, 0], portrait: [0.7, 0.22, 0.3, 0] }
 const WEEKS = 38
 const PHASE_ENDS = [8 / 38, 20 / 38, 28 / 38, 1]
 
+/** The sample build's keys: eight months from today, as MM/YYYY. */
+function keysDate(months = 8) {
+  const today = new Date()
+  const keys = new Date(today.getFullYear(), today.getMonth() + months, 1)
+  return `${String(keys.getMonth() + 1).padStart(2, '0')}/${keys.getFullYear()}`
+}
+
 /* The drawing's annotations, in photo pixels (the landscape crop starts at 0). */
 const LEVELS_Y = [322, 966, 1745]
 const AXES: [string, number][] = [
@@ -298,7 +305,6 @@ export function BuildVisual({ visualRef, copy, phase, sweep, overlay, storyOpen,
 
           <div
             className="cp-line"
-            data-no-drag
             onPointerDown={onPointerDown}
             onPointerMove={onPointerMove}
             onPointerUp={onPointerUp}
@@ -350,7 +356,7 @@ export function BuildVisual({ visualRef, copy, phase, sweep, overlay, storyOpen,
             </li>
           ))}
         </ol>
-        <p className="cp-card__note">{copy.progress.handover}</p>
+        <p className="cp-card__note">{copy.progress.handover.replace('{date}', keysDate())}</p>
         <p className="cp-card__note">{copy.progress.today}</p>
       </aside>
 
@@ -358,7 +364,7 @@ export function BuildVisual({ visualRef, copy, phase, sweep, overlay, storyOpen,
         <p className="cp-card__title">{copy.handover.title}</p>
         <p className="cp-card__key">
           <KeyIcon />
-          {copy.handover.date}
+          {copy.handover.date.replace('{date}', keysDate())}
         </p>
         <ul className="cp-card__list">
           {copy.handover.items.map((item) => (

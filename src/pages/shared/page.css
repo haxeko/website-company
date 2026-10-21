@@ -2,9 +2,9 @@
  * The stand-alone pages (Smart Home, Construction, Interior). On a computer each one is a
  * single screen, as the home page: the header, a strip under it, the theme's text over the
  * dark left of the photo with the live part on the right, the numbered themes along the
- * bottom — the wheel, a swipe, the arrows or the keys change the theme. Phones and portrait
- * tablets stack the text, the photo and the themes, and the page scrolls: under the photo
- * the "watch" button opens the story it plays.
+ * bottom — the wheel, the arrows, the themes or the keys change the theme. Phones and portrait
+ * tablets stack the photo, the themes as tabs and the text, and the page only scrolls (no
+ * swiping): under the tabs the "watch" button opens the story it plays.
  */
 
 @media (max-width: 760px), (orientation: portrait) and (max-width: 1024px) {
@@ -67,21 +67,6 @@
   flex-direction: column;
   height: 100svh;
   padding-top: var(--pg-header-h, 100px);
-  /* Sideways swipes change the theme (useDeck); the page still scrolls up and down. */
-  touch-action: pan-y pinch-zoom;
-}
-
-/* While dragging, nothing in the hero is selected; past the threshold the arrow it goes to lights up. */
-.pg-hero[data-dragging] {
-  user-select: none;
-  -webkit-user-select: none;
-}
-
-.pg-hero[data-swipe='next'] .pg-controls .hc-controls__btn:last-child,
-.pg-hero[data-swipe='prev'] .pg-controls .hc-controls__btn:first-child {
-  border-color: var(--c-accent);
-  background: var(--c-accent);
-  color: var(--c-bg);
 }
 
 /* The strip under the header */

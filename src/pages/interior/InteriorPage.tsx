@@ -160,7 +160,6 @@ export function InteriorPage() {
               aria-label={copy.moodLabel}
               data-on={(active === LIGHT && !storyOpen) || undefined}
               aria-hidden={active !== LIGHT}
-              data-no-drag
               style={{ '--ip-mood': MOODS.indexOf(mood) } as CSSProperties}
               onKeyDown={onMoodKey}
             >

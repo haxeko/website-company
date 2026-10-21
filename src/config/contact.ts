@@ -6,7 +6,7 @@
  *   Left empty, the button opens Zalo's own site.
  */
 export const contact = {
-  zalo: '',
+  zalo: '0981584328',
 }
 
 /** Where the Zalo button leads (spaces in a phone number are dropped). */

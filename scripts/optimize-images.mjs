@@ -97,13 +97,12 @@ function grade(data, grade) {
 
 /* ── Panorama: crop + seam harmonisation ─────────────────────────────────── */
 
-function coverCrop(width, height, aspect, fx, fy) {
-  if (width / height > aspect) {
-    const w = Math.round(height * aspect)
-    return { left: Math.round((width - w) * fx), top: 0, width: w, height }
-  }
-  const h = Math.round(width / aspect)
-  return { left: 0, top: Math.round((height - h) * fy), width, height: h }
+function coverCrop(width, height, aspect, fx, fy, zoom = 1) {
+  // The largest crop of that aspect, `zoom` times closer, placed by the focus (as object-position).
+  const fullWidth = width / height > aspect ? height * aspect : width
+  const w = Math.round(fullWidth / zoom)
+  const h = Math.round(Math.round(fullWidth / aspect) / zoom)
+  return { left: Math.round((width - w) * fx), top: Math.round((height - h) * fy), width: w, height: h }
 }
 
 /**
@@ -284,6 +283,7 @@ const layouts = [
     aspect: media.geometry.landscapeAspect,
     widths: media.landscapeWidths,
     focus: (c) => c.focus,
+    zoom: (c) => c.zoom ?? 1,
   },
   {
     name: 'portrait',
@@ -291,6 +291,7 @@ const layouts = [
     aspect: media.geometry.portraitAspect,
     widths: media.portraitWidths,
     focus: (c) => [c.portraitFocusX ?? 0.5, 0.5],
+    zoom: () => 1,
   },
 ]
 
@@ -305,7 +306,7 @@ for (const layout of layouts) {
     const cfg = media.images[slug]
     const crop = cfg.strip
       ? stripCrop(info, media.strips[cfg.strip][layout.name], cfg.slot, layout.aspect)
-      : coverCrop(info.width, info.height, cropAspect, ...layout.focus(cfg))
+      : coverCrop(info.width, info.height, cropAspect, ...layout.focus(cfg), layout.zoom(cfg))
     if (crop.width < W) console.warn(`! ${slug}: source crop is only ${crop.width}px wide (< ${W}px) — upscaled`)
     const buf = await sharp(data, { raw: info }).extract(crop).resize(W, H, { kernel: 'lanczos3' }).raw().toBuffer()
     panels.push(Float32Array.from(buf, (v) => v / 255))

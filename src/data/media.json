@@ -58,11 +58,13 @@
         7008,
         4672
       ],
+      "$comment": "focus = where the landscape crop sits (0–1, as object-position); zoom = that crop this many times closer — here on the control panel, so the panel as seen (turned with the wall) is in the middle of the card; portraitFocusX does the same on phones.",
       "focus": [
-        0.5,
-        0.5
+        0.9643,
+        0.496
       ],
-      "portraitFocusX": 0.82,
+      "zoom": 1.294,
+      "portraitFocusX": 0.802,
       "grade": {
         "exposure": 1.0,
         "contrast": 0.12,

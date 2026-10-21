@@ -32,10 +32,12 @@ export interface ConstructionCopy {
     project: string
     /** "Week {n} / {total}" */
     week: string
+    /** `{date}`: the month of the handover, as in `handover.date`. */
     handover: string
     phases: [string, string][]
     today: string
   }
+  /** `{date}` in `date`: the month the keys are handed over — eight months from today. */
   handover: { title: string; date: string; items: string[] }
   story: { title: string; replay: string; steps: StoryStep[] }
 }
@@ -48,7 +50,7 @@ const vi: ConstructionCopy = {
   strip: [
     { name: 'BIM 3D', note: 'Mô phỏng trước khi xây' },
     { name: 'Địa chất', note: 'Khảo sát trước khi đặt móng' },
-    { name: 'Bê tông M350', note: 'Nén mẫu 7 & 28 ngày' },
+    { name: 'Bê tông M350', note: 'Nén mẫu 28 ngày' },
     { name: 'Thép CB400', note: 'Có chứng chỉ xuất xưởng' },
     { name: 'Giám sát 24/7', note: 'Camera công trường' },
     { name: 'Bảo hành 10 năm', note: 'Kết cấu & chống thấm' },
@@ -67,17 +69,17 @@ const vi: ConstructionCopy = {
     design: {
       kicker: 'Từ bản vẽ đến công trình',
       headline: 'Vững từ móng.',
-      accent: 'Chuẩn đến từng mạch bê tông.',
+      accent: 'Chuẩn đến từng chi tiết.',
       description:
         'Kết cấu, giáo chống và ván khuôn được tổ chức chặt chẽ — mỗi giai đoạn thi công đều minh bạch, an toàn và đúng tiến độ, bắt đầu từ mô hình BIM và khảo sát địa chất.',
-      cta: 'Khám phá dự án',
+      cta: 'Khám phá',
     },
     structure: {
       kicker: 'Kết cấu & vật liệu',
       headline: 'Khung bê tông\nđúng chuẩn.',
       accent: 'Bê tông M350, thép CB400.',
       description:
-        'Cột, dầm, sàn được tính theo tải trọng thực; cốt thép nghiệm thu trước mỗi lần đổ, mẫu bê tông nén thử ở 7 và 28 ngày, ván khuôn chỉ tháo khi bê tông đủ cường độ.',
+        'Cột, dầm, sàn được tính theo tải trọng thực; cốt thép nghiệm thu trước mỗi lần đổ, mẫu bê tông nén thử ở 28 ngày, ván khuôn chỉ tháo khi bê tông đủ cường độ.',
       cta: 'Xem kết cấu',
     },
     progress: {
@@ -116,7 +118,7 @@ const vi: ConstructionCopy = {
     title: 'Tiến độ công trình',
     project: 'Dự án minh họa · Biệt thự 2 tầng',
     week: 'Tuần {n} / {total}',
-    handover: 'Bàn giao dự kiến 12/2026',
+    handover: 'Bàn giao dự kiến {date}',
     phases: [
       ['Móng & tầng trệt', 'T1–8'],
       ['Khung bê tông', 'T9–20'],
@@ -127,7 +129,7 @@ const vi: ConstructionCopy = {
   },
   handover: {
     title: 'Bàn giao',
-    date: 'Nhận chìa khóa · 12/2026',
+    date: 'Nhận chìa khóa · {date}',
     items: ['Bảo hành kết cấu 10 năm', 'Bảo hành chống thấm 5 năm', 'Hồ sơ hoàn công, bản vẽ điện nước', 'Bảo trì định kỳ 12 tháng đầu'],
   },
   story: {
@@ -150,7 +152,7 @@ const en: ConstructionCopy = {
   strip: [
     { name: 'BIM 3D', note: 'Simulated before it is built' },
     { name: 'Soil survey', note: 'Before the foundations' },
-    { name: 'M350 concrete', note: 'Cube tests at 7 & 28 days' },
+    { name: 'M350 concrete', note: 'Cube tests at 28 days' },
     { name: 'CB400 steel', note: 'Mill certificates' },
     { name: '24/7 monitoring', note: 'Site cameras' },
     { name: '10-year warranty', note: 'Structure & waterproofing' },
@@ -169,17 +171,17 @@ const en: ConstructionCopy = {
     design: {
       kicker: 'From drawing to structure',
       headline: 'Solid from the ground up.',
-      accent: 'Precise to every pour.',
+      accent: 'Precise in every detail.',
       description:
         'Structure, shoring and formwork, organised with rigour — every phase of the build transparent, safe and on schedule, starting from a BIM model and a soil survey.',
-      cta: 'Explore projects',
+      cta: 'Explore',
     },
     structure: {
       kicker: 'Structure & materials',
       headline: 'A concrete frame\nbuilt to standard.',
       accent: 'M350 concrete, CB400 steel.',
       description:
-        'Columns, beams and slabs sized for the real loads; the rebar inspected before every pour, concrete cubes tested at 7 and 28 days, formwork struck only once the concrete is strong enough.',
+        'Columns, beams and slabs sized for the real loads; the rebar inspected before every pour, concrete cubes tested at 28 days, formwork struck only once the concrete is strong enough.',
       cta: 'See the structure',
     },
     progress: {
@@ -218,7 +220,7 @@ const en: ConstructionCopy = {
     title: 'Site progress',
     project: 'Sample project · Two-storey villa',
     week: 'Week {n} / {total}',
-    handover: 'Handover planned 12/2026',
+    handover: 'Handover planned {date}',
     phases: [
       ['Foundations & ground floor', 'W1–8'],
       ['Concrete frame', 'W9–20'],
@@ -229,7 +231,7 @@ const en: ConstructionCopy = {
   },
   handover: {
     title: 'Handover',
-    date: 'Keys handed over · 12/2026',
+    date: 'Keys handed over · {date}',
     items: [
       '10-year structural warranty',
       '5-year waterproofing warranty',

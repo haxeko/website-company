@@ -1,4 +1,4 @@
-import { Fragment, useLayoutEffect, useRef } from 'react'
+import { Fragment, useLayoutEffect, useRef, type CSSProperties } from 'react'
 import type { Slide } from '../../data/slides'
 import { useI18n } from '../../i18n/context'
 import './editorial.css'
@@ -55,8 +55,16 @@ export function HeroCopy({ slides, active, ready }: HeroCopyProps) {
   const slide = slides[shown]
   const copy = slide.copy[lang]
 
+  // A space with a live panel in the middle of its card (Smart Home): on a computer the text keeps clear of it.
+  const panel = slide.screen?.landscape
+
   return (
-    <div ref={rootRef} className="hc-copy">
+    <div
+      ref={rootRef}
+      className="hc-copy"
+      data-panel={panel ? true : undefined}
+      style={panel ? ({ '--hc-panel-x': panel.frameLeft / 100 } as CSSProperties) : undefined}
+    >
       <p className="hc-copy__index" data-line>
         <span>{pad(shown + 1)}</span>
         <i aria-hidden="true" />

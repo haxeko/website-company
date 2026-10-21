@@ -129,7 +129,7 @@ export function RoomVisual({ visualRef, copy, facet, mood, selected, onSelect, w
           </span>
         ))}
 
-        <div className="ip-points" role="group" aria-label={copy.features.materials.title} data-no-drag>
+        <div className="ip-points" role="group" aria-label={copy.features.materials.title}>
           {POINTS.map(([x, y], i) => (
             <button
               key={i}

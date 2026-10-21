@@ -230,6 +230,22 @@
   pointer-events: none;
 }
 
+/*
+ * A space with a live panel in the middle of its card (Smart Home, HeroCopy): on a computer the
+ * text ends a little before the panel's frame — the headline wraps where it must, and where the
+ * room gets narrow (tablets held sideways) the description steps aside.
+ */
+.hc:not([data-layout='portrait']) .hc-copy[data-panel] {
+  width: min(40vw, 720px, calc(50% - var(--hc-w) / 2 + var(--hc-w) * var(--hc-panel-x) - max(var(--gutter), 7.5vw) - 32px));
+  container-type: inline-size;
+}
+
+@container (max-width: 340px) {
+  .hc-copy[data-panel] .hc-copy__description {
+    display: none;
+  }
+}
+
 /* ── Vertical arrows + counter (right) ───────────────────────────────────── */
 
 .hc-controls {
