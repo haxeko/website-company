@@ -1,6 +1,6 @@
 /*
- * Construction page: the villa as photograph and as drawing, the laser line between them,
- * the drawing's annotations, the frame's callouts, the progress and handover cards. The
+ * Construction page: the villa as photograph and as BIM model, the laser line between them,
+ * the model's annotations, the frame's callouts, the progress and handover cards. The
  * page's layout — strip, text, themes, phone stack — is shared (../shared/page.css).
  */
 
@@ -25,7 +25,7 @@
 }
 
 /* The photo's own box, as object-fit: cover would place it: everything inside is laid out
-   in the photo's proportions, so the drawing, its marks and the callouts stay on it. */
+   in the photo's proportions, so the model, its marks and the callouts stay on it. */
 .cp-box {
   position: absolute;
   top: 50%;
@@ -36,9 +36,9 @@
 }
 
 .cp-photo,
-.cp-ink,
+.cp-bim,
 .cp-photo img,
-.cp-ink img {
+.cp-bim img {
   position: absolute;
   inset: 0;
   display: block;
@@ -72,8 +72,9 @@
   opacity: 1;
 }
 
-/* The drawing: to the left of the line only. */
-.cp-drawing {
+/* The BIM model (the same view, rendered as the bare frame with its pipes, ducts and cable
+   trays): to the left of the line only. */
+.cp-model {
   position: absolute;
   inset: 0;
   overflow: hidden;
@@ -81,47 +82,34 @@
   pointer-events: none;
 }
 
-/* Charcoal paper with a faint construction grid. */
-.cp-paper {
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(rgb(232 220 200 / 0.045) 1px, transparent 1px) 0 0 / 100% 6.25%,
-    linear-gradient(90deg, rgb(232 220 200 / 0.045) 1px, transparent 1px) 0 0 / 2.4% 100%,
-    radial-gradient(70% 90% at 45% 45%, #17181b, #0d0e10 80%);
-}
-
-/* Light lines on black, added to the paper (screen); the ink calms down behind the text. */
-.cp-ink {
-  mix-blend-mode: screen;
-  opacity: 0.92;
-  -webkit-mask-image: linear-gradient(90deg, rgb(0 0 0 / 0.18), rgb(0 0 0 / 0.5) 16%, #000 36%);
-  mask-image: linear-gradient(90deg, rgb(0 0 0 / 0.18), rgb(0 0 0 / 0.5) 16%, #000 36%);
-}
-
-/* Levels, grid axes and the dimension chain, in the drawing's gold. */
+/* Levels, grid axes and the dimension chain, in gold — on a dark halo, as the model is bright. */
 .cp-marks {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   overflow: visible;
+  filter: drop-shadow(0 0 1.5px rgb(10 10 12 / 0.75));
 }
 
 .cp-mark {
   fill: none;
-  stroke: rgb(226 196 140 / 0.75);
-  stroke-width: 1;
+  stroke: rgb(236 204 146 / 0.9);
+  stroke-width: 1.2;
   vector-effect: non-scaling-stroke;
   stroke-dasharray: 1;
   stroke-dashoffset: 0;
 }
 
 .cp-mark--axis {
-  stroke: rgb(226 196 140 / 0.3);
+  stroke: rgb(236 204 146 / 0.45);
 }
 
-/* Design: the drawing's marks are drawn while you watch. */
+.cp-mark--bubble {
+  fill: rgb(12 12 14 / 0.5);
+}
+
+/* Design: the model's marks are drawn while you watch. */
 .cp-visual[data-phase='0'] .cp-mark {
   animation: cp-draw 1.8s 0.3s var(--ease-out) both;
 }
@@ -135,7 +123,10 @@
 .cp-label {
   position: absolute;
   translate: -50% -50%;
-  color: rgb(232 207 159 / 0.92);
+  color: rgb(240 214 164);
+  text-shadow:
+    0 0 3px rgb(10 10 12 / 0.9),
+    0 1px 6px rgb(10 10 12 / 0.6);
   font-size: 10px;
   letter-spacing: 0.14em;
   line-height: 1;
@@ -148,15 +139,23 @@
   letter-spacing: 0;
 }
 
+/* Levels and dimensions on small dark chips, legible over the model's concrete and sky. */
+.cp-label--level,
+.cp-label--dim {
+  padding: 3px 6px;
+  border-radius: 3px;
+  background: rgb(12 12 14 / 0.55);
+}
+
 .cp-label--level {
   translate: 0 calc(-100% - 6px);
-  color: rgb(244 240 233 / 0.62);
+  color: rgb(244 240 233 / 0.9);
   text-transform: uppercase;
 }
 
 .cp-label--level b {
   margin-right: 0.5em;
-  color: rgb(232 207 159 / 0.95);
+  color: rgb(240 214 164);
   font-weight: 500;
 }
 
@@ -174,7 +173,7 @@
   }
 }
 
-/* Keeps the text legible over the left of the view, drawing or photo (under the line). */
+/* Keeps the text legible over the left of the view, model or photo (under the line). */
 .cp-shade {
   position: absolute;
   inset: 0;
@@ -421,7 +420,7 @@
   pointer-events: none;
 }
 
-.cp-tag--drawing {
+.cp-tag--model {
   right: calc(50% + 12px);
   color: var(--gold-2);
   opacity: clamp(0, calc((var(--line) - 0.08) * 14), 1);
@@ -631,11 +630,6 @@
 /* ── Phones and portrait tablets ──────────────────────────────────────── */
 
 @media (max-width: 760px), (orientation: portrait) and (max-width: 1024px) {
-  .cp-ink {
-    -webkit-mask-image: none;
-    mask-image: none;
-  }
-
   .cp-label {
     font-size: 8px;
   }

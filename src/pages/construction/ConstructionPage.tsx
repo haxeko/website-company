@@ -23,7 +23,7 @@ const SWEEP_MS = 4300
 
 /**
  * The Construction page (opened from "Explore" on the Construction space of the home page):
- * the villa as drawing and as building, divided by a laser line that can be dragged; the
+ * the villa as BIM model and as building, divided by a laser line that can be dragged; the
  * four phases of the build — design, structure, progress, handover — change like the home
  * page's spaces. "Watch the build" walks through them, the line sweeping as the work goes.
  */

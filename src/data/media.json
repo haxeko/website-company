@@ -186,7 +186,7 @@
     },
     "construction": {
       "source": "panorama-construction-interior.jpg",
-      "credit": "Concept image by VILLA NEST; the drawing traced from it (XDoG line extraction, light lines on black: shown in screen blend over the page’s charcoal)",
+      "credit": "Concept image by VILLA NEST; the BIM model of the same view (render by VILLA NEST, upscaled ×4 with Real-ESRGAN and aligned with the photo: scripts/art/construction-bim.py)",
       "crop": [
         0,
         0,
@@ -218,8 +218,8 @@
       },
       "extras": [
         {
-          "name": "construction-drawing",
-          "source": "construction-drawing.png",
+          "name": "construction-bim",
+          "source": "construction-bim.jpg",
           "widths": [
             1280,
             1920,
@@ -228,13 +228,13 @@
           ]
         },
         {
-          "name": "construction-drawing-portrait",
-          "source": "construction-drawing.png",
+          "name": "construction-bim-portrait",
+          "source": "construction-bim.jpg",
           "crop": [
-            1150,
+            2300,
             0,
-            1535,
-            1334
+            3070,
+            2668
           ],
           "widths": [
             640,

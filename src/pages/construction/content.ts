@@ -17,13 +17,13 @@ export interface ConstructionCopy {
   /** `\n` in a title: where the theme's tab breaks on phones (one line elsewhere). */
   features: Record<PhaseId, { title: string; note: string }>
   themes: Record<PhaseId, DeckText & { cta: string }>
-  /** The two sides of the laser line, and its handle. */
-  drawing: string
+  /** The two sides of the laser line (the BIM model, the building), and its handle. */
+  model: string
   built: string
   handle: string
   /** "{n}% built", for the handle's value. */
   builtValue: string
-  /** The drawing's floor levels, top down: [name, level]. */
+  /** The model's floor levels, top down: [name, level]. */
   levels: [string, string][]
   /** What the structure callouts point at: [part, detail]. */
   callouts: [string, string][]
@@ -58,7 +58,7 @@ const vi: ConstructionCopy = {
   index: 'Construction',
   watch: 'Xem quá trình xây dựng',
   stop: 'Dừng',
-  tryIt: 'Kéo đường laser để xem bản vẽ trở thành công trình.',
+  tryIt: 'Kéo đường laser để xem mô hình BIM trở thành công trình.',
   features: {
     design: { title: 'Thiết kế\n& BIM', note: 'Bản vẽ trước, công trình sau.' },
     structure: { title: 'Kết cấu\nvững chắc', note: 'Từ móng đến mái.' },
@@ -99,9 +99,9 @@ const vi: ConstructionCopy = {
       cta: 'Xem bàn giao',
     },
   },
-  drawing: 'Bản vẽ',
+  model: 'BIM 3D',
   built: 'Thực tế',
-  handle: 'Kéo để so sánh bản vẽ và công trình',
+  handle: 'Kéo để so sánh mô hình BIM và công trình',
   builtValue: 'Đã xây {n}%',
   levels: [
     ['Mái', '+7.20'],
@@ -160,7 +160,7 @@ const en: ConstructionCopy = {
   index: 'Construction',
   watch: 'Watch the build',
   stop: 'Stop',
-  tryIt: 'Drag the laser line to watch the drawing become a building.',
+  tryIt: 'Drag the laser line to watch the BIM model become a building.',
   features: {
     design: { title: 'Design\n& BIM', note: 'Drawn first, then built.' },
     structure: { title: 'Solid\nstructure', note: 'From footing to roof.' },
@@ -201,9 +201,9 @@ const en: ConstructionCopy = {
       cta: 'See the handover',
     },
   },
-  drawing: 'Drawing',
+  model: 'BIM 3D',
   built: 'Built',
-  handle: 'Drag to compare the drawing with the building',
+  handle: 'Drag to compare the BIM model with the building',
   builtValue: '{n}% built',
   levels: [
     ['Roof', '+7.20'],

@@ -22,8 +22,8 @@ const [PX, , PW, PH] = PAGE.portrait.crop
 const [LW, LH] = PAGE.sourceSize
 
 /**
- * Where the laser line stands for each phase (share of the image width that is still
- * drawing): design, structure (the frame's callouts on the photo), progress, handover.
+ * Where the laser line stands for each phase (share of the image width that is still the
+ * BIM model): design, structure (the frame's callouts on the photo), progress, handover.
  */
 const LINE = { landscape: [0.66, 0.46, 0.36, 0], portrait: [0.7, 0.22, 0.3, 0] }
 /** Weeks of the sample build, and where each phase ends (share of the build). */
@@ -37,7 +37,7 @@ function keysDate(months = 8) {
   return `${String(keys.getMonth() + 1).padStart(2, '0')}/${keys.getFullYear()}`
 }
 
-/* The drawing's annotations, in photo pixels (the landscape crop starts at 0). */
+/* The model's annotations — grid, levels, dimensions — in photo pixels (the landscape crop starts at 0). */
 const LEVELS_Y = [322, 966, 1745]
 const AXES: [string, number][] = [
   ['A', 1464],
@@ -101,11 +101,12 @@ interface BuildVisualProps {
 }
 
 /**
- * The villa being built, twice over: the photograph, and the architect's drawing of the same
- * view on charcoal paper with its levels, grid and dimensions. A laser line divides them —
- * drawing to the left, the building to the right — and can be dragged (or moved with the
- * arrow keys): what is "built" follows it, and so does the site's progress card. Each phase
- * moves the line, shows the frame's callouts, the progress card or the handover.
+ * The villa being built, twice over: the photograph, and the BIM model of the same view —
+ * the bare concrete frame with its pipes, ducts and cable trays — with its levels, grid and
+ * dimensions. A laser line divides them — the model to the left, the building to the right —
+ * and can be dragged (or moved with the arrow keys): what is "built" follows it, and so does
+ * the site's progress card. Each phase moves the line, shows the frame's callouts, the
+ * progress card or the handover.
  */
 export function BuildVisual({ visualRef, copy, phase, sweep, overlay, storyOpen, hint, alt }: BuildVisualProps) {
   const portrait = usePortrait()
@@ -135,7 +136,7 @@ export function BuildVisual({ visualRef, copy, phase, sweep, overlay, storyOpen,
   // Each phase brings the line to its place.
   useEffect(() => moveTo(targets[phase]), [phase, targets, moveTo])
 
-  // "Explore": all drawing, then all built, then back to the phase.
+  // "Explore": all model, then all built, then back to the phase.
   const runSweep = useEffectEvent(() => {
     tween.current?.kill()
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
@@ -234,20 +235,19 @@ export function BuildVisual({ visualRef, copy, phase, sweep, overlay, storyOpen,
           />
           <div className="cp-glow" aria-hidden="true" />
 
-          <div className="cp-drawing" aria-hidden="true">
-            <div className="cp-paper" />
+          <div className="cp-model" aria-hidden="true">
             <Layers
-              name="construction-drawing"
+              name="construction-bim"
               widths={PAGE.extras[0].widths}
               portraitWidths={PAGE.extras[1].widths}
               alt=""
-              className="cp-ink"
+              className="cp-bim"
             />
             <svg className="cp-marks" viewBox={`${view.x} ${view.y} ${view.w} ${view.h}`} preserveAspectRatio="none">
               {AXES.map(([name, x]) => (
                 <g key={name}>
                   <line className="cp-mark cp-mark--axis" x1={x} y1={205} x2={x} y2={DIM_Y + 60} pathLength={1} />
-                  <circle className="cp-mark" cx={x} cy={150} r={52} pathLength={1} />
+                  <circle className="cp-mark cp-mark--bubble" cx={x} cy={150} r={52} pathLength={1} />
                 </g>
               ))}
               {LEVELS_Y.map((y) => (
@@ -312,8 +312,8 @@ export function BuildVisual({ visualRef, copy, phase, sweep, overlay, storyOpen,
             onPointerCancel={onPointerUp}
           >
             <span className="cp-line__beam" aria-hidden="true" />
-            <span className="cp-tag cp-tag--drawing" aria-hidden="true">
-              {copy.drawing}
+            <span className="cp-tag cp-tag--model" aria-hidden="true">
+              {copy.model}
             </span>
             <span className="cp-tag cp-tag--built" aria-hidden="true">
               {copy.built}

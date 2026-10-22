@@ -90,16 +90,16 @@ riêng** cùng một phong cách: [`/smart-home/`](#trang-smart-home), [`/constr
   - **"Xem kịch bản sống"**: 18:00 *Về nhà* → 20:30 *Thư giãn* → 23:00 *Ngủ ngon* (giờ trên bảng, ánh sáng, rèm, điều
     hòa đổi theo — máy lạnh kêu "tít" mỗi lần nhận lệnh), rồi căn phòng sáng lại như cũ.
 - <a id="trang-xây-dựng"></a>**Trang Xây dựng** (`/construction/`, nút **"Khám phá dự án"** ở cảnh Construction) —
-  *"Từ bản vẽ đến công trình"*: cùng một căn biệt thự vừa là **ảnh thật** vừa là **bản vẽ kiến trúc** (nét sáng trên giấy
-  than chì có lưới, cao độ +7.20 / +3.60 / ±0.00, trục A–E, chuỗi kích thước). Một **tia laser** dọc chia đôi: bên trái là
-  bản vẽ, bên phải là công trình — **kéo tia laser** (hoặc phím ← → khi chọn tay nắm) để so sánh, phần trăm "đã xây" chạy
-  theo.
+  *"Từ bản vẽ đến công trình"*: cùng một căn biệt thự vừa là **ảnh thật** vừa là **mô hình BIM 3D** (khung bê tông trần
+  với đường ống đỏ / xanh dương, máng cáp xanh lá, ống gió; trùng khít từng điểm với ảnh thật), kèm cao độ +7.20 / +3.60 /
+  ±0.00, trục A–E, chuỗi kích thước. Một **tia laser** dọc chia đôi: bên trái là mô hình BIM, bên phải là công trình —
+  **kéo tia laser** (hoặc phím ← → khi chọn tay nắm) để so sánh, phần trăm "đã xây" chạy theo.
   - Bốn chủ đề là bốn giai đoạn: **Thiết kế & BIM** (các nét ghi chú tự vẽ ra) · **Kết cấu vững chắc** (chú thích trên khung
     bê tông thật: cột 400 × 400, dầm 300 × 600, sàn 150 mm, giàn chống — trên điện thoại nhãn gần mép ảnh tự mở sang phía
     còn chỗ) · **Tiến độ minh bạch** (thẻ công trường: % hoàn thành, tuần, bốn hạng mục, nhật ký hôm nay — đổi theo tia
     laser) · **Bàn giao kỹ càng** (cả ngôi nhà hoàn thiện, đèn ấm lên, thẻ bảo hành; ngày nhận chìa khóa — và ngày
     "bàn giao dự kiến" trên thẻ tiến độ — = hôm nay + 8 tháng, tự tính theo ngày người xem mở trang).
-  - **"Khám phá …"**: tia laser quét một lượt từ bản vẽ sang công trình rồi về chỗ; **"Xem quá trình xây dựng"** đi qua
+  - **"Khám phá …"**: tia laser quét một lượt từ mô hình BIM sang công trình rồi về chỗ; **"Xem quá trình xây dựng"** đi qua
     bốn giai đoạn, tia laser chạy theo.
 - <a id="trang-nội-thất"></a>**Trang Nội thất** (`/interior/`, nút **"Khám phá dự án"** ở cảnh Interior) — *"Chất liệu &
   ánh sáng"*: dải dưới header là **sáu mẫu vật liệu thật** cắt từ chính căn phòng (travertine, gỗ óc chó, marble, bouclé,
@@ -163,6 +163,7 @@ Các lệnh khác:
 | `npm run typecheck` | Chỉ kiểm tra TypeScript                                      |
 | `npm run lint`      | Kiểm tra mã nguồn (oxlint)                                   |
 | `npm run images`    | Tạo lại toàn bộ ảnh tối ưu từ `assets-src/` (xem phần Thay ảnh) |
+| `npm run images -- --pages` | Chỉ tạo lại ảnh của ba trang riêng (nhanh hơn, không đụng tới ảnh toàn cảnh) |
 
 ## Build & triển khai bằng Nginx
 
@@ -207,7 +208,7 @@ static server nào); mở trực tiếp `dist/index.html` bằng `file://` sẽ 
 ├── docs/                       Ảnh chụp màn hình, hướng dẫn Raspberry Pi
 ├── public/
 │   ├── assets/slides/          Tấm toàn cảnh đã tối ưu: AVIF/WebP ngang, dọc, ambient (sinh tự động)
-│   ├── assets/pages/           Ảnh của ba trang: ngang, bản cắt cho điện thoại, camera, bản vẽ, ánh sáng, mẫu vật liệu (sinh tự động)
+│   ├── assets/pages/           Ảnh của ba trang: ngang, bản cắt cho điện thoại, camera, mô hình BIM, ánh sáng, mẫu vật liệu (sinh tự động)
 │   └── favicon.svg
 ├── scripts/optimize-images.mjs Pipeline ảnh: chỉnh màu, cắt tấm, hòa mép, resize, mã hoá AVIF/WebP
 ├── scripts/art/                Các bước dựng ảnh một lần (Python + OpenCV, xem phần Thay ảnh) — không cần cho build
@@ -241,7 +242,7 @@ static server nào); mở trực tiếp `dist/index.html` bằng `file://` sẽ 
     │                           đề, kịch bản trên điện thoại) · useDeck (chuột, phím, vuốt, bánh xe) · useDemo · page.css
     ├── pages/smart-home/       Trang Smart Home: content.ts (chữ VI/EN) · HeroVisual (ảnh + màn hình phối cảnh)
     │                           · ScenePanel (các màn hình của bảng, camera) · usePageHome (trạng thái, kịch bản) · icons.tsx
-    ├── pages/construction/     Trang Xây dựng: content.ts · BuildVisual (ảnh + bản vẽ, tia laser, chú thích, thẻ)
+    ├── pages/construction/     Trang Xây dựng: content.ts · BuildVisual (ảnh + mô hình BIM, tia laser, chú thích, thẻ)
     ├── pages/interior/         Trang Nội thất: content.ts · RoomVisual (ba ánh sáng, điểm vật liệu, kích thước)
     ├── styles/                 tokens.css (màu, font, khoảng cách) · global.css
     └── utils/device.ts         Nhận diện chế độ chất lượng & media query
@@ -326,9 +327,12 @@ lại rồi chạy `npm run images`:
 - `pages.smart-home` — `assets-src/smart-home-page.jpg`: `landscapeWidths` (bản ngang), `portrait.crop` (khung cắt cho
   điện thoại), `panel` (4 góc mặt kính của bảng: trên-trái, trên-phải, dưới-phải, dưới-trái — màn hình sống được chiếu
   đúng vào đó), `window` (mép vách kính mà rèm kéo qua); `extras`: hai khung hình camera (`assets-src/cameras/`).
-- `pages.construction` — cắt từ `panorama-construction-interior.jpg` (`crop`), kèm **bản vẽ** cùng khung hình
-  `assets-src/construction-drawing.png` (tạo bằng `scripts/art/construction-drawing.py`: nét sáng trên nền đen, trang
-  web cộng vào giấy than chì). Vị trí cao độ, trục, chú thích nằm ở đầu `src/pages/construction/BuildVisual.tsx`.
+- `pages.construction` — cắt từ `panorama-construction-interior.jpg` (`crop`), kèm **mô hình BIM** cùng khung hình
+  `assets-src/construction-bim.jpg`. Thay ảnh BIM: ảnh render phải cùng góc nhìn với ảnh toàn cảnh; phóng to ×4
+  (Real-ESRGAN x4plus, như ảnh toàn cảnh) rồi chạy `python scripts/art/construction-bim.py <ảnh-x4.png>
+  assets-src/panorama-construction-interior.jpg assets-src/construction-bim.jpg 0 6937` (cần OpenCV) — script tự dò
+  điểm trùng giữa hai ảnh, đặt ảnh BIM khớp từng điểm lên ảnh thật rồi cắt đúng khung trang. Vị trí cao độ, trục, chú
+  thích nằm ở đầu `src/pages/construction/BuildVisual.tsx`.
 - `pages.interior` — cắt từ cùng ảnh toàn cảnh, kèm ảnh **buổi sáng** và **buổi tối** (`assets-src/interior/`, dựng lại
   ánh sáng bằng `scripts/art/interior-light.py`) và sáu **mẫu vật liệu** (`swatch-…`, cắt thẳng từ ảnh). Vị trí các điểm
   vật liệu và nét kích thước nằm ở đầu `src/pages/interior/RoomVisual.tsx`.
@@ -383,8 +387,9 @@ Kiểm thử tự động bằng Playwright (Chromium) trên bản build:
 
 Thay bằng ảnh dự án thật của VILLA NEST trước khi ra mắt chính thức.
 
-- Construction, Interior — ảnh concept của VILLA NEST (`assets-src/panorama-construction-interior.jpg`); bản vẽ của
-  trang Xây dựng và ánh sáng sáng / tối của trang Nội thất được dựng từ chính ảnh này.
+- Construction, Interior — ảnh concept của VILLA NEST (`assets-src/panorama-construction-interior.jpg`); mô hình BIM
+  của trang Xây dựng là ảnh render của VILLA NEST cùng góc nhìn; ánh sáng sáng / tối của trang Nội thất được dựng từ
+  chính ảnh toàn cảnh.
 - Camera trên bảng điều khiển — ảnh của [Declan Sun](https://unsplash.com/photos/two-arched-doorways-with-bamboo-flanking-a-reflective-pool-IcpcvUN4fh0)
   và [ubeyonroad](https://unsplash.com/photos/modern-house-with-manicured-hedges-and-gate-4b25Ic2VjiQ) trên Unsplash
   ([Unsplash License](https://unsplash.com/license)), chỉnh thành khung hình camera (ống kính góc rộng, màu ban đêm /

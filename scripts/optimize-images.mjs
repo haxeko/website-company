@@ -26,6 +26,7 @@
  * Settings live in src/data/media.json (shared with the app).
  *
  *   npm run images
+ *   npm run images -- --pages     (the stand-alone pages' photos only)
  */
 import { mkdir, readFile, readdir, rm } from 'node:fs/promises'
 import { dirname, join, resolve } from 'node:path'
@@ -255,14 +256,17 @@ async function writePreview(panels, W, H, file) {
 
 /* ── Main ─────────────────────────────────────────────────────────────────── */
 
+/** `npm run images -- --pages`: the stand-alone pages' photos only (the panorama takes minutes). */
+const panorama = !process.argv.includes('--pages')
+
 await mkdir(outputDir, { recursive: true })
-for (const file of await readdir(outputDir)) {
+for (const file of panorama ? await readdir(outputDir) : []) {
   if (/\.(avif|webp)$/.test(file)) await rm(join(outputDir, file))
 }
 
 // 1. Grade every source once.
 const graded = {}
-for (const slug of media.order) {
+for (const slug of panorama ? media.order : []) {
   const cfg = media.images[slug]
   const source = cfg.strip ? media.strips[cfg.strip].source : cfg.source
   const { data, info } = await sharp(join(sourceDir, source))
@@ -296,7 +300,7 @@ const layouts = [
 ]
 
 const report = {}
-for (const layout of layouts) {
+for (const layout of panorama ? layouts : []) {
   const cropAspect = layout.aspect * (1 + seam)
   const W = Math.max(...layout.widths)
   const H = Math.round(W / cropAspect)
