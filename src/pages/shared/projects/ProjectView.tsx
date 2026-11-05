@@ -245,7 +245,7 @@ export function ProjectView({ project, origin, instant, target, closing, page, c
       </div>
 
       {/* (the project's own page: back to its projects) */}
-      <PagesArc variant="side" current={project.category} onCurrent={onClose} navRef={arcRef} />
+      <PagesArc current={project.category} onCurrent={onClose} navRef={arcRef} />
 
       <div ref={heroRef} className="pv__hero">
         <Picture img={project.cover} sizes="100vw" alt={project.title[lang]} />

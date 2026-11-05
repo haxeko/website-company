@@ -16,7 +16,7 @@ import { useI18n } from '../../../i18n/context'
 import { REDUCED_MOTION_QUERY } from '../../../utils/device'
 import { usePortrait } from '../useDeck'
 import { PROJECT_TYPES, PROJECT_TYPE_NAMES, preloadCover, useProjects, type Project, type ProjectCategory, type ProjectType } from './data'
-import { PagesArc } from './PagesArc'
+import { PagesDock } from './PagesArc'
 import { Picture, ProjectView, type CoverOrigin } from './ProjectView'
 import './projects.css'
 
@@ -79,7 +79,7 @@ const chunk = <T,>(list: T[], size: number) =>
  * type (the types the projects have). Tapping a project throws the others off the screen while
  * its cover grows into the project's page — the photos under it (ProjectView). Each project
  * has its own link: /construction/#<id>. On a phone, once the projects' end is in view, the
- * site's pages wait on an arc beside the Zalo button (PagesArc).
+ * site's pages wait in a row beside the Zalo button (PagesDock).
  */
 export function Projects({ category, name, ready }: ProjectsProps) {
   const { t, lang } = useI18n()
@@ -584,9 +584,7 @@ export function Projects({ category, name, ready }: ProjectsProps) {
         </div>
       )}
       <i ref={endRef} className="pj__end" aria-hidden="true" />
-      {portrait && (
-        <PagesArc variant="dock" current={category} on={near && !open} onCurrent={() => window.scrollTo({ top: 0, behavior: 'smooth' })} />
-      )}
+      {portrait && <PagesDock current={category} on={near && !open} onCurrent={() => window.scrollTo({ top: 0, behavior: 'smooth' })} />}
       {open &&
         createPortal(
           <ProjectView

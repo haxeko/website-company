@@ -339,8 +339,8 @@ html[data-project-open] .pj {
     --pj-gap: 14px;
     max-width: none;
     margin: 0;
-    /* (room for the pages' arc and the Zalo button under the last row) */
-    padding: 30px var(--gutter) calc(env(safe-area-inset-bottom, 0px) + 116px);
+    /* (room under the last row for the pages' row, and for the WhatsApp button over Zalo's) */
+    padding: 30px var(--gutter) calc(var(--chat-bottom) + 118px);
   }
 
   .pj__bar {
@@ -728,35 +728,18 @@ html[data-project-open] {
 }
 
 /*
- * The site's pages on an arc (PagesArc): round buttons as the header's, the line icons of the
- * strips under the pages' header, the page of the projects in gold. On a computer, in a
- * project's left margin once its banner is scrolled away — never over it; on a phone, along
- * the bottom row beside the Zalo button while the projects are in view. They come in one after
- * another along the arc.
+ * The site's pages on an arc (PagesArc, computers): round buttons as the header's, the line
+ * icons of the strips under the pages' header, the project's page in gold — in a project's left
+ * margin once its banner is scrolled away, never over it. They come in one after another along
+ * the arc.
  */
 .pages-arc {
   position: fixed;
-  z-index: 3;
-  pointer-events: none;
-}
-
-.pages-arc[data-variant='side'] {
   top: 50%;
   left: clamp(18px, 1.8vw, 32px);
+  z-index: 3;
   translate: 0 -50%;
-}
-
-.pages-arc[data-variant='dock'] {
-  bottom: max(3.2vh, calc(env(safe-area-inset-bottom, 0px) + 14px));
-  left: var(--gutter);
-  z-index: 30;
-  transform-origin: left bottom;
-}
-
-@media (max-width: 340px) {
-  .pages-arc[data-variant='dock'] {
-    scale: 0.86;
-  }
+  pointer-events: none;
 }
 
 .pages-arc__line {
@@ -800,10 +783,6 @@ html[data-project-open] {
     border-color 0.3s ease,
     background-color 0.3s ease,
     visibility 0s linear 0.4s;
-}
-
-.pages-arc[data-variant='dock'] .pages-arc__item {
-  translate: 0 20px;
 }
 
 .pages-arc[data-on] .pages-arc__item {
@@ -870,16 +849,116 @@ html[data-project-open] {
   translate: 0 -50%;
 }
 
-/* (on a phone the name goes over the button) */
-.pages-arc[data-variant='dock'] .pages-arc__label {
-  top: auto;
-  bottom: calc(100% + 10px);
-  left: 50%;
-  translate: -50% 6px;
+/*
+ * Phones (PagesDock): the same buttons in a straight row, each name under its button, from the
+ * left edge to the Zalo button — the buttons in line with it. They come in once the end of the
+ * projects is reached (there the page keeps room for them), one after another.
+ */
+.pages-dock {
+  position: fixed;
+  right: calc(var(--gutter) + 46px + 12px);
+  bottom: calc(var(--chat-bottom) - 15px);
+  left: calc(var(--gutter) - 6px);
+  z-index: 30;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: start;
+  pointer-events: none;
 }
 
-.pages-arc[data-variant='dock'] .pages-arc__item:is(:hover, :focus-visible) .pages-arc__label {
-  translate: -50% 0;
+.pages-dock__item {
+  display: grid;
+  justify-items: center;
+  gap: 5px;
+  min-width: 0;
+  color: var(--c-text);
+  text-decoration: none;
+  opacity: 0;
+  translate: 0 18px;
+  visibility: hidden;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    opacity 0.3s ease,
+    translate 0.4s var(--ease-out),
+    visibility 0s linear 0.4s;
+}
+
+.pages-dock[data-on] .pages-dock__item {
+  opacity: 1;
+  translate: 0 0;
+  visibility: visible;
+  pointer-events: auto;
+  transition:
+    opacity 0.45s ease calc(var(--i) * 0.06s + 0.05s),
+    translate 0.6s var(--ease-out) calc(var(--i) * 0.06s + 0.05s),
+    visibility 0s;
+}
+
+.pages-dock__icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgb(244 240 233 / 0.3);
+  border-radius: 50%;
+  background: rgb(14 14 16 / 0.6);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  transition:
+    border-color 0.3s ease,
+    background-color 0.3s ease,
+    scale 0.15s ease;
+}
+
+.pages-dock__icon .pv-icon {
+  width: 21px;
+  height: 21px;
+}
+
+.pages-dock__item:active .pages-dock__icon {
+  scale: 0.94;
+}
+
+.pages-dock__label {
+  max-width: 100%;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pages-dock__item[aria-current] .pages-dock__icon {
+  border-color: var(--c-accent);
+  background: rgb(210 176 122 / 0.14);
+  color: var(--gold-2);
+}
+
+.pages-dock__item[aria-current] .pages-dock__label {
+  color: var(--gold-2);
+}
+
+.pages-dock__item:focus-visible {
+  outline: none;
+}
+
+.pages-dock__item:focus-visible .pages-dock__icon {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 3px;
+}
+
+@media (max-width: 350px) {
+  .pages-dock__icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .pages-dock__label {
+    font-size: 9px;
+    letter-spacing: 0;
+  }
 }
 
 /* The photos, two to a row under the first, which runs across. */
@@ -953,7 +1032,7 @@ html[data-project-open] {
     margin-top: -64px;
   }
 
-  .pages-arc[data-variant='side'] {
+  .pages-arc {
     display: none;
   }
 
@@ -995,8 +1074,9 @@ html[data-project-open] {
     grid-template-columns: 1fr;
   }
 
+  /* (clear of the WhatsApp and Zalo buttons at the end) */
   .pv__contact {
-    margin-bottom: 64px;
+    margin-bottom: calc(var(--chat-bottom) + 64px);
   }
 }
 
@@ -1007,8 +1087,9 @@ html[data-project-open] {
   }
 
   .pages-arc__item,
-  .pages-arc[data-variant] .pages-arc__item,
-  .pages-arc[data-on] .pages-arc__item {
+  .pages-arc[data-on] .pages-arc__item,
+  .pages-dock__item,
+  .pages-dock[data-on] .pages-dock__item {
     translate: 0 0;
   }
 
@@ -1023,7 +1104,7 @@ html[data-project-open] {
 
 /* Phones held sideways and other short screens: no room for the menu. */
 @media (max-height: 560px) {
-  .pages-arc[data-variant='side'] {
+  .pages-arc {
     display: none;
   }
 }

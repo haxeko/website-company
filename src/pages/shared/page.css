@@ -536,6 +536,13 @@ html.is-page body {
     margin-top: 16px;
   }
 
+  /* (while the story is open under the photo, the WhatsApp button steps down into the Zalo
+     button's row, off the story's last line: the story ends just over the Zalo button) */
+  html:has(.pg-story[data-open]) .whatsapp-chat {
+    right: calc(var(--gutter) + var(--zalo-size) + 12px);
+    bottom: var(--chat-bottom);
+  }
+
   .pg-story[data-open] {
     display: grid;
     order: 3;
