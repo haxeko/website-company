@@ -14,6 +14,9 @@ set -euo pipefail
 
 SITE=${SITE:-villa-nest}
 WEB_ROOT=/var/www/$SITE
+# Dự án do trang quản trị (/admin/) lưu: danh sách, ảnh, mật khẩu — không bị đụng tới khi cập nhật website.
+DATA_DIR=/var/lib/$SITE
+ADMIN_PORT=${ADMIN_PORT:-8787}
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BACKUP_ROOT=/var/backups/villa-nest
 BUILD=1
@@ -156,7 +159,9 @@ if ((KEEP_CONF)); then
   step "Giữ nguyên cấu hình Nginx của VILLA NEST (có HTTPS của Certbot): $AVAIL"
 else
   step "Cấu hình Nginx (cổng $PORT, tên miền: $SERVER_NAME)"
-  CONF=$(sed -e "s#^\(\s*\)server_name .*#\1server_name $SERVER_NAME;#" -e "s#^\(\s*\)root .*#\1root $WEB_ROOT;#" \
+  CONF=$(sed -e "s#^\(\s*\)server_name .*#\1server_name $SERVER_NAME;#" \
+    -e "s|^\(\s*\)root [^;]*;\(.*contents of dist/.*\)$|\1root $WEB_ROOT;\2|" \
+    -e "s|/var/lib/villa-nest/|$DATA_DIR/|" -e "s|127\.0\.0\.1:8787|127.0.0.1:$ADMIN_PORT|" \
     -e "s#listen 80;#listen $PORT;#" -e "s#listen \[::\]:80;#listen [::]:$PORT;#" deploy/nginx.conf)
   # Pi đã tắt IPv6 thì bỏ dòng listen [::]
   [[ -e /proc/net/if_inet6 ]] || CONF=$(sed '/listen \[::\]/d' <<<"$CONF")
@@ -175,6 +180,42 @@ else
 
   echo "$CONF" | sudo tee "$AVAIL" >/dev/null
   [[ "$ENABLED" == "$AVAIL" ]] || sudo ln -sf "$AVAIL" "$ENABLED"
+fi
+
+# Trang quản trị dự án: một dịch vụ nhỏ (server/admin-server.mjs) chỉ nghe trên máy này; Nginx chuyển /api/admin/ tới nó.
+if command -v node >/dev/null && [[ -d node_modules/sharp ]]; then
+  step "Trang quản trị dự án (/admin/)"
+  RUN_USER=$(id -un)
+  sudo mkdir -p "$DATA_DIR"
+  sudo chown "$RUN_USER": "$DATA_DIR"
+  sudo chmod 755 "$DATA_DIR"
+  if [[ ! -f "$DATA_DIR/admin/password.json" ]]; then
+    if [[ -t 0 ]]; then
+      echo "Đặt mật khẩu để đăng nhập trang quản trị (/admin/):"
+      DATA_DIR="$DATA_DIR" node server/admin-password.mjs ||
+        echo "Chưa đặt được mật khẩu — đặt sau bằng: DATA_DIR=$DATA_DIR npm run admin:password"
+    else
+      echo "Chưa có mật khẩu quản trị — đặt bằng: DATA_DIR=$DATA_DIR npm run admin:password"
+    fi
+  fi
+  sed -e "s|@USER@|$RUN_USER|g" -e "s|@REPO@|$REPO_DIR|g" -e "s|@DATA_DIR@|$DATA_DIR|g" \
+    -e "s|@NODE@|$(command -v node)|g" -e "s|@PORT@|$ADMIN_PORT|g" deploy/villa-nest-admin.service |
+    sudo tee "/etc/systemd/system/$SITE-admin.service" >/dev/null
+  sudo systemctl daemon-reload
+  sudo systemctl enable "$SITE-admin" >/dev/null 2>&1 || true
+  sudo systemctl restart "$SITE-admin"
+  sleep 1
+  if systemctl is-active --quiet "$SITE-admin"; then
+    echo "Dịch vụ $SITE-admin đang chạy (dữ liệu: $DATA_DIR)"
+  else
+    echo "Dịch vụ $SITE-admin chưa chạy được — xem: journalctl -u $SITE-admin -n 30"
+  fi
+  if ((KEEP_CONF)) && ! sudo grep -qs '/api/admin/' "$AVAIL"; then
+    echo "Lưu ý: cấu hình Nginx (có HTTPS của Certbot) được giữ nguyên nên chưa có /api/admin/, /data/, /projects/ của"
+    echo "trang quản trị — chép các khối location đó từ deploy/nginx.conf vào $AVAIL rồi: sudo nginx -t && sudo systemctl reload nginx"
+  fi
+else
+  echo "(Bỏ qua trang quản trị: cần Node.js và thư viện — chạy script không có --no-build.)"
 fi
 
 # Nginx cũ (Raspberry Pi OS Bookworm dùng 1.22) chưa biết định dạng ảnh AVIF.

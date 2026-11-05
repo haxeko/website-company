@@ -1,0 +1,13 @@
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import '@fontsource-variable/montserrat'
+import '@fontsource-variable/cormorant-garamond/wght.css'
+import '../styles/tokens.css'
+import './admin.css'
+import { AdminApp } from './AdminApp'
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <AdminApp />
+  </StrictMode>,
+)

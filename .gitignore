@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# The admin's data when it runs on this machine (npm run admin): projects, photos, password
+.admin-data/

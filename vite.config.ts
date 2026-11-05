@@ -45,11 +45,15 @@ export default defineConfig({
         'smart-home': resolve(import.meta.dirname, 'smart-home/index.html'),
         construction: resolve(import.meta.dirname, 'construction/index.html'),
         interior: resolve(import.meta.dirname, 'interior/index.html'),
+        // The projects' admin (/admin/: server/admin-server.mjs answers its requests on the Pi).
+        admin: resolve(import.meta.dirname, 'admin/index.html'),
       },
     },
   },
   server: {
     host: true,
+    // (npm run dev with npm run admin: the admin's requests go to it)
+    proxy: { '/api/admin': 'http://127.0.0.1:8787' },
   },
   preview: {
     host: true,

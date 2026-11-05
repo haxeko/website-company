@@ -103,9 +103,10 @@ Lưu lại. Cloudflare tự tạo bản ghi DNS (`CNAME … .cfargotunnel.com`, 
 - **www → tên miền chính** (để chỉ có một địa chỉ): **Rules → Redirect Rules → Create rule** → chọn mẫu
   *Redirect from WWW to Root* → Deploy.
 - **Speed → Optimization → Rocket Loader: Off** — tính năng này viết lại JavaScript, có thể làm hỏng hiệu ứng.
-- **Caching**: để mặc định (*Caching Level: Standard* — đừng chọn *Ignore Query String*). Nginx đã gửi sẵn header:
-  `index.html` không bị cache (cập nhật là thấy ngay), file JS/CSS có tên băm (cache 1 năm), ảnh cache 30 ngày — đường
-  dẫn ảnh có kèm mã theo nội dung file (`…/smart-home-1920.avif?v=91ccea55f4`), nên ảnh nào thay đổi thì địa chỉ đổi
+- **Caching**: để mặc định (*Caching Level: Standard* — đừng chọn *Ignore Query String*, đừng tạo quy tắc *Cache
+  Everything*). Nginx đã gửi sẵn header: `index.html` và danh sách dự án không bị cache (cập nhật, lưu dự án là thấy
+  ngay), file JS/CSS có tên băm (cache 1 năm), ảnh cache 30 ngày — đường dẫn ảnh có kèm mã theo nội dung file
+  (`…/smart-home-1920.avif?v=91ccea55f4`, ảnh dự án thì mã nằm trong tên file), nên ảnh nào thay đổi thì địa chỉ đổi
   theo: không cần Purge sau khi cập nhật.
 
 ## Bước 6 — Kiểm tra
@@ -120,11 +121,28 @@ Mở thử trên điện thoại bằng 4G (không dùng Wi-Fi nhà) để chắ
 
 ## Cập nhật website sau này
 
-Không cần làm gì thêm với Cloudflare — cập nhật trên Pi như cũ:
+Không cần làm gì thêm với Cloudflare — cập nhật trên Pi như cũ (dự án sửa trong trang quản trị giữ nguyên):
 
 ```bash
 cd ~/villa-nest && git pull && bash deploy/install-pi.sh
 ```
+
+## (Tuỳ chọn, nên làm) Khoá trang quản trị bằng Cloudflare Access
+
+Trang quản trị dự án (`/admin/`) đã có mật khẩu riêng; **Cloudflare Access** thêm một lớp nữa: trước khi trang quản trị
+mở ra, Cloudflare hỏi email và gửi mã đăng nhập một lần vào email đó — người lạ không chạm được tới trang đăng nhập.
+Miễn phí đến 50 người dùng; phần còn lại của website không bị ảnh hưởng.
+
+1. **Zero Trust → Access → Applications → Add an application → Self-hosted**, đặt tên `VILLA NEST quản trị`.
+2. **Add public hostname** (hai dòng): domain `tenmien.vn` · path `admin`, và domain `tenmien.vn` · path `api/admin`.
+   Chưa bật chuyển *www → tên miền chính* (bước 5) thì thêm hai dòng giống vậy với subdomain `www`.
+3. **Policy**: Action **Allow** → Include → **Emails** → email của bạn (và của người được phép sửa dự án).
+4. Login method: **One-time PIN** (mặc định) → **Save**.
+5. Kiểm tra bằng cửa sổ ẩn danh: mở `https://tenmien.vn/admin/` phải thấy trang hỏi email của Cloudflare trước; mở
+   `https://tenmien.vn/` vẫn vào thẳng website.
+
+Phiên của Cloudflare Access mặc định 24 giờ: hết phiên mà trang quản trị báo *"Không kết nối được máy chủ"*, tải lại
+trang để nhận mã mới.
 
 ## (Tuỳ chọn) Đưa ken-dashboard lên subdomain
 

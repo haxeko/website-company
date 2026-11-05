@@ -55,7 +55,8 @@ bash deploy/install-pi.sh
 ```
 
 Script sẽ tự: cài thư viện → build → cài Nginx → chép website vào `/var/www/villa-nest` → cấu hình Nginx
-(thay trang "Welcome to nginx" mặc định, thêm định dạng ảnh AVIF nếu Nginx còn thiếu) → khởi động lại Nginx.
+(thay trang "Welcome to nginx" mặc định, thêm định dạng ảnh AVIF nếu Nginx còn thiếu) → cài **trang quản trị dự án**
+(lần đầu sẽ hỏi đặt mật khẩu, xem [Trang quản trị dự án](#trang-quản-trị-dự-án)) → khởi động lại Nginx.
 Pi 4 mất khoảng 2–4 phút, phần lớn là `npm ci`. Cuối cùng script in ra địa chỉ để mở website.
 
 > Repo đang để private? `git clone` sẽ hỏi đăng nhập GitHub — dùng
@@ -82,6 +83,9 @@ Trên **Pi**:
 cd ~/villa-nest
 bash deploy/install-pi.sh --no-build
 ```
+
+(Cách B không có trang quản trị dự án — nó cần Node.js và thư viện trên Pi; website hiện các dự án có sẵn trong bản
+build.)
 
 ### Pi đã có website khác (ví dụ một dashboard)
 
@@ -130,11 +134,48 @@ trang quản trị router (DHCP reservation) để địa chỉ không đổi.
 ```bash
 cd ~/villa-nest
 git pull                       # Cách A
-bash deploy/install-pi.sh      # build và cài lại
+bash deploy/install-pi.sh      # build và cài lại (dự án trong trang quản trị giữ nguyên)
 
 # Cách B: build lại trên máy tính, scp lại thư mục dist rồi chạy
 # bash deploy/install-pi.sh --no-build
 ```
+
+## Trang quản trị dự án
+
+Cách A cài kèm trang quản trị: một dịch vụ nhỏ tên `villa-nest-admin` (Node.js) chỉ nghe trên chính Pi
+(`127.0.0.1:8787`), Nginx chuyển `/api/admin/` tới nó. Mở **`http://<IP-của-Pi>/admin/`** (hay
+`https://tenmien.vn/admin/`) và đăng nhập bằng mật khẩu đặt lúc cài. Cách dùng: xem phần
+[Thêm / sửa dự án](../README.md#thêm--sửa-dự-án) trong README.
+
+```bash
+cd ~/villa-nest && npm run admin:password      # đặt / đổi mật khẩu (ít nhất 10 ký tự; máy đang đăng nhập phải đăng nhập lại)
+sudo systemctl status villa-nest-admin         # dịch vụ có đang chạy không
+sudo systemctl restart villa-nest-admin        # khởi động lại
+sudo journalctl -u villa-nest-admin -n 50      # xem lỗi
+```
+
+Dự án, ảnh và mật khẩu nằm trong **`/var/lib/villa-nest/`** — cập nhật website không đụng tới. Sao lưu (nên làm định
+kỳ, rồi chép file ra máy khác):
+
+```bash
+tar czf ~/villa-nest-du-an-$(date +%F).tar.gz -C /var/lib villa-nest
+```
+
+Khôi phục từ bản sao lưu:
+
+```bash
+sudo systemctl stop villa-nest-admin
+sudo rm -rf /var/lib/villa-nest && sudo tar xzf ~/villa-nest-du-an-<ngày>.tar.gz -C /var/lib
+sudo chown -R "$USER": /var/lib/villa-nest && sudo systemctl start villa-nest-admin
+```
+
+- Cài với tên khác (`SITE=…`): dịch vụ là `<tên>-admin`, dữ liệu ở `/var/lib/<tên>/`, đổi mật khẩu bằng
+  `DATA_DIR=/var/lib/<tên> npm run admin:password`.
+- Cấu hình Nginx đã có HTTPS của Certbot được giữ nguyên, nên chưa có các khối `/api/admin/`, `/data/`, `/projects/`
+  của trang quản trị — script sẽ nhắc: chép các khối `location` đó từ `deploy/nginx.conf` vào cấu hình đang dùng, rồi
+  `sudo nginx -t && sudo systemctl reload nginx`. (Dùng Cloudflare Tunnel thì không gặp trường hợp này.)
+- Trang quản trị không xuất hiện trong website, không cho máy tìm kiếm lập chỉ mục; khi đưa lên tên miền nên khoá thêm
+  bằng Cloudflare Access (xem [CLOUDFLARE.md](CLOUDFLARE.md#tuỳ-chọn-nên-làm-khoá-trang-quản-trị-bằng-cloudflare-access)).
 
 ## (Tuỳ chọn) Pi làm màn hình trình chiếu ở showroom
 
@@ -165,6 +206,10 @@ sudo reboot
 | Ảnh không hiện                              | `grep avif /etc/nginx/mime.types` phải có dòng `image/avif`; chạy lại script        |
 | Xem lỗi Nginx                               | `sudo nginx -t` và `sudo tail -n 50 /var/log/nginx/error.log`                      |
 | Một website khác trên Pi không vào được      | Chạy `bash deploy/doctor-pi.sh` và gửi kết quả; khôi phục cấu hình từ `/var/backups/villa-nest/` (ở trên) |
+| Trang quản trị báo *"Máy chủ quản trị không trả lời"* | `sudo systemctl restart villa-nest-admin`; vẫn lỗi thì xem `sudo journalctl -u villa-nest-admin -n 50` |
+| Quên mật khẩu trang quản trị                | `cd ~/villa-nest && npm run admin:password` đặt mật khẩu mới                        |
+| *"Sai mật khẩu nhiều lần — thử lại sau …"*   | Chờ 15 phút, hoặc `sudo systemctl restart villa-nest-admin`                          |
+| Đã lưu nhưng website vẫn hiện như cũ        | Mở lại trang (Ctrl + F5); kiểm tra dự án có ảnh bìa và đang bật *Hiện trên website*  |
 
 ## Đưa lên tên miền
 

@@ -132,7 +132,9 @@ riêng** cùng một phong cách: [`/smart-home/`](#trang-smart-home), [`/constr
     bốn chủ đề nên lưới không nhảy khi đổi chủ đề): 2 hàng nếu đủ cao, 1 hàng nếu không, và **các chấm** bên dưới để lật
     sang trang ô tiếp theo (các ô cũ trượt đi, ô mới bay vào). Trên điện thoại hiện đủ mọi dự án, trang cuộn dọc.
   - 8 dự án hiện có là **dự án minh họa** (dùng ảnh concept của website, có ghi chú trong trang dự án) — thay bằng dự án
-    thật theo phần [Thêm / sửa dự án](#thêm--sửa-dự-án).
+    thật trong **trang quản trị** `/admin/` (xem [Thêm / sửa dự án](#thêm--sửa-dự-án)).
+- **Trang quản trị dự án** (`/admin/`, chạy trên Pi): đăng nhập bằng mật khẩu, thêm / sửa / ẩn / xoá dự án, tải ảnh lên
+  từ điện thoại hay máy tính, đổi thứ tự — bấm **Lưu** là website cập nhật ngay, không cần build lại.
 - **Âm thanh**: không có nhạc nền, chuyển cảnh / chủ đề (vuốt, bấm, cuộn) **không phát âm thanh**. Chỉ có **máy lạnh và
   quạt kêu "tít" như máy thật** khi nhận lệnh: bật —
   hai tiếng "tít tít" lên giọng, tắt — một tiếng trầm hơn, đổi nhiệt độ / tốc độ — một tiếng ngắn (kéo thanh nhanh vẫn
@@ -186,6 +188,8 @@ Các lệnh khác:
 | `npm run images`    | Tạo lại toàn bộ ảnh tối ưu từ `assets-src/` (xem phần Thay ảnh) |
 | `npm run projects`  | Tạo ảnh và danh sách dự án từ `content/projects/` (xem phần Thêm / sửa dự án) |
 | `npm run images -- --pages` | Chỉ tạo lại ảnh của ba trang riêng (nhanh hơn, không đụng tới ảnh toàn cảnh) |
+| `npm run admin`     | Chạy máy chủ của trang quản trị (trên Pi đã chạy sẵn thành dịch vụ `villa-nest-admin`) |
+| `npm run admin:password` | Đặt / đổi mật khẩu trang quản trị (trên Pi: `DATA_DIR=/var/lib/villa-nest npm run admin:password`) |
 
 ## Build & triển khai bằng Nginx
 
@@ -220,13 +224,17 @@ static server nào); mở trực tiếp `dist/index.html` bằng `file://` sẽ 
 
 ```
 ├── assets-src/                 Ảnh gốc độ phân giải cao (đầu vào của npm run images)
-├── content/projects/           ★ Các dự án: projects.json (danh sách, chữ VI/EN) + mỗi dự án một thư mục ảnh
+├── content/projects/           Các dự án ban đầu: projects.json (danh sách, chữ VI/EN) + mỗi dự án một thư mục ảnh
 ├── smart-home/index.html       Trang Smart Home (→ /smart-home/)
 ├── construction/index.html     Trang Xây dựng (→ /construction/)
 ├── interior/index.html         Trang Nội thất (→ /interior/)
+├── admin/index.html            Trang quản trị dự án (→ /admin/, không cho máy tìm kiếm lập chỉ mục)
+├── server/                     Máy chủ của trang quản trị (Node.js, chạy trên Pi): admin-server.mjs (đăng nhập, lưu,
+│                               tải ảnh) · store.mjs (kiểm tra & lưu dự án, đưa lên website) · password.mjs (mật khẩu)
 ├── deploy/
 │   ├── nginx.conf              Cấu hình Nginx mẫu
 │   ├── install-pi.sh           Script cài lên Raspberry Pi / Debian / Ubuntu (sao lưu, không đụng site khác)
+│   ├── villa-nest-admin.service  Dịch vụ systemd của trang quản trị (install-pi.sh tự cài)
 │   └── doctor-pi.sh            Chẩn đoán các website trên Pi (chỉ đọc)
 ├── docs/                       Ảnh chụp màn hình, hướng dẫn Raspberry Pi
 ├── public/
@@ -237,6 +245,7 @@ static server nào); mở trực tiếp `dist/index.html` bằng `file://` sẽ 
 │   └── favicon.svg
 ├── scripts/optimize-images.mjs Pipeline ảnh: chỉnh màu, cắt tấm, hòa mép, resize, mã hoá AVIF/WebP
 ├── scripts/build-projects.mjs  Dự án: kiểm tra projects.json, cắt / thu nhỏ ảnh, mã hoá AVIF/WebP, ghi danh sách
+├── scripts/lib/project-images.mjs  Mã hoá ảnh dự án (dùng chung cho build-projects và trang quản trị)
 ├── scripts/art/                Các bước dựng ảnh một lần (Python + OpenCV, xem phần Thay ảnh) — không cần cho build
 └── src/
     ├── App.tsx                 Ghép Header, Loader, HeroCarousel; âm thanh; link #lĩnh-vực
@@ -272,6 +281,8 @@ static server nào); mở trực tiếp `dist/index.html` bằng `file://` sẽ 
     │                           · ScenePanel (các màn hình của bảng, camera) · usePageHome (trạng thái, kịch bản) · icons.tsx
     ├── pages/construction/     Trang Xây dựng: content.ts · BuildVisual (ảnh + mô hình BIM, tia laser, chú thích, thẻ)
     ├── pages/interior/         Trang Nội thất: content.ts · RoomVisual (ba ánh sáng, điểm vật liệu, kích thước)
+    ├── admin/                  Trang quản trị: AdminApp (đăng nhập, danh sách, thứ tự) · ProjectEditor (sửa dự án,
+    │                           ảnh bìa, ảnh) · api.ts (gọi máy chủ, thu nhỏ ảnh điện thoại trước khi gửi) · admin.css
     ├── styles/                 tokens.css (màu, font, khoảng cách) · global.css
     └── utils/device.ts         Nhận diện chế độ chất lượng & media query
 ```
@@ -367,8 +378,46 @@ lại rồi chạy `npm run images`:
 
 ## Thêm / sửa dự án
 
-Mọi dự án nằm trong [`content/projects/projects.json`](content/projects/projects.json) (thứ tự trong file = thứ tự trên
-trang), ảnh của mỗi dự án trong thư mục `content/projects/<mã-dự-án>/`:
+![Trang quản trị — danh sách dự án trên máy tính; sửa một dự án trên iPhone](docs/screenshot-admin.jpg)
+
+### Trang quản trị `/admin/`
+
+Mở **`https://tenmien.vn/admin/`** (trong mạng nhà: `http://<IP-của-Pi>/admin/`) trên điện thoại hay máy tính và đăng
+nhập bằng mật khẩu quản trị — script cài đặt hỏi đặt mật khẩu ở lần cài đầu tiên; đổi mật khẩu: trên Pi, trong thư mục
+website chạy `npm run admin:password` (các máy đang đăng nhập sẽ phải đăng nhập lại).
+
+- **Danh sách**: hai thẻ *Xây dựng* / *Nội thất*; thứ tự ở đây là thứ tự trên website — nút ↑ ↓ đổi chỗ (lưu ngay).
+  Mỗi dự án ghi rõ *Đang hiện*, *Đang ẩn* hay *Chưa có ảnh bìa*.
+- **+ Thêm dự án**: nhập tên, chọn trang → dự án mới đứng đầu trang đó, đang ẩn, mở ra để thêm ảnh và thông tin. Mã dự
+  án (link riêng `/construction/#biet-thu-thao-dien`) tự tạo từ tên.
+- **Thông tin**: tên, địa điểm, hạng mục, giới thiệu — ô tiếng Việt và ô tiếng Anh (để trống tiếng Anh thì website
+  dùng tiếng Việt); năm, diện tích; chuyển dự án sang trang kia; công tắc **Hiện trên website**.
+- **Ảnh**: **+ Thêm ảnh** chọn một hay nhiều ảnh (trên điện thoại: thư viện ảnh hoặc chụp luôn). Ảnh lớn được thu nhỏ
+  ngay trên máy trước khi gửi (nhanh cả khi dùng 4G); máy chủ xoay đúng chiều và tạo các cỡ AVIF / WebP cho website.
+  Ảnh đầu tiên thành ảnh bìa; mỗi ảnh có chú thích hai thứ tiếng, nút ↑ ↓, **Làm ảnh bìa**, **Xoá**. Ở ảnh bìa, chạm
+  vào chỗ muốn đặt giữa ô vuông — ô vuông xem trước đổi theo.
+- **Lưu**: website cập nhật ngay (không cần build, không cần xoá cache). **Hoàn tác** bỏ các thay đổi chưa lưu; rời
+  trang khi chưa lưu sẽ được hỏi lại. **Xoá dự án** xoá cả ảnh của nó (không hoàn tác được).
+- Dự án hiện trên website khi **có ảnh bìa** và **bật "Hiện trên website"** — dự án đang làm dở cứ để ẩn.
+- Ảnh nhận: JPEG, PNG, WebP, AVIF, tối đa 40 MB (ảnh HEIC của iPhone được Safari tự đổi sang JPEG khi tải lên).
+
+**Dữ liệu** nằm trên Pi ở `/var/lib/villa-nest/`: `admin/projects.json` (mọi dự án, kể cả đang ẩn),
+`admin/password.json` (mật khẩu đã băm bằng scrypt — không lưu mật khẩu gốc), `public/` (danh sách và ảnh website
+đang hiện — Nginx đọc thẳng từ đây). Cập nhật website (`git pull && bash deploy/install-pi.sh`) không đụng tới thư mục
+này; nên sao lưu nó định kỳ (xem [`docs/RASPBERRY-PI.md`](docs/RASPBERRY-PI.md#trang-quản-trị-dự-án)).
+
+**Bảo mật**: đăng nhập sai 5 lần thì địa chỉ đó phải chờ 15 phút; phiên đăng nhập giữ 7 ngày (cookie chỉ gửi tới
+`/api/admin/`, không đọc được bằng JavaScript); mọi thay đổi phải đến từ chính trang quản trị. Khi website đã lên tên
+miền, nên khoá thêm `/admin` bằng **Cloudflare Access** (miễn phí — xem [`docs/CLOUDFLARE.md`](docs/CLOUDFLARE.md)).
+
+### Cho lập trình viên: dự án trong mã nguồn
+
+Dự án mà website được build cùng nằm trong [`content/projects/projects.json`](content/projects/projects.json) (thứ tự
+trong file = thứ tự trên trang), ảnh của mỗi dự án trong thư mục `content/projects/<mã-dự-án>/`. Lần đầu chạy, trang
+quản trị chép các dự án này làm điểm bắt đầu; **từ đó trên Pi website hiện dự án của trang quản trị** — sửa
+`content/projects/` không còn tác dụng ở đó (trừ khi xoá `/var/lib/villa-nest/` để bắt đầu lại, mất mọi thay đổi đã
+làm trong trang quản trị). Cách này dùng cho website chạy không có trang quản trị (ví dụ cài bằng `--no-build`, hay
+một static host khác):
 
 ```json
 {
@@ -403,6 +452,10 @@ Script báo lỗi rõ ràng nếu thiếu tên, sai `category`, trùng `id` hay 
 trong `projects.json` (và thư mục ảnh) rồi chạy lại `npm run projects` — ảnh cũ trong `public/projects/` được dọn theo.
 Ảnh dự án có tên kèm mã nội dung nên thay ảnh là trình duyệt / Cloudflare tải ảnh mới ngay; danh sách dự án luôn được
 kiểm tra lại mỗi lần mở trang.
+
+Thử trang quản trị trên máy tính: `npm run admin:password`, rồi `npm run admin` và `npm run dev` cùng lúc →
+http://localhost:5173/admin/ (dữ liệu nằm trong `.admin-data/`; website ở `npm run dev` vẫn hiện dự án trong
+`public/` — chỉ sau Nginx như trên Pi thì dự án của trang quản trị mới lên website).
 
 ## Điều khiển
 
@@ -452,6 +505,12 @@ Kiểm thử tự động bằng Playwright (Chromium) trên bản build:
   to ≥ 60% sau 0,2 giây, các ô khác văng ra), đóng bằng ×, Back, Esc — ô về đúng chỗ, trang không bị cuộn lệch; link
   `#mã-dự-án` mở thẳng dự án; phím mũi tên và bánh xe không đổi chủ đề phía sau khi đang xem dự án; chấm lật trang;
   tiếng Anh; "giảm chuyển động".
+- Trang quản trị (qua Nginx như trên Pi, iPhone 14 Pro và máy tính): sai mật khẩu bị từ chối, 5 lần sai thì phải chờ;
+  thêm dự án (mã tạo từ tên tiếng Việt), tải 2 ảnh (ảnh chụp dọc có thẻ xoay vẫn đứng đúng chiều), tệp không phải ảnh
+  bị từ chối kèm lời nhắn, chạm chọn tâm ảnh bìa, lưu → website hiện ngay ở đầu trang, link riêng mở đúng dự án (tiếng
+  Anh để trống thì dùng tiếng Việt), đổi thứ tự, ẩn, xoá (ảnh bị xoá theo), đăng xuất; rời trang khi chưa lưu được hỏi
+  lại, Hoàn tác; đổi mật khẩu thì các phiên cũ hết hạn; không đăng nhập, khác trang gửi tới, ảnh của dự án khác, mã dự
+  án lạ, dữ liệu quá lớn đều bị từ chối; máy chủ quản trị không chạy thì trang báo cách khởi động lại.
 - Tốc độ: trang chủ hiện đủ chữ sau ~1,4 giây (trước ~2,5 giây), ba trang riêng ~0,9 giây (trước ~1,5 giây); ảnh nào
   cũng tải bằng đường dẫn có mã theo nội dung file.
 - Không có lỗi console, không có request ra ngoài Internet, không có thanh cuộn ngang; chạy đúng sau Nginx với cấu hình

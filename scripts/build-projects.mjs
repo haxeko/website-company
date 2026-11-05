@@ -14,29 +14,19 @@
  *
  *   npm run projects
  */
-import { createHash } from 'node:crypto'
 import { existsSync } from 'node:fs'
 import { mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import sharp from 'sharp'
+import { COVER_WIDTHS, PHOTO_WIDTHS, encodePhoto, hashOf } from './lib/project-images.mjs'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const contentDir = join(root, 'content/projects')
 const outDir = join(root, 'public/projects')
 const dataFile = join(root, 'public/data/projects.json')
 
-/** Widths of the cover (also the project page's banner) and of the other photos — never wider than the photo. */
-const COVER_WIDTHS = [640, 1280, 1920]
-const PHOTO_WIDTHS = [640, 1280]
 const CATEGORIES = ['construction', 'interior']
 const LANGS = ['vi', 'en']
-const encoders = {
-  avif: (img) => img.avif({ quality: 60, effort: 4 }),
-  webp: (img) => img.webp({ quality: 80, effort: 5 }),
-}
-/** Part of every key: encoding differently makes new files. */
-const RECIPE = JSON.stringify({ avif: [60, 4], webp: [80, 5], sharpen: 0.5 })
 
 const fail = (message) => {
   console.error(`✗ ${message}`)
@@ -59,13 +49,7 @@ function text(id, field, value, required) {
 
 const sourceHashes = new Map()
 async function sourceHash(file) {
-  if (!sourceHashes.has(file))
-    sourceHashes.set(
-      file,
-      createHash('sha256')
-        .update(await readFile(file))
-        .digest('hex'),
-    )
+  if (!sourceHashes.has(file)) sourceHashes.set(file, hashOf(await readFile(file)))
   return sourceHashes.get(file)
 }
 
@@ -76,36 +60,20 @@ async function photo(project, spec, name, sizes) {
   // A bare file name lives in the project's folder; a path is from the repository root.
   const file = entry.src.includes('/') ? join(root, entry.src) : join(contentDir, project.id, entry.src)
   if (!existsSync(file)) fail(`${project.id}: ${entry.src} not found`)
-  // (as the photo stands: a phone's portrait photo is stored on its side, with an orientation tag)
-  const meta = await sharp(file).metadata()
-  const [W, H] = (meta.orientation ?? 1) >= 5 ? [meta.height, meta.width] : [meta.width, meta.height]
-  const crop = entry.crop ?? [0, 0, W, H]
-  const [cx, cy, cw, ch] = crop
-  if (crop.length !== 4 || cx < 0 || cy < 0 || cw <= 0 || ch <= 0 || cx + cw > W || cy + ch > H) {
-    fail(`${project.id}: crop ${JSON.stringify(crop)} is outside ${entry.src} (${W} × ${H})`)
-  }
-  const key = createHash('sha256')
-    .update(`${await sourceHash(file)}|${crop}|${RECIPE}`)
-    .digest('hex')
-    .slice(0, 10)
-  const base = `${name}.${key}`
-  const top = Math.min(cw, sizes.at(-1))
-  const widths = [...sizes.filter((w) => w < top), top]
-  const dir = join(outDir, project.id)
-  const wanted = widths.flatMap((w) => Object.keys(encoders).map((ext) => `${base}-${w}.${ext}`))
-  if (!wanted.every((f) => existsSync(join(dir, f)))) {
-    await mkdir(dir, { recursive: true })
-    const cropped = await sharp(file).rotate().extract({ left: cx, top: cy, width: cw, height: ch }).toColourspace('srgb').toBuffer()
-    for (const w of widths) {
-      const resized = sharp(cropped).resize({ width: w, kernel: 'lanczos3' }).sharpen({ sigma: 0.5 })
-      for (const [ext, encode] of Object.entries(encoders)) await encode(resized.clone()).toFile(join(dir, `${base}-${w}.${ext}`))
-    }
-    console.log(`  ${project.id}/${base}  ${widths.join(', ')}`)
-  }
-  const out = { base: `projects/${project.id}/${base}`, widths, w: cw, h: ch }
+  const done = await encodePhoto({
+    input: file,
+    sourceHash: await sourceHash(file),
+    crop: entry.crop,
+    dir: join(outDir, project.id),
+    id: project.id,
+    name,
+    sizes,
+  }).catch((error) => fail(`${project.id}: ${entry.src}: ${error.message}`))
+  if (done.encoded) console.log(`  ${done.entry.base}  ${done.entry.widths.join(', ')}`)
+  const out = { ...done.entry }
   if (entry.focus) out.focus = entry.focus
   if (entry.caption) out.caption = text(project.id, 'caption', entry.caption)
-  return { out, files: wanted }
+  return { out, files: done.files }
 }
 
 const list = []

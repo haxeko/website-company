@@ -1,0 +1,24 @@
+# VILLA NEST — the projects' admin (/admin/), as a service: deploy/install-pi.sh fills in the
+# @…@ values and installs it as /etc/systemd/system/<site>-admin.service.
+#
+#   sudo systemctl status villa-nest-admin       journalctl -u villa-nest-admin -n 50
+[Unit]
+Description=VILLA NEST — trang quản trị dự án (/admin/)
+After=network.target
+
+[Service]
+Type=simple
+User=@USER@
+WorkingDirectory=@REPO@
+Environment=NODE_ENV=production
+Environment=DATA_DIR=@DATA_DIR@
+Environment=ADMIN_PORT=@PORT@
+ExecStart=@NODE@ server/admin-server.mjs
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+
+[Install]
+WantedBy=multi-user.target

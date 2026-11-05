@@ -14,7 +14,9 @@
     "lint": "oxlint",
     "preview": "vite preview",
     "images": "node --max-old-space-size=6144 scripts/optimize-images.mjs",
-    "projects": "node scripts/build-projects.mjs"
+    "projects": "node scripts/build-projects.mjs",
+    "admin": "node server/admin-server.mjs",
+    "admin:password": "node server/admin-password.mjs"
   },
   "dependencies": {
     "@fontsource-variable/cormorant-garamond": "^5.3.0",
