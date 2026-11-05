@@ -1,0 +1,256 @@
+/*
+ * The chat button: in the site's gold, in the bottom right corner of every page — in line with
+ * the arrows, at the end of the bottom row (editorial.css leaves it the room). Tapped, it turns
+ * into a × and the apps rise over it, one above another, each in its own colours with its name
+ * beside it: Facebook, WhatsApp, Zalo.
+ */
+:root {
+  /* (where the button stands from the bottom, its size: the pages' row of links lines up with it) */
+  --chat-bottom: max(3.2vh, calc(env(safe-area-inset-bottom, 0px) + 14px));
+  --chat-size: 48px;
+}
+
+@media (max-width: 760px), (orientation: portrait) and (max-width: 1024px) {
+  :root {
+    --chat-size: 46px;
+  }
+}
+
+.chat {
+  position: fixed;
+  right: var(--gutter);
+  bottom: var(--chat-bottom);
+  z-index: 45;
+  width: var(--chat-size);
+  height: var(--chat-size);
+  opacity: 0;
+  transition: opacity 0.6s var(--ease-out) 0.3s;
+}
+
+/* (it comes in with the page) */
+.app[data-ready='true'] .chat {
+  opacity: 1;
+}
+
+.chat__toggle {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--c-accent);
+  color: #17140f;
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 0.28),
+    0 10px 28px rgb(0 0 0 / 0.45),
+    0 2px 8px rgb(0 0 0 / 0.4);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    translate 0.35s var(--ease-out),
+    background-color 0.35s ease,
+    color 0.35s ease,
+    box-shadow 0.35s var(--ease-out);
+}
+
+.chat__toggle svg {
+  position: absolute;
+  width: 50%;
+  height: 50%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition:
+    opacity 0.25s ease,
+    rotate 0.4s var(--ease-out),
+    scale 0.4s var(--ease-out);
+}
+
+.chat__toggle .is-filled {
+  fill: currentColor;
+  stroke: none;
+}
+
+.chat__close {
+  opacity: 0;
+  rotate: -90deg;
+  scale: 0.5;
+}
+
+/* Open: a dark × with a gold rim. */
+.chat[data-open] .chat__toggle {
+  background: rgb(20 21 24 / 0.94);
+  color: var(--c-accent);
+  box-shadow:
+    inset 0 0 0 1px var(--c-accent),
+    0 10px 28px rgb(0 0 0 / 0.5);
+}
+
+.chat[data-open] .chat__bubble {
+  opacity: 0;
+  rotate: 90deg;
+  scale: 0.5;
+}
+
+.chat[data-open] .chat__close {
+  opacity: 1;
+  rotate: 0deg;
+  scale: 1;
+}
+
+@media (hover: hover) {
+  .chat__toggle:hover {
+    translate: 0 -2px;
+    box-shadow:
+      inset 0 0 0 1px rgb(255 255 255 / 0.36),
+      0 14px 34px rgb(0 0 0 / 0.55),
+      0 2px 8px rgb(0 0 0 / 0.4);
+  }
+}
+
+.chat__toggle:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 4px;
+}
+
+/* The apps, over the button, the nearest rising first. */
+.chat__list {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 14px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  pointer-events: none;
+}
+
+.chat__app {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  /* (centred over the button) */
+  margin-right: calc((var(--chat-size) - 44px) / 2);
+  color: var(--c-text);
+  text-decoration: none;
+  opacity: 0;
+  translate: 0 16px;
+  scale: 0.8;
+  transform-origin: right center;
+  visibility: hidden;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    opacity 0.2s ease,
+    translate 0.3s var(--ease-out),
+    scale 0.3s var(--ease-out),
+    visibility 0s linear 0.3s;
+}
+
+.chat[data-open] .chat__app {
+  opacity: 1;
+  translate: 0 0;
+  scale: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition:
+    opacity 0.3s ease calc(var(--i) * 0.06s),
+    translate 0.5s var(--ease-out) calc(var(--i) * 0.06s),
+    scale 0.5s var(--ease-out) calc(var(--i) * 0.06s),
+    visibility 0s;
+}
+
+.chat__name {
+  padding: 7px 12px;
+  border: 1px solid rgb(244 240 233 / 0.16);
+  border-radius: 999px;
+  background: rgb(14 14 16 / 0.86);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+.chat__mark {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  overflow: hidden;
+  border-radius: 50%;
+  color: #fff;
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 0.22),
+    0 8px 22px rgb(0 0 0 / 0.42);
+  transition:
+    translate 0.3s var(--ease-out),
+    scale 0.15s ease;
+}
+
+.chat__mark svg {
+  width: 58%;
+  fill: currentColor;
+}
+
+/* (Facebook's mark is its round logo: it fills the button, white showing through the f) */
+.chat__app[data-app='facebook'] .chat__mark {
+  background: #fff;
+  color: #0866ff;
+}
+
+.chat__app[data-app='facebook'] .chat__mark svg {
+  width: 100%;
+}
+
+.chat__app[data-app='whatsapp'] .chat__mark {
+  background: #25d366;
+}
+
+.chat__app[data-app='zalo'] .chat__mark {
+  background: #0068ff;
+}
+
+.chat__app[data-app='zalo'] .chat__mark svg {
+  width: 64%;
+}
+
+@media (hover: hover) {
+  .chat__app:hover .chat__mark {
+    translate: -2px 0;
+  }
+}
+
+.chat__app:active .chat__mark {
+  scale: 0.94;
+}
+
+.chat__app:focus-visible {
+  outline: none;
+}
+
+.chat__app:focus-visible .chat__mark {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chat__toggle:hover {
+    translate: none;
+  }
+
+  .chat__app,
+  .chat[data-open] .chat__app {
+    translate: none;
+    scale: none;
+  }
+}

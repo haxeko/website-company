@@ -79,7 +79,7 @@ const chunk = <T,>(list: T[], size: number) =>
  * type (the types the projects have). Tapping a project throws the others off the screen while
  * its cover grows into the project's page — the photos under it (ProjectView). Each project
  * has its own link: /construction/#<id>. On a phone, once the projects' end is in view, the
- * site's pages wait in a row beside the Zalo button (PagesDock).
+ * site's pages wait in a row beside the chat button (PagesDock).
  */
 export function Projects({ category, name, ready }: ProjectsProps) {
   const { t, lang } = useI18n()
@@ -267,7 +267,7 @@ export function Projects({ category, name, ready }: ProjectsProps) {
     goTo(current)
   }
 
-  /* ── The site's pages beside the Zalo button (phones), once the projects' end is reached:
+  /* ── The site's pages beside the chat button (phones), once the projects' end is reached:
      there the page keeps room for them under the squares ── */
 
   const endRef = useRef<HTMLElement>(null)

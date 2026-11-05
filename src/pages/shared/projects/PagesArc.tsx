@@ -6,7 +6,7 @@ import { CraneIcon, HomeMarkIcon, SmartHomeIcon, SofaIcon } from './icons'
 /*
  * The site's pages as round buttons with the line icons of the pages' strips: on a computer set
  * on an arc down the left margin of a project, as on a dial (PagesArc); on a phone in a straight
- * row with their names, in the Zalo button's row (PagesDock).
+ * row with their names, in the chat button's row (PagesDock).
  */
 
 interface Page {
@@ -96,7 +96,7 @@ export function PagesArc({ navRef, ...props }: PagesProps & { navRef?: Ref<HTMLE
   )
 }
 
-/** Phones: a straight row, each name under its button, from the left edge to the Zalo button. */
+/** Phones: a straight row, each name under its button, from the left edge to the chat button. */
 export function PagesDock({ on, ...props }: PagesProps & { on: boolean }) {
   const { t } = useI18n()
   const pages = usePages()

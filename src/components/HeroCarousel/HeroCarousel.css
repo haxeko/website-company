@@ -356,7 +356,7 @@
   font-size: 14px;
 }
 
-/* (the narrowest phones: the three titles beside the Zalo button) */
+/* (the narrowest phones: the three titles beside the chat button) */
 @media (max-width: 340px) {
   .hc[data-layout='portrait'] .hc-nav__list {
     gap: 10px;

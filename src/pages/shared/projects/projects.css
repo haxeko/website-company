@@ -339,8 +339,8 @@ html[data-project-open] .pj {
     --pj-gap: 14px;
     max-width: none;
     margin: 0;
-    /* (room under the last row for the pages' row, and for the WhatsApp button over Zalo's) */
-    padding: 30px var(--gutter) calc(var(--chat-bottom) + 118px);
+    /* (room under the last row for the pages' row beside the chat button) */
+    padding: 30px var(--gutter) calc(var(--chat-bottom) + 66px);
   }
 
   .pj__bar {
@@ -851,13 +851,14 @@ html[data-project-open] {
 
 /*
  * Phones (PagesDock): the same buttons in a straight row, each name under its button, from the
- * left edge to the Zalo button — the buttons in line with it. They come in once the end of the
+ * left edge to the chat button — the buttons in line with it. They come in once the end of the
  * projects is reached (there the page keeps room for them), one after another.
  */
 .pages-dock {
   position: fixed;
-  right: calc(var(--gutter) + 46px + 12px);
-  bottom: calc(var(--chat-bottom) - 15px);
+  right: calc(var(--gutter) + var(--chat-size) + 12px);
+  /* (a button's centre on the chat button's: under it, the gap and the name) */
+  bottom: calc(var(--chat-bottom) + var(--chat-size) / 2 - 22px - 5px - 12px);
   left: calc(var(--gutter) - 6px);
   z-index: 30;
   display: grid;
@@ -1074,9 +1075,8 @@ html[data-project-open] {
     grid-template-columns: 1fr;
   }
 
-  /* (clear of the WhatsApp and Zalo buttons at the end) */
   .pv__contact {
-    margin-bottom: calc(var(--chat-bottom) + 64px);
+    margin-bottom: 64px;
   }
 }
 

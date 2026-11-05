@@ -1,7 +1,7 @@
 import { useId, type MouseEvent } from 'react'
 import { useI18n } from '../../i18n/context'
 import type { Lang } from '../../i18n/strings'
-import { WhatsAppButton, ZaloButton } from '../Zalo/ZaloButton'
+import { ChatButton } from '../Chat/ChatButton'
 import './Header.css'
 
 /**
@@ -68,7 +68,7 @@ export function Header({ soundOn, onToggleSound, onLogoClick, homeHref = './' }:
     onLogoClick()
   }
 
-  // (every page has the header, so the Zalo button in the corner comes with it)
+  // (every page has the header, so the chat button in the corner comes with it)
   return (
     <>
       <header className="site-header">
@@ -123,8 +123,7 @@ export function Header({ soundOn, onToggleSound, onLogoClick, homeHref = './' }:
           </div>
         </div>
       </header>
-      <WhatsAppButton />
-      <ZaloButton />
+      <ChatButton />
     </>
   )
 }

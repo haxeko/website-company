@@ -6,7 +6,7 @@ Website cao cấp cho thương hiệu **VILLA NEST** — *Design · Build · Liv
 phòng — cuối ảnh này ăn khớp với đầu ảnh kia — và xoay để chuyển cảnh khi bấm, kéo hay vuốt. Mỗi lĩnh vực có **trang
 riêng** cùng một phong cách: [`/smart-home/`](#trang-smart-home), [`/construction/`](#trang-xây-dựng),
 [`/interior/`](#trang-nội-thất). Song ngữ Việt / Anh (mặc định tiếng Việt), tiếng "tít" của máy lạnh khi điều khiển
-(tắt được), nút **Zalo** ở góc dưới phải mọi trang, link riêng cho từng lĩnh vực.
+(tắt được), **nút nhắn tin** ở góc dưới phải mọi trang (Facebook, WhatsApp, Zalo), link riêng cho từng lĩnh vực.
 
 ![VILLA NEST — desktop](docs/screenshot-desktop.jpg)
 
@@ -81,7 +81,7 @@ riêng** cùng một phong cách: [`/smart-home/`](#trang-smart-home), [`/constr
     Smart Home và Nội thất một dòng, Xây dựng hai dòng), rồi đến những gì chủ đề mở ra — kịch bản, thẻ vật liệu, công tắc
     ánh sáng, thẻ tiến độ / bàn giao — và chữ của chủ đề (Xây dựng, Nội thất: rồi đến lưới dự án). Trang Smart Home: bấm
     **"Xem …"** thì trang **trôi tới ảnh** và mở **kịch bản ngay dưới hàng thẻ** (từng bước, bước đang chạy có vạch thời gian): ảnh, hàng thẻ và cả khối kịch bản cùng nằm trong màn
-    hình, không bị nút Zalo che (máy thấp: ảnh thu lại một chút; máy hẹp: kịch bản gọn lại — tên các bước một hàng, lời
+    hình, không bị nút nhắn tin che (máy thấp: ảnh thu lại một chút; máy hẹp: kịch bản gọn lại — tên các bước một hàng, lời
     của bước đang chạy ở dưới; màn hình dưới 600 px thì phần trên của ảnh nằm dưới header).
 - <a id="trang-smart-home"></a>**Trang Smart Home** (`/smart-home/`, nút **"Khám phá giải pháp"** ở trang chủ): logo chính
   thức của Matter, Zigbee, Thread, Wi-Fi, Home Assistant, HomeKit; ảnh tường đá với bảng điều khiển lớn gắn tường và căn
@@ -143,9 +143,9 @@ riêng** cùng một phong cách: [`/smart-home/`](#trang-smart-home), [`/constr
     gồm những loại mà các dự án của trang đó có (chọn trong trang quản trị khi thêm / sửa dự án — xem
     [Thêm / sửa dự án](#thêm--sửa-dự-án)): *Nhà phố, Biệt thự, Nhà vườn, Nhà hàng, Quán cafe, Shop bán hàng*. Chọn một
     loại thì các ô sắp xếp lại, số đếm đổi theo. Trên điện thoại là danh sách chọn của máy (vòng xoay trên iPhone).
-  - **Biểu tượng các trang cạnh nút Zalo** (điện thoại): cuộn tới cuối danh sách dự án, ở hàng dưới cùng bên trái nút
-    Zalo hiện **4 nút tròn thẳng hàng ngang, tên trang ghi bên dưới** — Trang chủ, Smart Home, Xây dựng, Nội thất (cùng
-    biểu tượng với menu vòng cung của máy tính), các nút ngang hàng với nút Zalo; trang đang xem viền vàng (bấm vào là
+  - **Biểu tượng các trang cạnh nút nhắn tin** (điện thoại): cuộn tới cuối danh sách dự án, ở hàng dưới cùng bên trái
+    nút nhắn tin hiện **4 nút tròn thẳng hàng ngang, tên trang ghi bên dưới** — Trang chủ, Smart Home, Xây dựng, Nội thất
+    (cùng biểu tượng với menu vòng cung của máy tính), các nút ngang hàng với nút nhắn tin; trang đang xem viền vàng (bấm vào là
     cuộn lên đầu trang); cuộn lên lại thì ẩn. Trang web chừa chỗ cho hàng nút nên không đè lên dự án nào.
   - **Menu vòng cung** (trang dự án trên máy tính): khi cuộn qua ảnh bìa, ở lề tối bên trái hiện **4 nút tròn xếp trên
     một cung tròn** — Trang chủ (dấu mái nhà của VILLA NEST), Smart Home, Xây dựng (cần cẩu), Nội thất (sofa) — cùng
@@ -163,15 +163,17 @@ riêng** cùng một phong cách: [`/smart-home/`](#trang-smart-home), [`/constr
   tai. Tổng hợp ngay trong trình duyệt bằng Web Audio (không cần file âm thanh, chạy offline). Mặc định bật, kêu từ lần
   bấm / chạm đầu tiên (trình duyệt không cho phát âm thanh trước đó); nút âm thanh trên header tắt / bật lại tiếng
   "tít" và trình duyệt nhớ lựa chọn.
-- **Nút Zalo**: biểu tượng Zalo nhỏ (màu xanh của Zalo) cố định ở **góc dưới bên phải** mọi trang — trang chủ và ba
-  trang riêng — luôn ở đó khi vuốt, cuộn hay chuyển cảnh; hàng điều hướng dưới cùng chừa chỗ cho nút nên không che gì.
-  Bấm là mở khung chat Zalo với số **0981584328** (`https://zalo.me/0981584328`); đổi số (hoặc dùng Zalo OA) trong
-  [`src/config/contact.ts`](src/config/contact.ts).
-- **Nút WhatsApp**: ngay **trên nút Zalo** (cùng cỡ, màu xanh lá của WhatsApp), ở mọi trang; bấm là mở khung chat
-  WhatsApp với số **+84 977 177 497** (`https://wa.me/84977177497`) — đổi số, hoặc để trống để bỏ nút, ở mục
-  `whatsapp` trong [`src/config/contact.ts`](src/config/contact.ts). Trên điện thoại, khi kịch bản Smart Home đang mở
-  dưới ảnh, nút WhatsApp tạm xuống nằm cạnh trái nút Zalo để không che dòng cuối của kịch bản; cuối các trang có chừa
-  chỗ để hai nút không che nội dung.
+- **Nút nhắn tin**: một nút tròn màu vàng (biểu tượng khung chat) cố định ở **góc dưới bên phải** mọi trang — trang
+  chủ và ba trang riêng — luôn ở đó khi vuốt, cuộn hay chuyển cảnh; hàng điều hướng dưới cùng chừa chỗ cho nút nên
+  không che gì. **Bấm vào**, nút thành dấu ×, ba nút bung lên theo chiều dọc, có tên bên cạnh:
+  - **Facebook** — tạm thời mở `https://www.facebook.com/` (chưa có trang); khi có trang Facebook, sửa mục `facebook`
+    trong [`src/config/contact.ts`](src/config/contact.ts) thành địa chỉ trang (hoặc `https://m.me/<tên-trang>` để
+    mở thẳng Messenger);
+  - **WhatsApp** — chat với số **+84 977 177 497** (`https://wa.me/84977177497`);
+  - **Zalo** — chat với số **0981584328** (`https://zalo.me/0981584328`; dùng được cả Zalo OA).
+
+  Mỗi nút mở ứng dụng trong tab mới. Bấm ×, bấm ra ngoài hoặc phím Esc để thu lại. Số / địa chỉ để trống trong
+  `contact.ts` thì nút đó không hiện.
 - **Link riêng từng lĩnh vực**: `/#smart-home`, `/#construction`, `/#interior` (vị trí trên bức toàn cảnh, tự cập nhật
   khi chuyển cảnh) và các trang `/smart-home/`, `/construction/`, `/interior/`.
 - **Chiều sâu điện ảnh**: ảnh hai bên nghiêng ±12°, nhoè và tối dần ra mép màn hình; mép trên/dưới tan vào bóng tối;
@@ -276,7 +278,7 @@ static server nào); mở trực tiếp `dist/index.html` bằng `file://` sẽ 
 └── src/
     ├── App.tsx                 Ghép Header, Loader, HeroCarousel; âm thanh; link #lĩnh-vực
     ├── config/animation.ts     ★ Toàn bộ thông số hiệu ứng / chuyển động / bố cục
-    ├── config/contact.ts       ★ Số Zalo và số WhatsApp của hai nút chat ở góc dưới phải
+    ├── config/contact.ts       ★ Facebook, số WhatsApp, số Zalo của nút nhắn tin ở góc dưới phải
     ├── assets/brand/           (tuỳ chọn) logo công ty: logo.svg / logo.png / logo.webp
     ├── audio/sound.ts          Âm thanh của website (Web Audio): tiếng "tít" của máy lạnh / quạt
     ├── audio/useApplianceBeep.ts  Máy lạnh, quạt kêu khi nhận lệnh (bật, tắt, đổi mức)
@@ -296,14 +298,15 @@ static server nào); mở trực tiếp `dist/index.html` bằng `file://` sẽ 
     │   │   ├── SlideImage.tsx      <picture> AVIF/WebP, art-direction ngang/dọc
     │   │   └── HeroCarousel.css
     │   ├── SmartHome/          Bảng điều khiển (ControlScreen), tường: ánh sáng, lời mời (HomeWall), rèm (Curtains), tuyết / lá (SceneEffects)
-    │   ├── Header/             Logo, slogan, nút âm thanh, chọn ngôn ngữ (kèm nút Zalo)
-    │   ├── Zalo/               Nút chat Zalo ở góc dưới phải (logo: Simple Icons, CC0)
+    │   ├── Header/             Logo, slogan, nút âm thanh, chọn ngôn ngữ (kèm nút nhắn tin)
+    │   ├── Chat/               Nút nhắn tin ở góc dưới phải: Facebook, WhatsApp, Zalo (logo: Simple Icons, CC0)
     │   └── Loader/             Vạch tiến trình tối giản khi ảnh đang tải
     ├── pages/shared/           Khung chung của ba trang: Deck.tsx (dải biểu tượng, chữ chủ đề, nút, mũi tên, thanh chủ
     │                           đề, kịch bản trên điện thoại) · useDeck (phím, thẻ) · useDemo · page.css
     │   └── projects/           Dự án: Projects.tsx (lưới ô vuông, hiệu ứng sắp xếp / văng ra, link #dự-án) ·
     │                           ProjectView.tsx (trang dự án: ảnh lớn, thông số, ảnh) · PagesArc.tsx (các trang:
-    │                           cung tròn ở lề trái máy tính, hàng ngang cạnh Zalo trên điện thoại) · icons.tsx · data.ts
+    │                           cung tròn ở lề trái máy tính, hàng ngang cạnh nút nhắn tin trên điện thoại) · icons.tsx ·
+    │                           data.ts
     │                           (loại công trình) · projects.css
     ├── pages/smart-home/       Trang Smart Home: content.ts (chữ VI/EN) · HeroVisual (ảnh + màn hình phối cảnh)
     │                           · ScenePanel (các màn hình của bảng, camera) · usePageHome (trạng thái, kịch bản) · icons.tsx
@@ -356,7 +359,7 @@ trong suốt) vào `src/assets/brand/` với tên `logo.svg`, `logo.png` hoặc 
   có bản `vi` và `en`.
 - Chữ giao diện (slogan, nút âm thanh, gợi ý thao tác…) nằm trong `src/i18n/strings.ts`.
 - Nút "Khám phá" của mỗi lĩnh vực mở trang riêng của nó: `smart-home/`, `construction/`, `interior/` (`ctaHref`).
-- Số Zalo của nút chat ở góc dưới phải: `src/config/contact.ts`.
+- Facebook, số WhatsApp, số Zalo của nút nhắn tin ở góc dưới phải: `src/config/contact.ts`.
 - Chữ của từng trang (dải dưới header, bốn chủ đề, bảng điều khiển, kịch bản, thẻ, vật liệu, kích thước) nằm trong
   `src/pages/<trang>/content.ts`, bản `vi` và `en`. Trong tên chủ đề (`features`), `\n` là chỗ thẻ xuống dòng trên điện
   thoại (trang Xây dựng: "Kết cấu\nvững chắc"); ở chỗ khác tên vẫn liền một dòng.
@@ -529,7 +532,7 @@ Kiểm thử tự động bằng Playwright (Chromium) trên bản build:
   vuốt dọc cuộn trang, chạm vẫn bật thiết bị; điện thoại: ảnh + hàng thẻ ở màn hình đầu, nút "Xem …" đưa ảnh + kịch bản
   vào màn hình (iPhone SE 320×568, SE 3, 12 mini, 14 Pro, Galaxy S8, Pixel 7, 15 Plus: kịch bản nằm trọn, không bị nút
   Zalo che; 4 thẻ dàn đều hết chiều ngang, tên không tràn, cùng số dòng; chú thích kết cấu không lấn nhau, không ra
-  ngoài ảnh); không có âm thanh khi chuyển cảnh; nút Zalo cố định ở góc dưới phải, không đè lên thẻ / nhãn nào; camera
+  ngoài ảnh); không có âm thanh khi chuyển cảnh; nút nhắn tin cố định ở góc dưới phải, không đè lên thẻ / nhãn nào; camera
   chạy giờ; kéo tia laser (không đổi chủ đề), phím trên tay nắm; thẻ tiến độ, chú thích kết cấu; điểm vật liệu đều nằm
   trong khung, thẻ vật liệu, ánh sáng buổi tối, nét kích thước.
 - Dự án: máy tính 1280×720 → 1920×1080: lưới dưới màn hình đầu, ô vuông 200–290 px, nhiều ô mỗi hàng, không tràn ngang;
@@ -537,11 +540,12 @@ Kiểm thử tự động bằng Playwright (Chromium) trên bản build:
   vuốt nhanh sang phải quay về, vuốt dọc trên các ô vẫn cuộn trang, vuốt không mở nhầm dự án, chạm vẫn mở; dấu
   "← Vuốt" hiện khi còn trang sau, ẩn ở trang cuối, chỉ còn mũi tên trên màn 320 px; link tới dự án ở trang 2 đóng lại
   về đúng trang 2; bộ lọc (Biệt thự / Nhà vườn / Tất cả) trên điện thoại và máy tính, số đếm đổi theo; trang quản trị:
-  chọn loại khi thêm dự án → bộ lọc của website có loại đó, máy chủ từ chối loại lạ; hàng nút các trang cạnh Zalo hiện
-  ở cuối danh sách, thẳng hàng, ngang tâm nút Zalo, tên dưới mỗi nút không chạm nhau, không đè ô nào, cuộn lên thì ẩn;
-  nút WhatsApp trên nút Zalo ở cả 4 trang (máy tính, iPhone 14 Pro, iPhone SE), đúng số, cuối mỗi trang không có nội
-  dung nào bị nút che, kịch bản Smart Home mở trên điện thoại không bị che;
-  điện thoại: 2 ô mỗi hàng, đủ mọi dự án, cách đều hai bên, còn chỗ cho nút Zalo; bấm mở dự án (ảnh bìa phóng
+  chọn loại khi thêm dự án → bộ lọc của website có loại đó, máy chủ từ chối loại lạ; hàng nút các trang cạnh nút nhắn
+  tin hiện ở cuối danh sách, thẳng hàng, ngang tâm nút nhắn tin, tên dưới mỗi nút không chạm nhau, không đè ô nào, cuộn
+  lên thì ẩn; nút nhắn tin ở cả 4 trang (máy tính, iPhone): một nút, bấm vào bung Facebook, WhatsApp, Zalo từ trên
+  xuống, thẳng hàng với nút, đúng link, mở tab mới rồi thu lại; thu lại bằng ×, bấm ra ngoài, Esc; dùng được bằng bàn
+  phím (Tab tới từng ứng dụng, Esc trả về nút);
+  điện thoại: 2 ô mỗi hàng, đủ mọi dự án, cách đều hai bên, còn chỗ cho nút nhắn tin; bấm mở dự án (ảnh bìa phóng
   to ≥ 60% sau 0,2 giây, các ô khác văng ra), đóng bằng ×, Back, Esc — ô về đúng chỗ, trang không bị cuộn lệch; link
   `#mã-dự-án` mở thẳng dự án; phím mũi tên và bánh xe không đổi chủ đề phía sau khi đang xem dự án; menu vòng cung ở
   1280×720, 1440×900, 1536×864, 1920×1080 (ẩn khi còn thấy ảnh bìa, hiện khi cuộn qua, nằm trong lề không chạm ảnh, đúng
@@ -578,10 +582,9 @@ Thay bằng ảnh dự án thật của VILLA NEST trước khi ra mắt chính 
   sở hữu (Connectivity Standards Alliance, Thread Group, Wi-Fi Alliance, Home Assistant / Open Home Foundation, Apple);
   việc dùng logo chính thức thường kèm điều kiện của chủ sở hữu (thiết bị / chương trình được chứng nhận) — nên kiểm
   tra trước khi ra mắt.
-- Logo Zalo của nút chat (`src/components/Zalo/ZaloButton.tsx`) — [Simple Icons](https://simpleicons.org) (CC0), màu
-  thương hiệu #0068FF; là nhãn hiệu của Zalo / VNG, dùng để dẫn khách tới khung chat Zalo của VILLA NEST.
-- Logo WhatsApp của nút chat (cùng file) — [Simple Icons](https://simpleicons.org) (CC0), màu thương hiệu #25D366; là
-  nhãn hiệu của WhatsApp / Meta, dùng để dẫn khách tới khung chat WhatsApp của VILLA NEST.
+- Logo Facebook, WhatsApp, Zalo của nút nhắn tin (`src/components/Chat/ChatButton.tsx`) —
+  [Simple Icons](https://simpleicons.org) (CC0), màu thương hiệu #0866FF, #25D366, #0068FF; là nhãn hiệu của Meta và
+  của Zalo / VNG, dùng để dẫn khách tới khung chat của VILLA NEST trên từng ứng dụng.
 - Smart Home — nền tường đá travertine từ ảnh của [HUUM](https://unsplash.com/photos/smart-thermostat-on-stone-wall-eJAWSL_0L98)
   ([Unsplash License](https://unsplash.com/license), miễn phí cho mục đích thương mại; thiết bị gốc đã được xoá),
   ánh sáng buổi tối và màn hình điều khiển trung tâm (giao diện VILLA NEST) được dựng thêm.

@@ -8,9 +8,9 @@ export function revealBelowHeader(el: HTMLElement | null) {
   requestAnimationFrame(() => {
     if (!el) return
     const header = document.querySelector<HTMLElement>('.site-header')?.offsetHeight ?? 0
-    // What is fixed at the foot of the screen (the Zalo button) is not covering the end of it.
-    const zalo = document.querySelector('.zalo-chat')?.getBoundingClientRect()
-    const foot = zalo ? window.innerHeight - zalo.top + 8 : 12
+    // What is fixed at the foot of the screen (the chat button) is not covering the end of it.
+    const chat = document.querySelector('.chat')?.getBoundingClientRect()
+    const foot = chat ? window.innerHeight - chat.top + 8 : 12
     const top = el.getBoundingClientRect().top + window.scrollY
     // (layout boxes: an opening block's entrance animation does not move them)
     const below = [...(el.parentElement?.children ?? [])].filter(
