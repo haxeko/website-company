@@ -19,6 +19,11 @@
         color: #f4f0e9;
       }
     </style>
+    <!-- The site's other pages are prepared the moment a link to one is pointed at or touched
+         (Chrome, Edge, Android), so the next page opens at once. -->
+    <script type="speculationrules">
+      { "prerender": [{ "where": { "href_matches": "/*" }, "eagerness": "moderate" }] }
+    </script>
   </head>
   <body>
     <div id="root"></div>

@@ -1,0 +1,625 @@
+/*
+ * Projects (Construction and Interior pages): the grid of square covers under the theme's text
+ * (Projects) and the project's page over the site (ProjectView).
+ */
+
+/* ── The grid ─────────────────────────────────────────────────────────── */
+
+/* (on a computer the square's size comes from the room under the text: Projects, whose
+   measures — margin, head, label, gap, dots — these heights are) */
+.pj {
+  --pj-tile: 120px;
+  --pj-gap: 14px;
+  margin-top: 20px;
+  pointer-events: auto;
+}
+
+.pj[hidden] {
+  display: none;
+}
+
+.pj__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 14px;
+  margin: 0 0 14px;
+  color: var(--gold-2);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+
+.pj__head i {
+  width: 28px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.55;
+}
+
+.pj__head span:last-child {
+  color: var(--muted);
+}
+
+.pj__grid {
+  display: grid;
+  grid-template-columns: repeat(2, var(--pj-tile));
+  gap: var(--pj-gap);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pj__item {
+  position: relative;
+  min-width: 0;
+}
+
+.pj__tile {
+  display: grid;
+  gap: 8px;
+  color: inherit;
+  text-decoration: none;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* A square, rounded as a phone's app icons are. */
+.pj__cover {
+  position: relative;
+  display: block;
+  width: var(--pj-tile);
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 14%;
+  background: #1a1b1e;
+  box-shadow:
+    0 12px 30px rgb(0 0 0 / 0.38),
+    inset 0 0 0 1px rgb(255 255 255 / 0.08);
+  transition:
+    translate 0.45s var(--ease-out),
+    scale 0.45s var(--ease-out),
+    box-shadow 0.45s var(--ease-out);
+}
+
+/* (a fine light rim, over the photo) */
+.pj__cover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.1);
+  pointer-events: none;
+}
+
+.pj__cover picture,
+.pj__cover img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.pj__cover img {
+  object-fit: cover;
+  transition: scale 0.9s var(--ease-out);
+}
+
+@media (hover: hover) {
+  .pj__tile:hover .pj__cover {
+    translate: 0 -4px;
+    scale: 1.03;
+    box-shadow:
+      0 20px 42px rgb(0 0 0 / 0.5),
+      inset 0 0 0 1px rgb(232 207 159 / 0.4);
+  }
+
+  .pj__tile:hover .pj__cover img {
+    scale: 1.08;
+  }
+}
+
+/* Pressed, as an app icon. */
+.pj__tile:active .pj__cover {
+  scale: 0.95;
+  transition-duration: 0.15s;
+}
+
+.pj__tile:focus-visible .pj__cover {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 3px;
+}
+
+.pj__label {
+  display: grid;
+  align-content: start;
+  gap: 4px;
+  width: var(--pj-tile);
+  height: 36px;
+}
+
+.pj__label b {
+  overflow: hidden;
+  font-family: var(--font-serif);
+  font-size: clamp(14px, 1.05vw, 17px);
+  font-weight: 500;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pj__label small {
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 8.5px;
+  letter-spacing: 0.16em;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* (very short screens: the squares and their names only) */
+.pj[data-compact] .pj__head,
+.pj[data-compact] .pj__label small {
+  display: none;
+}
+
+.pj[data-compact] .pj__label {
+  height: 20px;
+}
+
+/* The project on show: its banner stands in for the square. */
+.pj__item[data-open] .pj__cover {
+  visibility: hidden;
+}
+
+/* The page turns (computers, more projects than the squares on show). */
+.pj__pages {
+  display: flex;
+  gap: 4px;
+  height: 22px;
+  margin-top: 10px;
+  margin-left: -9px;
+}
+
+.pj__pages button {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.pj__pages button::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgb(244 240 233 / 0.3);
+  transition:
+    background-color 0.3s ease,
+    scale 0.3s var(--ease-out);
+}
+
+.pj__pages button[aria-current]::before {
+  background: var(--gold-2);
+  scale: 1.25;
+}
+
+.pj__pages button:focus-visible {
+  outline: 1px solid var(--c-accent);
+  border-radius: 50%;
+}
+
+/* On a computer the grid keeps its place at the bottom of the text's column. */
+.pg-copy[data-below] {
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+}
+
+.pg-copy[data-below] .pg-copy__text {
+  margin-block: auto;
+}
+
+.pg-copy[data-below] .pj {
+  flex: none;
+}
+
+/* Every theme's text, measured out of sight (DeckCopy), in the column's own width (and taking
+   no room: no scrolling of the one-screen page). */
+.pg-copy__measure {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 0;
+  overflow: hidden;
+  padding-left: inherit;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* While a project opens or closes, the grid is drawn over the project's dark (the others fly
+   over it), and the text above makes way. */
+.pg-copy[data-lifted] {
+  z-index: 46;
+}
+
+.pg-copy .pg-copy__text,
+.pg-copy .pj__head,
+.pg-copy .pj__pages {
+  transition: opacity 0.35s ease;
+}
+
+html[data-project-open] .pg-copy :is(.pg-copy__text, .pj__head, .pj__pages) {
+  opacity: 0;
+}
+
+html[data-project-open] .pj {
+  pointer-events: none;
+}
+
+/* ── Phones and portrait tablets ──────────────────────────────────────── */
+
+@media (max-width: 760px), (orientation: portrait) and (max-width: 1024px) {
+  .pj {
+    --pj-gap: 14px;
+    --pj-tile: calc((100vw - 2 * var(--gutter) - var(--pj-gap)) / 2);
+    margin-top: 30px;
+    /* (room for the Zalo button under the last row) */
+    padding-bottom: 76px;
+  }
+
+  @media (min-width: 600px) {
+    .pj {
+      --pj-tile: min(calc((100vw - 2 * var(--gutter) - var(--pj-gap)) / 2), 300px);
+    }
+  }
+
+  .pg-copy__measure {
+    display: none;
+  }
+
+  .pj__label {
+    height: auto;
+  }
+
+  .pj__label b {
+    font-size: 16px;
+  }
+
+  .pj__label small {
+    font-size: 9px;
+  }
+}
+
+/* ── The project's page (ProjectView) ─────────────────────────────────── */
+
+html[data-project-open] {
+  overflow: hidden;
+}
+
+.pv {
+  position: fixed;
+  inset: 0;
+  z-index: 44;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  color: var(--c-text);
+  outline: none;
+}
+
+.pv__bg {
+  position: fixed;
+  inset: 0;
+  background: #0e0f11;
+  opacity: 0;
+}
+
+.pv__hero,
+.pv__body {
+  position: relative;
+  z-index: 2;
+}
+
+/* The way back, over the banner (and, once the page is scrolled, a shade behind it for what
+   passes under it). */
+.pv__bar::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: calc(var(--gutter-top) + 112px);
+  background: linear-gradient(to bottom, rgb(14 15 17 / 0.96), rgb(14 15 17 / 0.8) 55%, transparent);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+
+.pv[data-scrolled] .pv__bar::before {
+  opacity: 1;
+}
+
+@media (max-width: 760px), (orientation: portrait) and (max-width: 1024px) {
+  .pv__bar::before {
+    height: calc(var(--gutter-top) + 64px);
+  }
+}
+
+.pv__bar {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 0;
+  padding: 0 var(--gutter);
+}
+
+.pv__back,
+.pv__close {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  margin-top: calc(var(--gutter-top) + 44px);
+  border: 1px solid rgb(244 240 233 / 0.3);
+  background: rgb(14 14 16 / 0.45);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  color: var(--c-text);
+  cursor: pointer;
+  transition:
+    border-color 0.3s ease,
+    background-color 0.3s ease;
+}
+
+.pv__back {
+  gap: 10px;
+  height: 44px;
+  padding: 0 18px 0 12px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+.pv__close {
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 50%;
+}
+
+.pv__back svg,
+.pv__close svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@media (hover: hover) {
+  .pv__back:hover,
+  .pv__close:hover {
+    border-color: var(--c-accent);
+    background: rgb(14 14 16 / 0.7);
+  }
+}
+
+.pv__back:focus-visible,
+.pv__close:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 2px;
+}
+
+/* The cover, across the screen. */
+.pv__hero {
+  height: min(78svh, 64vw);
+  min-height: 320px;
+  overflow: hidden;
+}
+
+.pv__hero::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  height: 42%;
+  background: linear-gradient(to bottom, transparent, #0e0f11);
+  pointer-events: none;
+}
+
+.pv__hero picture,
+.pv__hero img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.pv__hero img {
+  object-fit: cover;
+}
+
+/* (the square's picture, flying between the page and the banner: over the dark, under the text) */
+.pv-flyer {
+  position: fixed;
+  z-index: 1;
+  display: block;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.pv__body {
+  max-width: 1180px;
+  margin: calc(-1 * clamp(70px, 12vh, 140px)) auto 0;
+  padding: 0 var(--gutter) clamp(60px, 10vh, 120px);
+}
+
+.pv__kicker {
+  margin: 0;
+  color: var(--gold-2);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+
+.pv__title {
+  margin: 14px 0 0;
+  font-family: var(--font-serif);
+  font-size: clamp(38px, 5vw, 76px);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1;
+}
+
+.pv__place {
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.pv__about {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  gap: clamp(28px, 5vw, 80px);
+  margin-top: clamp(28px, 5vh, 52px);
+  padding-top: clamp(24px, 4vh, 40px);
+  border-top: 1px solid var(--line);
+}
+
+.pv__summary {
+  margin: 0;
+  color: rgb(244 240 233 / 0.82);
+  font-size: clamp(14px, 1.05vw, 16px);
+  line-height: 1.8;
+}
+
+.pv__facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px 28px;
+  margin: 0;
+}
+
+.pv__facts dt {
+  color: var(--muted);
+  font-size: 9px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+.pv__facts dd {
+  margin: 7px 0 0;
+  font-family: var(--font-serif);
+  font-size: clamp(17px, 1.3vw, 21px);
+  line-height: 1.2;
+}
+
+.pv__note {
+  margin: 22px 0 0;
+  color: rgb(244 240 233 / 0.45);
+  font-size: 11px;
+  font-style: italic;
+}
+
+/* The photos, two to a row under the first, which runs across. */
+.pv__photos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(14px, 2vw, 28px);
+  margin: clamp(40px, 7vh, 72px) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pv__photo:first-child,
+.pv__photo[data-wide] {
+  grid-column: 1 / -1;
+}
+
+.pv__photo figure {
+  margin: 0;
+}
+
+.pv__photo picture {
+  display: block;
+  overflow: hidden;
+  border-radius: 6px;
+  background: #17181b;
+}
+
+.pv__photo img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.pv__photo figcaption {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.pv__contact {
+  margin-top: clamp(40px, 7vh, 72px);
+}
+
+@media (max-width: 760px), (orientation: portrait) and (max-width: 1024px) {
+  .pv__back,
+  .pv__close {
+    margin-top: calc(var(--gutter-top) + 4px);
+  }
+
+  .pv__back {
+    height: 40px;
+    padding: 0 14px 0 10px;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+  }
+
+  .pv__close {
+    width: 40px;
+    height: 40px;
+  }
+
+  .pv__hero {
+    height: 62svh;
+    min-height: 0;
+  }
+
+  .pv__body {
+    margin-top: -64px;
+  }
+
+  .pv__about {
+    grid-template-columns: 1fr;
+  }
+
+  .pv__photos {
+    grid-template-columns: 1fr;
+  }
+
+  .pv__contact {
+    margin-bottom: 64px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pj__cover,
+  .pj__cover img {
+    transition: none;
+  }
+}

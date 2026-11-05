@@ -1,4 +1,4 @@
-import { useEffect, useRef, type CSSProperties, type PointerEvent, type ReactNode, type RefObject } from 'react'
+import { useRef, type CSSProperties, type PointerEvent, type ReactNode, type RefObject } from 'react'
 import media from '../../data/media.json'
 import { pageAsset } from '../shared/pageAsset'
 import { MOODS, type InteriorCopy, type MoodId } from './content'
@@ -51,10 +51,6 @@ interface RoomVisualProps {
   /** The material whose card is open (materials). */
   selected: number
   onSelect: (index: number) => void
-  /** Counts the calls to action on the space: each one walks slowly into the room. */
-  walk: number
-  /** Counts the calls to action on the sizes: each one draws them again. */
-  redraw: number
   overlay?: ReactNode
   alt: string
 }
@@ -64,15 +60,8 @@ interface RoomVisualProps {
  * cross-faded), the points on its materials, and the made-to-measure pieces' dimension lines
  * drawn over it. On a computer the room follows the pointer a little, for depth.
  */
-export function RoomVisual({ visualRef, copy, facet, mood, selected, onSelect, walk, redraw, overlay, alt }: RoomVisualProps) {
+export function RoomVisual({ visualRef, copy, facet, mood, selected, onSelect, overlay, alt }: RoomVisualProps) {
   const boxRef = useRef<HTMLDivElement>(null)
-
-  // "Explore" on the space: a slow walk into the room.
-  useEffect(() => {
-    const box = boxRef.current
-    if (!walk || !box || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    box.animate([{ scale: 1 }, { scale: 1.07, offset: 0.55 }, { scale: 1 }], { duration: 6400, easing: 'cubic-bezier(0.45, 0, 0.3, 1)' })
-  }, [walk])
 
   // A touch of depth: the room drifts with the pointer (fine pointers only).
   const onPointerMove = (e: PointerEvent<HTMLDivElement>) => {
@@ -105,7 +94,7 @@ export function RoomVisual({ visualRef, copy, facet, mood, selected, onSelect, w
           </picture>
         ))}
 
-        <svg key={redraw} className="ip-dims" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" aria-hidden="true">
+        <svg className="ip-dims" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" aria-hidden="true">
           {DIMS.map(({ from, to }, i) => {
             const vertical = from[0] === to[0]
             const tick = (x: number, y: number) => (vertical ? `M${x - 34} ${y}h68` : `M${x} ${y - 34}v68`)

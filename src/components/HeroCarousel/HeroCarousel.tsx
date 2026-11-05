@@ -53,7 +53,9 @@ interface HeroCarouselProps {
 }
 
 /** Never keep the visitor waiting longer than this for slow images. */
-const IMAGE_TIMEOUT = 8000
+const IMAGE_TIMEOUT = 6000
+/** Once the photo in the centre is ready, how long its neighbours may still take. */
+const SIDE_GRACE = 450
 /** Panels needed around the ring so both screen edges always show a neighbour. */
 const MIN_RING_PANELS = 5
 
@@ -148,26 +150,28 @@ export function HeroCarousel({
     engine.setEnabled(isInteractive())
     engineRef.current = engine
 
-    // Preload: wait until every image is downloaded *and decoded* before the scene is
-    // revealed, so no transition ever shows an empty or half-painted frame.
+    // Preload: the scene is revealed once the photo in the centre is downloaded *and decoded*
+    // (so the first frame is never empty or half-painted); its neighbours get a moment more,
+    // and the ones still on their way fade in as they arrive.
     let cancelled = false
     let loaded = 0
+    const wait = (ms: number) => new Promise((resolve) => window.setTimeout(resolve, ms))
     const images = slideEls
       .slice(0, slides.length)
       .map((el) => el.querySelector<HTMLImageElement>('[data-frame] img'))
       .filter((img) => img !== null)
-    const decoded = Promise.all(
-      images.map((img) =>
-        img
-          .decode()
-          .catch(() => undefined)
-          .then(() => {
-            if (!cancelled) handleProgress(++loaded / images.length)
-          }),
-      ),
+    const decodes = images.map((img) =>
+      img
+        .decode()
+        .catch(() => undefined)
+        .then(() => {
+          if (!cancelled) handleProgress(++loaded / images.length)
+        }),
     )
-    const timeout = new Promise((resolve) => window.setTimeout(resolve, IMAGE_TIMEOUT))
-    void Promise.race([decoded, timeout]).then(() => {
+    const all = Promise.all(decodes)
+    const centre = decodes[getInitialIndex()] ?? all
+    const shown = centre.then(() => Promise.race([all, wait(SIDE_GRACE)]))
+    void Promise.race([shown, wait(IMAGE_TIMEOUT)]).then(() => {
       if (cancelled) return
       engine.playIntro()
       handleReady()

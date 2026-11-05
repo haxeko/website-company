@@ -2,10 +2,9 @@ import { useEffect, useRef, useState } from 'react'
 import { getSound, useSoundOn } from '../../audio/sound'
 import { Header } from '../../components/Header'
 import { useI18n } from '../../i18n/context'
-import { Cta, DeckControls, DeckCopy, DeckNav, DeckStory, PageStrip, PlayButton } from '../shared/Deck'
-import { revealBelowHeader } from '../shared/reveal'
+import { DeckControls, DeckCopy, DeckNav, PageStrip } from '../shared/Deck'
+import { Projects, PROJECTS_MIN_ROOM } from '../shared/projects/Projects'
 import { useDeck } from '../shared/useDeck'
-import { useDemo } from '../shared/useDemo'
 import { usePageChrome } from '../shared/usePageChrome'
 import { BuildVisual } from './BuildVisual'
 import { constructionCopy, type PhaseId } from './content'
@@ -15,17 +14,15 @@ import './ConstructionPage.css'
 
 /** The four phases of the build, in order: the page's themes. */
 const PHASES: PhaseId[] = ['design', 'structure', 'progress', 'handover']
-const STEP_MS = 4200
-/** The hint by the laser line: how long it stays, when it first shows, and after a sweep. */
+/** The hint by the laser line: when it shows, a moment after the page opens, and for how long. */
+const HINT_AT_MS = 2600
 const HINT_MS = 4000
-const FIRST_HINT_MS = 2600
-const SWEEP_MS = 4300
 
 /**
  * The Construction page (opened from "Explore" on the Construction space of the home page):
  * the villa as BIM model and as building, divided by a laser line that can be dragged; the
  * four phases of the build — design, structure, progress, handover — change like the home
- * page's spaces. "Watch the build" walks through them, the line sweeping as the work goes.
+ * page's spaces. Under the text, the construction projects.
  */
 export function ConstructionPage() {
   const { lang } = useI18n()
@@ -37,46 +34,18 @@ export function ConstructionPage() {
   const { ready, scrolled } = usePageChrome(rootRef, copy.description)
   const soundOn = useSoundOn()
 
-  const deck = useDeck(PHASES.length, { heroRef })
-  const { active, show, portrait } = deck
-  const demo = useDemo(PHASES.length, STEP_MS, show)
-  const playing = demo.step !== null
+  const { active, show } = useDeck(PHASES.length, { heroRef })
 
-  // Phones: the story opens under the photo with the first play.
-  const [storyOpen, setStoryOpen] = useState(false)
-  // "Explore": the line sweeps across once, then a hint says it can be dragged — as it does
-  // once, a moment after the page opens.
-  const [sweep, setSweep] = useState(0)
+  // A hint says the line can be dragged, a moment after the page opens.
   const [hint, setHint] = useState(false)
   useEffect(() => {
-    const delay = sweep ? SWEEP_MS : FIRST_HINT_MS
-    const showHint = window.setTimeout(() => setHint(true), delay)
-    const hideHint = window.setTimeout(() => setHint(false), delay + HINT_MS)
+    const showHint = window.setTimeout(() => setHint(true), HINT_AT_MS)
+    const hideHint = window.setTimeout(() => setHint(false), HINT_AT_MS + HINT_MS)
     return () => {
       window.clearTimeout(showHint)
       window.clearTimeout(hideHint)
     }
-  }, [sweep])
-
-  const reveal = () => {
-    if (portrait) revealBelowHeader(visualRef.current)
-  }
-  const explore = () => {
-    demo.stop()
-    setHint(false)
-    setSweep((n) => n + 1)
-    reveal()
-  }
-  const playDemo = () => {
-    setStoryOpen(true)
-    setHint(false)
-    demo.play()
-    reveal()
-  }
-  const chooseStep = (i: number) => {
-    demo.stop()
-    show(i)
-  }
+  }, [])
 
   return (
     <div ref={rootRef} className="app pg cp" data-ready={ready} data-scrolled={scrolled || undefined}>
@@ -93,8 +62,6 @@ export function ConstructionPage() {
               visualRef={visualRef}
               copy={copy}
               phase={active}
-              sweep={sweep}
-              storyOpen={storyOpen}
               hint={hint ? copy.tryIt : undefined}
               alt={copy.themes.design.kicker}
               overlay={
@@ -109,26 +76,8 @@ export function ConstructionPage() {
               titleId="pg-title"
               titles={PHASES.map((id) => copy.features[id].title)}
               texts={PHASES.map((id) => copy.themes[id])}
-              actions={(shown) => (
-                <>
-                  <Cta label={copy.themes[PHASES[shown]].cta} onClick={explore} />
-                  <PlayButton playing={playing} watch={copy.watch} stop={copy.stop} onPlay={playDemo} onStop={demo.stop} />
-                </>
-              )}
-            />
-
-            <DeckStory
-              open={storyOpen}
-              title={copy.story.title}
-              steps={copy.story.steps}
-              playing={demo.step}
-              chosen={playing ? null : active}
-              stepMs={STEP_MS}
-              onStep={chooseStep}
-              onPlay={playDemo}
-              onStop={demo.stop}
-              replay={copy.story.replay}
-              stop={copy.stop}
+              below={(room) => <Projects category="construction" name={copy.name} ready={ready} room={room} />}
+              belowMin={PROJECTS_MIN_ROOM}
             />
           </div>
 

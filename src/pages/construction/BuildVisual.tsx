@@ -2,7 +2,6 @@ import { gsap } from 'gsap'
 import {
   useCallback,
   useEffect,
-  useEffectEvent,
   useRef,
   useState,
   type CSSProperties,
@@ -89,13 +88,9 @@ interface BuildVisualProps {
   copy: ConstructionCopy
   /** The phase (theme) on show. */
   phase: number
-  /** Counts the calls to action: each one sweeps the line across once. */
-  sweep: number
   /** Over the photo, at the front (the arrows). */
   overlay?: ReactNode
-  /** Phones: the story is open under the photo, in place of the phase's card. */
-  storyOpen: boolean
-  /** Shown by the handle for a moment, after the call to action. */
+  /** Shown by the handle for a moment, a little after the page opens. */
   hint?: string
   alt: string
 }
@@ -108,7 +103,7 @@ interface BuildVisualProps {
  * the site's progress card. Each phase moves the line, shows the frame's callouts, the
  * progress card or the handover.
  */
-export function BuildVisual({ visualRef, copy, phase, sweep, overlay, storyOpen, hint, alt }: BuildVisualProps) {
+export function BuildVisual({ visualRef, copy, phase, overlay, hint, alt }: BuildVisualProps) {
   const portrait = usePortrait()
   const boxRef = useRef<HTMLDivElement>(null)
   const line = useRef({ v: LINE.landscape[0] })
@@ -135,20 +130,6 @@ export function BuildVisual({ visualRef, copy, phase, sweep, overlay, storyOpen,
   const targets = portrait ? LINE.portrait : LINE.landscape
   // Each phase brings the line to its place.
   useEffect(() => moveTo(targets[phase]), [phase, targets, moveTo])
-
-  // "Explore": all model, then all built, then back to the phase.
-  const runSweep = useEffectEvent(() => {
-    tween.current?.kill()
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    tween.current = gsap
-      .timeline()
-      .to(line.current, { v: 1, duration: 0.9, ease: 'power2.inOut', onUpdate: apply })
-      .to(line.current, { v: 0, duration: 2.2, ease: 'power2.inOut', onUpdate: apply })
-      .to(line.current, { v: targets[phase], duration: 1.1, ease: 'power3.inOut', onUpdate: apply })
-  })
-  useEffect(() => {
-    if (sweep) runSweep()
-  }, [sweep])
 
   useEffect(() => () => void tween.current?.kill(), [])
 
@@ -341,7 +322,7 @@ export function BuildVisual({ visualRef, copy, phase, sweep, overlay, storyOpen,
         {overlay}
       </div>
 
-      <aside className="cp-card cp-card--progress" data-on={(phase === 2 && !storyOpen) || undefined} aria-hidden={phase !== 2}>
+      <aside className="cp-card cp-card--progress" data-on={phase === 2 || undefined} aria-hidden={phase !== 2}>
         <p className="cp-card__title">{copy.progress.title}</p>
         <p className="cp-card__project">{copy.progress.project}</p>
         <p className="cp-card__value">
@@ -361,7 +342,7 @@ export function BuildVisual({ visualRef, copy, phase, sweep, overlay, storyOpen,
         <p className="cp-card__note">{copy.progress.today}</p>
       </aside>
 
-      <aside className="cp-card cp-card--handover" data-on={(phase === 3 && !storyOpen) || undefined} aria-hidden={phase !== 3}>
+      <aside className="cp-card cp-card--handover" data-on={phase === 3 || undefined} aria-hidden={phase !== 3}>
         <p className="cp-card__title">{copy.handover.title}</p>
         <p className="cp-card__key">
           <KeyIcon />

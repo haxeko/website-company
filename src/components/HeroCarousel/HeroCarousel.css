@@ -281,13 +281,13 @@
 .hc:is([data-phase='intro'], [data-phase='ready']) :is(.hc-controls, .hc-nav) {
   opacity: 1;
   pointer-events: auto;
-  transition: opacity 1.4s var(--ease-out) 1.3s;
+  transition: opacity 0.8s var(--ease-out) 0.45s;
 }
 
 /* ── Phones and other portrait screens ───────────────────────────────────── */
 
 .hc[data-layout='portrait'] .hc-copy {
-  top: calc(var(--hc-cy) + var(--hc-h) / 2 + 14px);
+  top: calc(var(--hc-cy) + var(--hc-h) / 2 + 10px);
   right: var(--gutter);
   left: var(--gutter);
   width: auto;
@@ -306,16 +306,16 @@
 
 .hc[data-layout='portrait'] .hc-copy__description {
   display: -webkit-box;
-  margin-top: 10px;
+  margin-top: 8px;
   overflow: hidden;
   font-size: 12.5px;
-  line-height: 1.6;
+  line-height: 1.5;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
 }
 
 .hc[data-layout='portrait'] .hc-copy__cta {
-  margin-top: 10px;
+  margin-top: 8px;
 }
 
 .hc[data-layout='portrait'] .hc-copy__cta-icon {

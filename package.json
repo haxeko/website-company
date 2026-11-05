@@ -13,7 +13,8 @@
     "typecheck": "tsc -b",
     "lint": "oxlint",
     "preview": "vite preview",
-    "images": "node --max-old-space-size=6144 scripts/optimize-images.mjs"
+    "images": "node --max-old-space-size=6144 scripts/optimize-images.mjs",
+    "projects": "node scripts/build-projects.mjs"
   },
   "dependencies": {
     "@fontsource-variable/cormorant-garamond": "^5.3.0",

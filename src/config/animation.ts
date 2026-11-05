@@ -145,7 +145,7 @@ export const carouselConfig: CarouselConfig = {
 
   intro: {
     enabled: true,
-    duration: 2.2,
+    duration: 1.3,
   },
 
   reducedMotion: {

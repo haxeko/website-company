@@ -1,0 +1,628 @@
+{
+  "$comment": [
+    "The projects of the Construction and Interior pages, in the order they are shown.",
+    "Add a project: copy an entry, give it a new id (lower case, dashes: it becomes the link /construction/#<id>),",
+    "put its photos in content/projects/<id>/ and list them by file name: \"cover\": \"cover.jpg\", \"photos\": [\"01.jpg\", \"02.jpg\"].",
+    "A photo can also be an object { \"src\": \"<path from the repository root>\", \"crop\": [x, y, width, height], \"focus\": [x, y], \"caption\": { \"vi\": \"...\", \"en\": \"...\" } }.",
+    "category: \"construction\" or \"interior\". sample: true marks an illustrative project (the samples reuse the site's concept images).",
+    "Then run: npm run projects (photos → public/projects/, list → public/data/projects.json)."
+  ],
+  "projects": [
+    {
+      "id": "biet-thu-ho-boi",
+      "category": "construction",
+      "sample": true,
+      "title": {
+        "vi": "Biệt thự hồ bơi",
+        "en": "Pool villa"
+      },
+      "place": {
+        "vi": "Sơn Trà, Đà Nẵng",
+        "en": "Son Tra, Da Nang"
+      },
+      "year": "2025",
+      "area": "420 m²",
+      "scope": {
+        "vi": "Thiết kế & thi công trọn gói",
+        "en": "Design & build"
+      },
+      "summary": {
+        "vi": "Hai tầng mở ra hồ bơi tràn bờ và vịnh biển: khung bê tông cốt thép, mái đúc đua rộng che nắng, vách kính lớn khung nhôm cầu cách nhiệt và đèn hắt trong vườn.",
+        "en": "Two storeys opening onto an infinity pool and the bay: a reinforced-concrete frame, deep cast eaves for shade, large thermally broken glazing and lights in the garden."
+      },
+      "cover": {
+        "src": "assets-src/panorama-construction-interior.jpg",
+        "crop": [
+          0,
+          0,
+          3300,
+          2200
+        ],
+        "focus": [
+          0.62,
+          0.55
+        ]
+      },
+      "photos": [
+        {
+          "src": "assets-src/panorama-construction-interior.jpg",
+          "crop": [
+            0,
+            0,
+            3400,
+            2668
+          ],
+          "caption": {
+            "vi": "Mặt tiền về đêm, nhìn từ hồ bơi",
+            "en": "The façade at night, from the pool"
+          }
+        },
+        {
+          "src": "assets-src/panorama-construction-interior.jpg",
+          "crop": [
+            1700,
+            950,
+            1700,
+            1100
+          ],
+          "caption": {
+            "vi": "Phòng khách tầng trệt mở ra sân hiên",
+            "en": "The ground-floor living room opening onto the terrace"
+          }
+        },
+        {
+          "src": "assets-src/panorama-construction-interior.jpg",
+          "crop": [
+            0,
+            1650,
+            2700,
+            1018
+          ],
+          "caption": {
+            "vi": "Hồ bơi tràn bờ",
+            "en": "The infinity pool"
+          }
+        }
+      ]
+    },
+    {
+      "id": "khung-be-tong-mep",
+      "category": "construction",
+      "sample": true,
+      "title": {
+        "vi": "Khung bê tông & cơ điện",
+        "en": "Concrete frame & MEP"
+      },
+      "place": {
+        "vi": "Hội An, Quảng Nam",
+        "en": "Hoi An, Quang Nam"
+      },
+      "year": "2026",
+      "area": "380 m²",
+      "scope": {
+        "vi": "Kết cấu & cơ điện trên BIM",
+        "en": "Structure & MEP in BIM"
+      },
+      "summary": {
+        "vi": "Đường ống cấp thoát nước, chữa cháy, máng cáp điện và ống gió được dựng trên mô hình BIM và kiểm tra va chạm trước khi đổ bê tông — không đục phá khi lắp đặt.",
+        "en": "Water and fire pipes, cable trays and ducts were laid out in the BIM model and clash-checked before the concrete was poured — no breaking out walls at fit-out."
+      },
+      "cover": {
+        "src": "assets-src/construction-bim.jpg",
+        "crop": [
+          1500,
+          150,
+          3700,
+          2467
+        ],
+        "focus": [
+          0.5,
+          0.5
+        ]
+      },
+      "photos": [
+        {
+          "src": "assets-src/construction-bim.jpg",
+          "crop": [
+            0,
+            0,
+            6937,
+            2668
+          ],
+          "caption": {
+            "vi": "Mô hình BIM của toàn công trình",
+            "en": "The whole building in the BIM model"
+          }
+        },
+        {
+          "src": "assets-src/construction-bim.jpg",
+          "crop": [
+            4800,
+            0,
+            2137,
+            1600
+          ],
+          "caption": {
+            "vi": "Ống nước (xanh dương), chữa cháy (đỏ) và máng cáp (xanh lá) dưới sàn mái",
+            "en": "Water (blue), fire (red) and cable trays (green) under the roof slab"
+          }
+        },
+        {
+          "src": "assets-src/panorama-construction-interior.jpg",
+          "crop": [
+            3250,
+            200,
+            2100,
+            2200
+          ],
+          "caption": {
+            "vi": "Khung thật đang thi công, cùng góc nhìn",
+            "en": "The real frame under construction, from the same spot"
+          }
+        }
+      ]
+    },
+    {
+      "id": "biet-thu-suon-doi",
+      "category": "construction",
+      "sample": true,
+      "title": {
+        "vi": "Biệt thự sườn đồi",
+        "en": "Hillside villa"
+      },
+      "place": {
+        "vi": "Bảo Lộc, Lâm Đồng",
+        "en": "Bao Loc, Lam Dong"
+      },
+      "year": "2026",
+      "area": "350 m²",
+      "scope": {
+        "vi": "Thi công phần thô",
+        "en": "Shell & core"
+      },
+      "summary": {
+        "vi": "Giàn chống và ván khuôn gỗ cho sàn đúc liền khối; cốt thép nghiệm thu trước mỗi lần đổ, mẫu bê tông nén thử ở 28 ngày, ván khuôn chỉ tháo khi bê tông đủ cường độ.",
+        "en": "Shoring and timber formwork for monolithic slabs; the rebar inspected before every pour, cubes tested at 28 days, formwork struck only once the concrete is strong enough."
+      },
+      "cover": {
+        "src": "assets-src/panorama-construction-interior.jpg",
+        "crop": [
+          2900,
+          150,
+          2900,
+          1933
+        ],
+        "focus": [
+          0.45,
+          0.5
+        ]
+      },
+      "photos": [
+        {
+          "src": "assets-src/panorama-construction-interior.jpg",
+          "crop": [
+            2900,
+            0,
+            3000,
+            2668
+          ],
+          "caption": {
+            "vi": "Khung bê tông và giàn chống lúc hoàng hôn",
+            "en": "The concrete frame and its shoring at sunset"
+          }
+        },
+        {
+          "src": "assets-src/panorama-construction-interior.jpg",
+          "crop": [
+            4100,
+            1450,
+            1400,
+            900
+          ],
+          "caption": {
+            "vi": "Ván khuôn gỗ tập kết trên sàn",
+            "en": "Formwork timber stacked on the slab"
+          }
+        },
+        {
+          "src": "assets-src/panorama-construction-interior.jpg",
+          "crop": [
+            4250,
+            200,
+            1200,
+            1050
+          ],
+          "caption": {
+            "vi": "Đỉnh khung, nhìn ra núi",
+            "en": "The top of the frame, looking out to the hills"
+          }
+        }
+      ]
+    },
+    {
+      "id": "nha-vuon-nhiet-doi",
+      "category": "construction",
+      "sample": true,
+      "title": {
+        "vi": "Nhà vườn nhiệt đới",
+        "en": "Tropical garden house"
+      },
+      "place": {
+        "vi": "Phú Quốc, Kiên Giang",
+        "en": "Phu Quoc, Kien Giang"
+      },
+      "year": "2024",
+      "area": "300 m²",
+      "scope": {
+        "vi": "Cảnh quan & chiếu sáng",
+        "en": "Landscape & lighting"
+      },
+      "summary": {
+        "vi": "Hàng cau, cây đại và đèn hắt chân cây ôm lấy ngôi nhà; ánh sáng vườn chia theo từng lớp để buổi tối ngoài hiên ấm mà không chói.",
+        "en": "Palms, frangipani and uplights wrapped round the house; the garden light set in layers, so evenings on the terrace are warm without glare."
+      },
+      "cover": {
+        "src": "assets-src/panorama-construction-interior.jpg",
+        "crop": [
+          0,
+          150,
+          2600,
+          1733
+        ],
+        "focus": [
+          0.42,
+          0.5
+        ]
+      },
+      "photos": [
+        {
+          "src": "assets-src/panorama-construction-interior.jpg",
+          "crop": [
+            0,
+            0,
+            1900,
+            2050
+          ],
+          "caption": {
+            "vi": "Vườn cau và vịnh biển lúc chạng vạng",
+            "en": "The palm garden and the bay at dusk"
+          }
+        },
+        {
+          "src": "assets-src/smart-home-page.jpg",
+          "crop": [
+            3450,
+            0,
+            1350,
+            1705
+          ],
+          "caption": {
+            "vi": "Mặt nhà về đêm, nhìn qua vách kính",
+            "en": "The house at night, through the glass"
+          }
+        },
+        {
+          "src": "assets-src/panorama-construction-interior.jpg",
+          "crop": [
+            700,
+            1100,
+            2000,
+            1000
+          ],
+          "caption": {
+            "vi": "Hiên nghỉ bên hồ",
+            "en": "The lounge terrace by the pool"
+          }
+        }
+      ]
+    },
+    {
+      "id": "phong-khach-travertine",
+      "category": "interior",
+      "sample": true,
+      "title": {
+        "vi": "Phòng khách travertine",
+        "en": "Travertine living room"
+      },
+      "place": {
+        "vi": "Thảo Điền, TP. Hồ Chí Minh",
+        "en": "Thao Dien, Ho Chi Minh City"
+      },
+      "year": "2025",
+      "area": "180 m²",
+      "scope": {
+        "vi": "Thiết kế & thi công nội thất",
+        "en": "Interior design & fit-out"
+      },
+      "summary": {
+        "vi": "Đá travertine ốp tường, gỗ óc chó và sofa vải bouclé; vách kính trượt mở trọn phòng khách ra vườn, ánh sáng đổi theo giờ trong ngày.",
+        "en": "Travertine walls, walnut and a bouclé sofa; sliding glass opens the whole living room to the garden, and the light changes with the hour."
+      },
+      "cover": {
+        "src": "assets-src/panorama-construction-interior.jpg",
+        "crop": [
+          5300,
+          700,
+          2700,
+          1800
+        ],
+        "focus": [
+          0.6,
+          0.6
+        ]
+      },
+      "photos": [
+        {
+          "src": "assets-src/panorama-construction-interior.jpg",
+          "crop": [
+            5150,
+            0,
+            2850,
+            2668
+          ],
+          "caption": {
+            "vi": "Buổi chiều, ánh nắng vàng",
+            "en": "Afternoon, in the golden light"
+          }
+        },
+        {
+          "src": "assets-src/interior/interior-morning.jpg",
+          "crop": [
+            0,
+            0,
+            2850,
+            2668
+          ],
+          "caption": {
+            "vi": "Buổi sáng",
+            "en": "Morning"
+          }
+        },
+        {
+          "src": "assets-src/interior/interior-evening.jpg",
+          "crop": [
+            0,
+            0,
+            2850,
+            2668
+          ],
+          "caption": {
+            "vi": "Buổi tối, đèn hắt trần và đèn thả",
+            "en": "Evening, with the cove lights and the pendant"
+          }
+        }
+      ]
+    },
+    {
+      "id": "bep-dao-ban-an",
+      "category": "interior",
+      "sample": true,
+      "title": {
+        "vi": "Bếp đảo & bàn ăn",
+        "en": "Kitchen island & dining"
+      },
+      "place": {
+        "vi": "Nha Trang, Khánh Hòa",
+        "en": "Nha Trang, Khanh Hoa"
+      },
+      "year": "2024",
+      "area": "95 m²",
+      "scope": {
+        "vi": "Nội thất bếp & phòng ăn",
+        "en": "Kitchen & dining interiors"
+      },
+      "summary": {
+        "vi": "Đảo bếp đá cẩm thạch nguyên khối, tủ gỗ óc chó âm tường và bàn ăn mười chỗ dưới đèn thả đồng — bếp mở liền với phòng khách và hiên vườn.",
+        "en": "A solid marble island, built-in walnut cabinets and a ten-seat table under a brass pendant — the kitchen open to the living room and the garden terrace."
+      },
+      "cover": {
+        "src": "assets-src/interior/interior-morning.jpg",
+        "crop": [
+          450,
+          900,
+          1650,
+          1100
+        ],
+        "focus": [
+          0.5,
+          0.55
+        ]
+      },
+      "photos": [
+        {
+          "src": "assets-src/interior/interior-morning.jpg",
+          "crop": [
+            300,
+            850,
+            2000,
+            1300
+          ],
+          "caption": {
+            "vi": "Bàn ăn và đảo bếp buổi sáng",
+            "en": "The table and the island in the morning"
+          }
+        },
+        {
+          "src": "assets-src/interior/interior-evening.jpg",
+          "crop": [
+            300,
+            850,
+            2000,
+            1300
+          ],
+          "caption": {
+            "vi": "Buổi tối",
+            "en": "In the evening"
+          }
+        },
+        {
+          "src": "assets-src/panorama-construction-interior.jpg",
+          "crop": [
+            6450,
+            1000,
+            1150,
+            800
+          ],
+          "caption": {
+            "vi": "Đảo bếp đá cẩm thạch",
+            "en": "The marble island"
+          }
+        }
+      ]
+    },
+    {
+      "id": "can-ho-thong-minh",
+      "category": "interior",
+      "sample": true,
+      "title": {
+        "vi": "Căn hộ thông minh",
+        "en": "Smart apartment"
+      },
+      "place": {
+        "vi": "Tây Hồ, Hà Nội",
+        "en": "Tay Ho, Hanoi"
+      },
+      "year": "2025",
+      "area": "140 m²",
+      "scope": {
+        "vi": "Nội thất & nhà thông minh",
+        "en": "Interiors & smart home"
+      },
+      "summary": {
+        "vi": "Bảng điều khiển âm tường đá điều khiển đèn, rèm, điều hòa và an ninh; ánh sáng ấm, vật liệu tối màu, tầm nhìn mở ra khoảng sân trong.",
+        "en": "A control panel set into the stone wall runs the lights, curtains, air-con and security; warm light, dark materials and a view onto the inner courtyard."
+      },
+      "cover": {
+        "src": "assets-src/smart-home-page.jpg",
+        "crop": [
+          1700,
+          0,
+          2557,
+          1705
+        ],
+        "focus": [
+          0.42,
+          0.45
+        ]
+      },
+      "photos": [
+        {
+          "src": "assets-src/smart-home-page.jpg",
+          "crop": [
+            0,
+            0,
+            4800,
+            1705
+          ],
+          "caption": {
+            "vi": "Phòng khách với bảng điều khiển trên tường đá",
+            "en": "The living room, with the panel on the stone wall"
+          }
+        },
+        {
+          "src": "assets-src/smart-home-page.jpg",
+          "crop": [
+            2250,
+            120,
+            1200,
+            1000
+          ],
+          "caption": {
+            "vi": "Bảng điều khiển: đèn, rèm, điều hòa, an ninh",
+            "en": "The panel: lights, curtains, air-con, security"
+          }
+        },
+        {
+          "src": "assets-src/smart-home-page.jpg",
+          "crop": [
+            3450,
+            0,
+            1350,
+            1705
+          ],
+          "caption": {
+            "vi": "Sân trong về đêm",
+            "en": "The courtyard at night"
+          }
+        }
+      ]
+    },
+    {
+      "id": "khong-gian-mo",
+      "category": "interior",
+      "sample": true,
+      "title": {
+        "vi": "Không gian mở ra vườn",
+        "en": "Open to the garden"
+      },
+      "place": {
+        "vi": "Đà Lạt, Lâm Đồng",
+        "en": "Da Lat, Lam Dong"
+      },
+      "year": "2026",
+      "area": "160 m²",
+      "scope": {
+        "vi": "Cải tạo nội thất",
+        "en": "Interior renovation"
+      },
+      "summary": {
+        "vi": "Vách kính trượt sát trần nối phòng khách với hiên và vườn; sàn đá liền mạch trong ngoài, trần gỗ đua ra che nắng chiều.",
+        "en": "Floor-to-ceiling sliding glass joins the living room to the terrace and the garden; one stone floor inside and out, a timber soffit shading the afternoon sun."
+      },
+      "cover": {
+        "src": "assets-src/interior/interior-morning.jpg",
+        "crop": [
+          0,
+          700,
+          2100,
+          1400
+        ],
+        "focus": [
+          0.35,
+          0.5
+        ]
+      },
+      "photos": [
+        {
+          "src": "assets-src/panorama-construction-interior.jpg",
+          "crop": [
+            4900,
+            0,
+            3100,
+            2668
+          ],
+          "caption": {
+            "vi": "Hiên và vách kính mở ra vườn",
+            "en": "The terrace and the glass wall to the garden"
+          }
+        },
+        {
+          "src": "assets-src/interior/interior-morning.jpg",
+          "crop": [
+            0,
+            600,
+            1500,
+            1500
+          ],
+          "caption": {
+            "vi": "Vách kính trượt nhìn ra vườn",
+            "en": "The sliding glass, looking out to the garden"
+          }
+        },
+        {
+          "src": "assets-src/interior/interior-evening.jpg",
+          "crop": [
+            0,
+            0,
+            2850,
+            2668
+          ],
+          "caption": {
+            "vi": "Buổi tối",
+            "en": "In the evening"
+          }
+        }
+      ]
+    }
+  ]
+}

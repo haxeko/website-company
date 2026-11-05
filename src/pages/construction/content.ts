@@ -1,22 +1,22 @@
 import type { Lang } from '../../i18n/strings'
-import type { DeckText, StoryStep } from '../shared/Deck'
+import type { DeckText } from '../shared/Deck'
 
 /** The four phases of the build: the page's themes, in order. */
 export type PhaseId = 'design' | 'structure' | 'progress' | 'handover'
 
 export interface ConstructionCopy {
   documentTitle: string
+  /** The page's name (its projects: "Các dự án Xây dựng"). */
+  name: string
   description: string
   stripLabel: string
   strip: { name: string; note: string }[]
   index: string
-  watch: string
-  stop: string
-  /** After "Explore": the laser line can be dragged. */
+  /** A moment after the page opens: the laser line can be dragged. */
   tryIt: string
   /** `\n` in a title: where the theme's tab breaks on phones (one line elsewhere). */
   features: Record<PhaseId, { title: string; note: string }>
-  themes: Record<PhaseId, DeckText & { cta: string }>
+  themes: Record<PhaseId, DeckText>
   /** The two sides of the laser line (the BIM model, the building), and its handle. */
   model: string
   built: string
@@ -39,11 +39,11 @@ export interface ConstructionCopy {
   }
   /** `{date}` in `date`: the month the keys are handed over — eight months from today. */
   handover: { title: string; date: string; items: string[] }
-  story: { title: string; replay: string; steps: StoryStep[] }
 }
 
 const vi: ConstructionCopy = {
   documentTitle: 'Xây dựng — VILLA NEST',
+  name: 'Xây dựng',
   description:
     'Xây dựng biệt thự VILLA NEST: thiết kế BIM, kết cấu bê tông cốt thép đúng chuẩn, tiến độ minh bạch theo từng tuần và bàn giao kèm bảo hành dài hạn.',
   stripLabel: 'Tiêu chuẩn thi công',
@@ -53,11 +53,9 @@ const vi: ConstructionCopy = {
     { name: 'Bê tông M350', note: 'Nén mẫu 28 ngày' },
     { name: 'Thép CB400', note: 'Có chứng chỉ xuất xưởng' },
     { name: 'Giám sát 24/7', note: 'Camera công trường' },
-    { name: 'Bảo hành 10 năm', note: 'Kết cấu & chống thấm' },
+    { name: 'Bảo hành 5 năm', note: 'Kết cấu & chống thấm' },
   ],
   index: 'Construction',
-  watch: 'Xem quá trình xây dựng',
-  stop: 'Dừng',
   tryIt: 'Kéo đường laser để xem mô hình BIM trở thành công trình.',
   features: {
     design: { title: 'Thiết kế\n& BIM', note: 'Bản vẽ trước, công trình sau.' },
@@ -72,7 +70,6 @@ const vi: ConstructionCopy = {
       accent: 'Chuẩn đến từng chi tiết.',
       description:
         'Kết cấu, giáo chống và ván khuôn được tổ chức chặt chẽ — mỗi giai đoạn thi công đều minh bạch, an toàn và đúng tiến độ, bắt đầu từ mô hình BIM và khảo sát địa chất.',
-      cta: 'Khám phá',
     },
     structure: {
       kicker: 'Kết cấu & vật liệu',
@@ -80,7 +77,6 @@ const vi: ConstructionCopy = {
       accent: 'Bê tông M350, thép CB400.',
       description:
         'Cột, dầm, sàn được tính theo tải trọng thực; cốt thép nghiệm thu trước mỗi lần đổ, mẫu bê tông nén thử ở 28 ngày, ván khuôn chỉ tháo khi bê tông đủ cường độ.',
-      cta: 'Xem kết cấu',
     },
     progress: {
       kicker: 'Thi công minh bạch',
@@ -88,15 +84,13 @@ const vi: ConstructionCopy = {
       accent: 'Tiến độ, chi phí, hình ảnh mỗi ngày.',
       description:
         'Chủ nhà theo dõi tiến độ từng hạng mục, nhật ký và camera công trường ngay trên điện thoại — mọi phát sinh đều được báo trước và duyệt trước khi làm.',
-      cta: 'Xem tiến độ',
     },
     handover: {
       kicker: 'Bàn giao & bảo hành',
       headline: 'Nhận chìa khóa,\nan tâm dài lâu.',
-      accent: 'Bảo hành kết cấu 10 năm.',
+      accent: 'Bảo hành kết cấu 5 năm.',
       description:
         'Nghiệm thu cùng chủ nhà từng hạng mục, bàn giao hồ sơ hoàn công, bản vẽ điện nước và lịch bảo trì — VILLA NEST tiếp tục đồng hành sau ngày dọn vào.',
-      cta: 'Xem bàn giao',
     },
   },
   model: 'BIM 3D',
@@ -130,22 +124,13 @@ const vi: ConstructionCopy = {
   handover: {
     title: 'Bàn giao',
     date: 'Nhận chìa khóa · {date}',
-    items: ['Bảo hành kết cấu 10 năm', 'Bảo hành chống thấm 5 năm', 'Hồ sơ hoàn công, bản vẽ điện nước', 'Bảo trì định kỳ 12 tháng đầu'],
-  },
-  story: {
-    title: 'Hành trình một công trình',
-    replay: 'Xem lại',
-    steps: [
-      { time: 'Tháng 1–2', name: 'Thiết kế', does: 'Khảo sát, kiến trúc, kết cấu, BIM 3D và giấy phép xây dựng.' },
-      { time: 'Tháng 3–6', name: 'Kết cấu', does: 'Móng, cột, dầm, sàn — nghiệm thu thép trước mỗi lần đổ.' },
-      { time: 'Tháng 7–9', name: 'Thi công', does: 'Mái, bao che, điện nước, hoàn thiện — báo cáo mỗi tuần.' },
-      { time: 'Tháng 10', name: 'Bàn giao', does: 'Nghiệm thu, hồ sơ hoàn công, bảo hành và bảo trì.' },
-    ],
+    items: ['Bảo hành kết cấu 5 năm', 'Bảo hành chống thấm 5 năm', 'Hồ sơ hoàn công, bản vẽ điện nước', 'Bảo trì định kỳ 12 tháng đầu'],
   },
 }
 
 const en: ConstructionCopy = {
   documentTitle: 'Construction — VILLA NEST',
+  name: 'Construction',
   description:
     'VILLA NEST villa construction: BIM design, a reinforced-concrete structure built to standard, week-by-week transparent progress and a handover with long-term warranty.',
   stripLabel: 'Building standards',
@@ -155,11 +140,9 @@ const en: ConstructionCopy = {
     { name: 'M350 concrete', note: 'Cube tests at 28 days' },
     { name: 'CB400 steel', note: 'Mill certificates' },
     { name: '24/7 monitoring', note: 'Site cameras' },
-    { name: '10-year warranty', note: 'Structure & waterproofing' },
+    { name: '5-year warranty', note: 'Structure & waterproofing' },
   ],
   index: 'Construction',
-  watch: 'Watch the build',
-  stop: 'Stop',
   tryIt: 'Drag the laser line to watch the BIM model become a building.',
   features: {
     design: { title: 'Design\n& BIM', note: 'Drawn first, then built.' },
@@ -174,7 +157,6 @@ const en: ConstructionCopy = {
       accent: 'Precise in every detail.',
       description:
         'Structure, shoring and formwork, organised with rigour — every phase of the build transparent, safe and on schedule, starting from a BIM model and a soil survey.',
-      cta: 'Explore',
     },
     structure: {
       kicker: 'Structure & materials',
@@ -182,7 +164,6 @@ const en: ConstructionCopy = {
       accent: 'M350 concrete, CB400 steel.',
       description:
         'Columns, beams and slabs sized for the real loads; the rebar inspected before every pour, concrete cubes tested at 28 days, formwork struck only once the concrete is strong enough.',
-      cta: 'See the structure',
     },
     progress: {
       kicker: 'Transparent building',
@@ -190,15 +171,13 @@ const en: ConstructionCopy = {
       accent: 'Progress, costs and photos every day.',
       description:
         'Owners follow every work package, the site diary and the site cameras on their phone — any change is announced and approved before it is made.',
-      cta: 'See the progress',
     },
     handover: {
       kicker: 'Handover & warranty',
       headline: 'Take the keys,\nrest easy for years.',
-      accent: 'A 10-year structural warranty.',
+      accent: 'A 5-year structural warranty.',
       description:
         'Every package inspected with the owner, the as-built files, wiring and plumbing drawings and the maintenance plan handed over — VILLA NEST stays by your side after moving day.',
-      cta: 'See the handover',
     },
   },
   model: 'BIM 3D',
@@ -233,20 +212,10 @@ const en: ConstructionCopy = {
     title: 'Handover',
     date: 'Keys handed over · {date}',
     items: [
-      '10-year structural warranty',
+      '5-year structural warranty',
       '5-year waterproofing warranty',
       'As-built files, wiring & plumbing drawings',
       'Maintenance for the first 12 months',
-    ],
-  },
-  story: {
-    title: 'The journey of a build',
-    replay: 'Watch again',
-    steps: [
-      { time: 'Months 1–2', name: 'Design', does: 'Survey, architecture, structure, BIM model and the building permit.' },
-      { time: 'Months 3–6', name: 'Structure', does: 'Footings, columns, beams, slabs — rebar inspected before every pour.' },
-      { time: 'Months 7–9', name: 'Building', does: 'Roof, envelope, services, finishes — reported every week.' },
-      { time: 'Month 10', name: 'Handover', does: 'Inspection, as-built files, warranty and maintenance.' },
     ],
   },
 }

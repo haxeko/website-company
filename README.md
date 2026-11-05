@@ -22,14 +22,19 @@ riêng** cùng một phong cách: [`/smart-home/`](#trang-smart-home), [`/constr
 
 <img src="docs/screenshot-pages-mobile.jpg" width="780" alt="Ba trang trên iPhone: ảnh, hàng thẻ chủ đề ngay dưới ảnh, rồi chữ">
 
+![Dự án — trang dự án trên máy tính; lưới ô vuông và trang dự án trên iPhone](docs/screenshot-projects.jpg)
+
 ## Điểm nổi bật
 
 - **Ba ảnh hòa làm một**: các tấm ảnh được "bản lề" vào nhau trên một đa giác nhìn từ bên trong (tường cong), nên
   mép phải tấm này luôn trùng khít mép trái tấm kia ở mọi khung hình, kể cả khi đang xoay. Hai ảnh kề nhau chồng lên
   nhau một dải hẹp và hòa dần vào nhau (`mask-image`); khi xử lý ảnh, màu và ánh sáng ở hai mép chạm nhau còn được
   kéo về cùng một tông nên đường nối gần như biến mất.
-- **Mở màn ~2 giây**: màn hình tối → máy quay lia nhẹ qua bức toàn cảnh, công trình hiện ra từ bóng tối và lấy nét →
-  header, tiêu đề, thanh điều hướng hiện lên lần lượt.
+- **Mở màn ~1 giây**: màn hình tối → máy quay lia nhẹ qua bức toàn cảnh, công trình hiện ra từ bóng tối và lấy nét →
+  header, tiêu đề, thanh điều hướng hiện lên lần lượt (đủ cả sau ~1,4 giây). Trang chủ hiện ngay khi ảnh ở giữa đã tải
+  xong (hai ảnh bên được chờ thêm tối đa 0,45 giây). Ba trang riêng: chữ hiện đủ sau ~0,9 giây; đổi chủ đề ~1,2 giây.
+- **Mở trang kế tiếp tức thì** (Chrome, Edge, Android): khi chuột chỉ vào hoặc ngón tay chạm một link sang trang khác của
+  website, trang đó được chuẩn bị sẵn (Speculation Rules), bấm là hiện ngay.
 - **Giao diện biên tập**: header có chữ VILLA NEST, slogan *DESIGN · BUILD · LIVE*, nút âm thanh và nút chọn ngôn ngữ (cờ VI/EN);
   mỗi lĩnh vực có tiêu đề serif lớn với dòng nghiêng màu vàng, mô tả và nút "Khám phá"; chữ đổi theo hiệu ứng khi
   chuyển cảnh; thanh điều hướng 01 · 02 · 03 kèm phụ đề; nút mũi tên dọc với bộ đếm; gợi ý "Click · Vuốt · Phím mũi tên".
@@ -65,15 +70,16 @@ riêng** cùng một phong cách: [`/smart-home/`](#trang-smart-home), [`/constr
   chữ và hiệu ứng đổi chữ của trang chủ), phần ảnh "sống" bên phải, bốn chủ đề ở hàng dưới cùng với gợi ý *"Click · Cuộn
   chuột · Phím mũi tên"*. Trên máy tính mỗi trang **vừa đúng một màn hình** (không có nội dung bên dưới) và chuyển chủ đề
   bằng **bánh xe chuột / trackpad** (một cử chỉ = một chủ đề), phím ← →, nút ← → bên phải hoặc bấm thẻ ở hàng dưới. Nút
-  **"Khám phá …"** cùng kiểu với nút "Khám phá dự án" của trang chủ (chữ in hoa + vòng tròn mũi tên).
+  **"Khám phá …"** (trang Smart Home) cùng kiểu với nút "Khám phá dự án" của trang chủ (chữ in hoa + vòng tròn mũi tên);
+  trang Xây dựng và Nội thất có **danh sách dự án** ở chỗ đó (xem [Dự án](#dự-án)).
   - **Không vuốt ngang**: ba trang riêng không đổi chủ đề khi vuốt hay kéo ngang (trên điện thoại trang chỉ cuộn dọc);
     đổi chủ đề bằng hàng thẻ, mũi tên ← → trên ảnh, phím ← → hoặc bánh xe chuột trên máy tính. Chạm vẫn là chạm (bật
     đèn, chọn vật liệu…); thanh trượt và tia laser vẫn kéo được.
   - **Trên điện thoại** (bố cục như trang chủ): dải biểu tượng thành **một dòng chạy chậm** dưới header, **ảnh "sống" ngay
     đầu trang**, bốn chủ đề thành **một hàng 4 thẻ ngay dưới ảnh, dàn đều hết chiều ngang** (tên ngắn gọn, cùng số dòng:
     Smart Home và Nội thất một dòng, Xây dựng hai dòng), rồi đến những gì chủ đề mở ra — kịch bản, thẻ vật liệu, công tắc
-    ánh sáng, thẻ tiến độ / bàn giao — và chữ của chủ đề. Bấm **"Xem …"** thì trang **trôi tới ảnh** và mở **kịch bản ngay
-    dưới hàng thẻ** (từng bước, bước đang chạy có vạch thời gian): ảnh, hàng thẻ và cả khối kịch bản cùng nằm trong màn
+    ánh sáng, thẻ tiến độ / bàn giao — và chữ của chủ đề (Xây dựng, Nội thất: rồi đến lưới dự án). Trang Smart Home: bấm
+    **"Xem …"** thì trang **trôi tới ảnh** và mở **kịch bản ngay dưới hàng thẻ** (từng bước, bước đang chạy có vạch thời gian): ảnh, hàng thẻ và cả khối kịch bản cùng nằm trong màn
     hình, không bị nút Zalo che (máy thấp: ảnh thu lại một chút; máy hẹp: kịch bản gọn lại — tên các bước một hàng, lời
     của bước đang chạy ở dưới; màn hình dưới 600 px thì phần trên của ảnh nằm dưới header).
 - <a id="trang-smart-home"></a>**Trang Smart Home** (`/smart-home/`, nút **"Khám phá giải pháp"** ở trang chủ): logo chính
@@ -99,19 +105,34 @@ riêng** cùng một phong cách: [`/smart-home/`](#trang-smart-home), [`/constr
     còn chỗ) · **Tiến độ minh bạch** (thẻ công trường: % hoàn thành, tuần, bốn hạng mục, nhật ký hôm nay — đổi theo tia
     laser) · **Bàn giao kỹ càng** (cả ngôi nhà hoàn thiện, đèn ấm lên, thẻ bảo hành; ngày nhận chìa khóa — và ngày
     "bàn giao dự kiến" trên thẻ tiến độ — = hôm nay + 8 tháng, tự tính theo ngày người xem mở trang).
-  - **"Khám phá …"**: tia laser quét một lượt từ mô hình BIM sang công trình rồi về chỗ; **"Xem quá trình xây dựng"** đi qua
-    bốn giai đoạn, tia laser chạy theo.
+  - Dưới chữ là **các dự án xây dựng** (xem [Dự án](#dự-án)).
 - <a id="trang-nội-thất"></a>**Trang Nội thất** (`/interior/`, nút **"Khám phá dự án"** ở cảnh Interior) — *"Chất liệu &
   ánh sáng"*: dải dưới header là **sáu mẫu vật liệu thật** cắt từ chính căn phòng (travertine, gỗ óc chó, marble, bouclé,
   len dệt tay, đồng thau).
-  - **Không gian** (căn phòng nhích nhẹ theo chuột cho có chiều sâu; "Khám phá" đưa máy quay chậm rãi vào phòng) ·
+  - **Không gian** (căn phòng nhích nhẹ theo chuột cho có chiều sâu) ·
     **Vật liệu** (các điểm sáng trên tường đá, vách gỗ, đảo bếp, sofa, thảm, đèn thả — chạm để mở thẻ vật liệu) ·
     **Ánh sáng** (công tắc *Sáng 07:00 · Chiều 17:30 · Tối 21:00*: ba ảnh ánh sáng chuyển mềm sang nhau — buổi tối có
     đèn hắt trần, đèn thả, dải đèn tủ bếp) · **May đo** (nét kích thước tự vẽ: sofa 4 200, bàn trà 1 400 × 900, bàn ăn
     2 800, trần 3 200).
-  - **"Xem một ngày trong nhà"**: sáng → hoàng hôn → tối trên chính căn phòng.
+  - Dưới chữ là **các dự án nội thất** (xem [Dự án](#dự-án)).
   Chữ, số liệu (tiêu chuẩn, bảo hành, vật liệu, kích thước) trên hai trang này là **nội dung minh họa** — sửa lại theo
   dự án thật trong `content.ts` của từng trang.
+- <a id="dự-án"></a>**Dự án** (trang Xây dựng và Nội thất, thay cho các nút "Khám phá" / "Xem …"): ảnh bìa các dự án
+  xếp thành **ô cờ, mỗi hàng 2 ô vuông** bo góc như biểu tượng ứng dụng điện thoại, kèm tên dự án, địa điểm và năm.
+  - **Hiệu ứng sắp xếp**: khi lưới hiện ra (trên điện thoại: khi cuộn tới), các ô bay vào từ nhiều hướng rồi nảy nhẹ vào
+    đúng chỗ — các "ô đen" của bàn cờ trước, "ô trắng" sau. Rê chuột lên ô: ô nhấc lên, ảnh phóng nhẹ; chạm: ô lún xuống
+    như bấm biểu tượng ứng dụng.
+  - **Bấm vào một dự án**: các dự án khác **bị văng ra khỏi màn hình**, ảnh bìa của dự án được chọn **phóng to từ đúng ô
+    đó thành ảnh lớn đầu trang**, nền tối dần, rồi tên dự án, loại hạng mục, địa điểm · năm, phần giới thiệu, thông số
+    (địa điểm, năm, diện tích, hạng mục) và **các ảnh của dự án** xếp bên dưới (ảnh đầu trải ngang, các ảnh sau hai cột
+    trên máy tính, một cột trên điện thoại), cuối trang là nút tư vấn qua Zalo. Đóng (nút ×, "← Các dự án …", phím Esc
+    hoặc nút Back của trình duyệt): ảnh thu nhỏ về đúng ô cũ, các dự án khác bay về chỗ.
+  - **Mỗi dự án có link riêng**: `/construction/#<mã-dự-án>`, `/interior/#<mã-dự-án>` — gửi link là mở thẳng dự án đó.
+  - Trên máy tính (trang một màn hình) lưới nằm dưới chữ, kích thước ô tự tính theo chỗ còn lại (đo chữ dài nhất của cả
+    bốn chủ đề nên lưới không nhảy khi đổi chủ đề): 2 hàng nếu đủ cao, 1 hàng nếu không, và **các chấm** bên dưới để lật
+    sang trang ô tiếp theo (các ô cũ trượt đi, ô mới bay vào). Trên điện thoại hiện đủ mọi dự án, trang cuộn dọc.
+  - 8 dự án hiện có là **dự án minh họa** (dùng ảnh concept của website, có ghi chú trong trang dự án) — thay bằng dự án
+    thật theo phần [Thêm / sửa dự án](#thêm--sửa-dự-án).
 - **Âm thanh**: không có nhạc nền, chuyển cảnh / chủ đề (vuốt, bấm, cuộn) **không phát âm thanh**. Chỉ có **máy lạnh và
   quạt kêu "tít" như máy thật** khi nhận lệnh: bật —
   hai tiếng "tít tít" lên giọng, tắt — một tiếng trầm hơn, đổi nhiệt độ / tốc độ — một tiếng ngắn (kéo thanh nhanh vẫn
@@ -163,6 +184,7 @@ Các lệnh khác:
 | `npm run typecheck` | Chỉ kiểm tra TypeScript                                      |
 | `npm run lint`      | Kiểm tra mã nguồn (oxlint)                                   |
 | `npm run images`    | Tạo lại toàn bộ ảnh tối ưu từ `assets-src/` (xem phần Thay ảnh) |
+| `npm run projects`  | Tạo ảnh và danh sách dự án từ `content/projects/` (xem phần Thêm / sửa dự án) |
 | `npm run images -- --pages` | Chỉ tạo lại ảnh của ba trang riêng (nhanh hơn, không đụng tới ảnh toàn cảnh) |
 
 ## Build & triển khai bằng Nginx
@@ -198,6 +220,7 @@ static server nào); mở trực tiếp `dist/index.html` bằng `file://` sẽ 
 
 ```
 ├── assets-src/                 Ảnh gốc độ phân giải cao (đầu vào của npm run images)
+├── content/projects/           ★ Các dự án: projects.json (danh sách, chữ VI/EN) + mỗi dự án một thư mục ảnh
 ├── smart-home/index.html       Trang Smart Home (→ /smart-home/)
 ├── construction/index.html     Trang Xây dựng (→ /construction/)
 ├── interior/index.html         Trang Nội thất (→ /interior/)
@@ -209,8 +232,11 @@ static server nào); mở trực tiếp `dist/index.html` bằng `file://` sẽ 
 ├── public/
 │   ├── assets/slides/          Tấm toàn cảnh đã tối ưu: AVIF/WebP ngang, dọc, ambient (sinh tự động)
 │   ├── assets/pages/           Ảnh của ba trang: ngang, bản cắt cho điện thoại, camera, mô hình BIM, ánh sáng, mẫu vật liệu (sinh tự động)
+│   ├── projects/               Ảnh dự án đã tối ưu, tên file kèm mã nội dung (sinh tự động: npm run projects)
+│   ├── data/projects.json      Danh sách dự án trang web đọc khi mở trang (sinh tự động: npm run projects)
 │   └── favicon.svg
 ├── scripts/optimize-images.mjs Pipeline ảnh: chỉnh màu, cắt tấm, hòa mép, resize, mã hoá AVIF/WebP
+├── scripts/build-projects.mjs  Dự án: kiểm tra projects.json, cắt / thu nhỏ ảnh, mã hoá AVIF/WebP, ghi danh sách
 ├── scripts/art/                Các bước dựng ảnh một lần (Python + OpenCV, xem phần Thay ảnh) — không cần cho build
 └── src/
     ├── App.tsx                 Ghép Header, Loader, HeroCarousel; âm thanh; link #lĩnh-vực
@@ -239,7 +265,9 @@ static server nào); mở trực tiếp `dist/index.html` bằng `file://` sẽ 
     │   ├── Zalo/               Nút chat Zalo ở góc dưới phải (logo: Simple Icons, CC0)
     │   └── Loader/             Vạch tiến trình tối giản khi ảnh đang tải
     ├── pages/shared/           Khung chung của ba trang: Deck.tsx (dải biểu tượng, chữ chủ đề, nút, mũi tên, thanh chủ
-    │                           đề, kịch bản trên điện thoại) · useDeck (chuột, phím, vuốt, bánh xe) · useDemo · page.css
+    │                           đề, kịch bản trên điện thoại) · useDeck (chuột, phím, bánh xe) · useDemo · page.css
+    │   └── projects/           Dự án: Projects.tsx (lưới ô vuông, hiệu ứng sắp xếp / văng ra, link #dự-án) ·
+    │                           ProjectView.tsx (trang dự án: ảnh lớn, thông số, ảnh) · data.ts · projects.css
     ├── pages/smart-home/       Trang Smart Home: content.ts (chữ VI/EN) · HeroVisual (ảnh + màn hình phối cảnh)
     │                           · ScenePanel (các màn hình của bảng, camera) · usePageHome (trạng thái, kịch bản) · icons.tsx
     ├── pages/construction/     Trang Xây dựng: content.ts · BuildVisual (ảnh + mô hình BIM, tia laser, chú thích, thẻ)
@@ -337,6 +365,45 @@ lại rồi chạy `npm run images`:
   ánh sáng bằng `scripts/art/interior-light.py`) và sáu **mẫu vật liệu** (`swatch-…`, cắt thẳng từ ảnh). Vị trí các điểm
   vật liệu và nét kích thước nằm ở đầu `src/pages/interior/RoomVisual.tsx`.
 
+## Thêm / sửa dự án
+
+Mọi dự án nằm trong [`content/projects/projects.json`](content/projects/projects.json) (thứ tự trong file = thứ tự trên
+trang), ảnh của mỗi dự án trong thư mục `content/projects/<mã-dự-án>/`:
+
+```json
+{
+  "id": "biet-thu-thao-dien",
+  "category": "construction",
+  "title": { "vi": "Biệt thự Thảo Điền", "en": "Thao Dien villa" },
+  "place": { "vi": "Thảo Điền, TP. Hồ Chí Minh", "en": "Thao Dien, Ho Chi Minh City" },
+  "year": "2026",
+  "area": "450 m²",
+  "scope": { "vi": "Thiết kế & thi công trọn gói", "en": "Design & build" },
+  "summary": { "vi": "Giới thiệu ngắn về dự án…", "en": "A few lines about the project…" },
+  "cover": "cover.jpg",
+  "photos": ["01.jpg", "02.jpg", { "src": "03.jpg", "caption": { "vi": "Phòng khách", "en": "Living room" } }]
+}
+```
+
+- `id` — mã dự án: chữ thường không dấu, số, gạch nối; cũng là link `/construction/#biet-thu-thao-dien`.
+- `category` — `"construction"` (trang Xây dựng) hoặc `"interior"` (trang Nội thất).
+- `cover` — ảnh bìa (ô vuông lấy phần giữa ảnh; thêm `"focus": [x, y]` từ 0 đến 1 để chọn phần khác, ví dụ
+  `{ "src": "cover.jpg", "focus": [0.3, 0.5] }`); `photos` — các ảnh còn lại, có thể kèm chú thích (`caption`).
+  Ảnh chụp bằng điện thoại cứ để nguyên (ảnh dọc tự xoay đúng chiều); ảnh càng lớn càng nét (tối thiểu ~2000 px).
+- Chữ có thể chỉ viết một thứ tiếng (`"area": "450 m²"`) nếu hai thứ tiếng giống nhau.
+
+Rồi chạy:
+
+```bash
+npm run projects      # ảnh → public/projects/, danh sách → public/data/projects.json (chỉ xử lý ảnh mới / đã đổi)
+npm run build
+```
+
+Script báo lỗi rõ ràng nếu thiếu tên, sai `category`, trùng `id` hay không tìm thấy ảnh. Xoá một dự án: xoá mục của nó
+trong `projects.json` (và thư mục ảnh) rồi chạy lại `npm run projects` — ảnh cũ trong `public/projects/` được dọn theo.
+Ảnh dự án có tên kèm mã nội dung nên thay ảnh là trình duyệt / Cloudflare tải ảnh mới ngay; danh sách dự án luôn được
+kiểm tra lại mỗi lần mở trang.
+
 ## Điều khiển
 
 | Thiết bị    | Thao tác                                                                                   |
@@ -380,6 +447,13 @@ Kiểm thử tự động bằng Playwright (Chromium) trên bản build:
   ngoài ảnh); không có âm thanh khi chuyển cảnh; nút Zalo cố định ở góc dưới phải, không đè lên thẻ / nhãn nào; camera
   chạy giờ; kéo tia laser (không đổi chủ đề), phím trên tay nắm; thẻ tiến độ, chú thích kết cấu; điểm vật liệu đều nằm
   trong khung, thẻ vật liệu, ánh sáng buổi tối, nét kích thước.
+- Dự án: ở 1280×720 → 2560×1440 lưới không tràn ở chủ đề nào (chữ và lưới không chạm nhau, không chạm hàng chủ đề), ô
+  luôn vuông, 2 ô mỗi hàng; điện thoại: đủ mọi dự án, cách đều hai bên, còn chỗ cho nút Zalo; bấm mở dự án (ảnh bìa phóng
+  to ≥ 60% sau 0,2 giây, các ô khác văng ra), đóng bằng ×, Back, Esc — ô về đúng chỗ, trang không bị cuộn lệch; link
+  `#mã-dự-án` mở thẳng dự án; phím mũi tên và bánh xe không đổi chủ đề phía sau khi đang xem dự án; chấm lật trang;
+  tiếng Anh; "giảm chuyển động".
+- Tốc độ: trang chủ hiện đủ chữ sau ~1,4 giây (trước ~2,5 giây), ba trang riêng ~0,9 giây (trước ~1,5 giây); ảnh nào
+  cũng tải bằng đường dẫn có mã theo nội dung file.
 - Không có lỗi console, không có request ra ngoài Internet, không có thanh cuộn ngang; chạy đúng sau Nginx với cấu hình
   trong `deploy/nginx.conf`.
 
@@ -387,6 +461,7 @@ Kiểm thử tự động bằng Playwright (Chromium) trên bản build:
 
 Thay bằng ảnh dự án thật của VILLA NEST trước khi ra mắt chính thức.
 
+- Dự án mẫu (`content/projects/`) — cắt từ chính các ảnh concept của website, chỉ để minh họa.
 - Construction, Interior — ảnh concept của VILLA NEST (`assets-src/panorama-construction-interior.jpg`); mô hình BIM
   của trang Xây dựng là ảnh render của VILLA NEST cùng góc nhìn; ánh sáng sáng / tối của trang Nội thất được dựng từ
   chính ảnh toàn cảnh.

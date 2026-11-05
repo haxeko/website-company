@@ -51,12 +51,12 @@
 
 /* No carousel intro here: the header comes in at once. */
 .pg .site-header {
-  transition-delay: 0.3s;
+  transition-delay: 0s;
 }
 
 .pg[data-ready='true'] .site-header > * {
-  transition-delay: 0.05s;
-  transition-duration: 0.9s;
+  transition-delay: 0s;
+  transition-duration: 0.5s;
 }
 
 /* ── Hero ─────────────────────────────────────────────────────────────── */

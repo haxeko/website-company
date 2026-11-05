@@ -33,7 +33,8 @@ export function HeroCopy({ slides, active, ready }: HeroCopyProps) {
   const shown = useLineSwap(rootRef, active, ready)
 
   // Phones: when the text would run into the bottom navigation, the description goes, then
-  // the kicker — the type keeps its size.
+  // the kicker — the type keeps its size. Measured again once the web fonts are in, so both
+  // languages are judged on the same type.
   useLayoutEffect(() => {
     const copy = rootRef.current
     const root = copy?.parentElement
@@ -43,13 +44,18 @@ export function HeroCopy({ slides, active, ready }: HeroCopyProps) {
       for (const tight of ['0', '1', '2']) {
         copy.dataset.tight = tight
         // (layout boxes, not the animated ones)
-        if (root.dataset.layout !== 'portrait' || copy.offsetTop + copy.offsetHeight <= nav.offsetTop - 8) break
+        if (root.dataset.layout !== 'portrait' || copy.offsetTop + copy.offsetHeight <= nav.offsetTop - 6) break
       }
     }
     fit()
     const observer = new ResizeObserver(fit)
     observer.observe(root)
-    return () => observer.disconnect()
+    let live = true
+    void document.fonts?.ready.then(() => live && fit())
+    return () => {
+      live = false
+      observer.disconnect()
+    }
   }, [shown, lang])
 
   const slide = slides[shown]

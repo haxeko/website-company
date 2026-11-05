@@ -8,7 +8,7 @@ import { REDUCED_MOTION_QUERY } from '../../utils/device'
  * (the returned index follows) and the new lines rise in one after another.
  * Nothing shows before `ready`; `introDelay` = wait before the very first reveal.
  */
-export function useLineSwap(rootRef: RefObject<HTMLElement | null>, active: number, ready: boolean, introDelay = 1.1) {
+export function useLineSwap(rootRef: RefObject<HTMLElement | null>, active: number, ready: boolean, introDelay = 0.35) {
   const [shown, setShown] = useState(active)
   const entered = useRef(false)
 
@@ -23,10 +23,10 @@ export function useLineSwap(rootRef: RefObject<HTMLElement | null>, active: numb
     const reduced = window.matchMedia(REDUCED_MOTION_QUERY).matches
     const tween = gsap.to(lines, {
       opacity: 0,
-      y: reduced ? 0 : -16,
-      duration: reduced ? 0.2 : 0.38,
+      y: reduced ? 0 : -14,
+      duration: reduced ? 0.2 : 0.26,
       ease: 'power2.in',
-      stagger: reduced ? 0 : 0.035,
+      stagger: reduced ? 0 : 0.025,
       overwrite: true,
       onComplete: () => setShown(active),
     })
@@ -52,10 +52,10 @@ export function useLineSwap(rootRef: RefObject<HTMLElement | null>, active: numb
       {
         opacity: 1,
         y: 0,
-        duration: reduced ? 0.3 : 1.05,
+        duration: reduced ? 0.3 : 0.75,
         ease: 'power3.out',
-        stagger: reduced ? 0 : 0.075,
-        delay: first && !reduced ? introDelay : 0.05,
+        stagger: reduced ? 0 : 0.05,
+        delay: first && !reduced ? introDelay : 0,
         overwrite: true,
       },
     )

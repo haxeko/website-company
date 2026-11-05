@@ -1,4 +1,4 @@
-import { Fragment, useLayoutEffect, type CSSProperties, type ReactNode, type RefObject } from 'react'
+import { Fragment, useLayoutEffect, useState, type CSSProperties, type ReactNode, type RefObject } from 'react'
 import { MultiLine } from '../../components/HeroCarousel/HeroCopy'
 import { useLineSwap } from '../../components/HeroCarousel/useLineSwap'
 import '../../components/HeroCarousel/editorial.css'
@@ -123,65 +123,126 @@ interface DeckCopyProps {
   texts: DeckText[]
   titleId: string
   /** The buttons under the text of theme `shown`. */
-  actions: (shown: number) => ReactNode
+  actions?: (shown: number) => ReactNode
+  /**
+   * What stays under the text whichever theme is shown (the projects). On a computer it keeps
+   * its place at the bottom of the column while the text changes above it, and is told the
+   * room it has there (px) — null on phones, where the page scrolls; undefined until measured.
+   */
+  below?: (room: number | null | undefined) => ReactNode
+  /** The least room `below` can do with (computers). */
+  belowMin?: number
+}
+
+interface TextBlockProps {
+  text: DeckText
+  index: number
+  title: string
+  titleId?: string
+  /** The text on show (its lines animate); the hidden copies only measure. */
+  live: boolean
+}
+
+/** A theme's text, as it shows (the hidden copies measure every theme). */
+function TextBlock({ text, index, title, titleId, live }: TextBlockProps) {
+  const line = live ? { 'data-line': true } : {}
+  const Heading = live ? 'h1' : 'div'
+  return (
+    <>
+      <p className="hc-copy__index" {...line}>
+        <span>{pad(index + 1)}</span>
+        <i aria-hidden="true" />
+        <span>{title}</span>
+      </p>
+      <p className="hc-copy__kicker" {...line}>
+        {text.kicker}
+      </p>
+      <Heading className="hc-copy__headline" id={titleId}>
+        <span {...line}>
+          <MultiLine text={text.headline} />
+        </span>
+        <em {...line}>{text.accent}</em>
+      </Heading>
+      <p className="hc-copy__description" {...line}>
+        {text.description}
+      </p>
+    </>
+  )
 }
 
 /**
  * The lines slide out, the text is swapped and the new lines rise in one after another, as
  * on the home page. Where the page is one screen and the text would not fit, the
- * description goes, then the kicker — the type keeps its size.
+ * description goes, then the kicker — the type keeps its size. With something below the
+ * text, every theme's text is measured (hidden copies), so the room left for it is the same
+ * whichever theme is shown.
  */
-export function DeckCopy({ copyRef, active, ready, titles, texts, titleId, actions }: DeckCopyProps) {
+export function DeckCopy({ copyRef, active, ready, titles, texts, titleId, actions, below, belowMin = 0 }: DeckCopyProps) {
   const { lang } = useI18n()
-  const shown = useLineSwap(copyRef, active, ready, 0.35)
+  const shown = useLineSwap(copyRef, active, ready, 0.05)
   const text = texts[shown]
+  const [room, setRoom] = useState<number | null | undefined>(undefined)
+  const hasBelow = below !== undefined
 
   useLayoutEffect(() => {
     const copy = copyRef.current
     const stage = copy?.parentElement
     if (!copy || !stage) return
     const stacked = window.matchMedia(PORTRAIT_QUERY)
+    const copies = Array.from(copy.querySelectorAll<HTMLElement>('.pg-copy__measure > *'))
+    // (with something below, the column fills the stage: the tallest theme and the least
+    // room below must fit in it)
+    const inner = () => {
+      const style = getComputedStyle(copy)
+      return copy.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom)
+    }
+    const tallest = () => Math.max(...copies.map((c) => c.offsetHeight))
+    const fits = () => (hasBelow ? tallest() + belowMin <= inner() : copy.offsetHeight <= stage.clientHeight)
     const fit = () => {
       for (const tight of ['0', '1', '2']) {
         copy.dataset.tight = tight
-        if (stacked.matches || copy.offsetHeight <= stage.clientHeight) break
+        if (stacked.matches || fits()) break
       }
     }
+    // (the room below is reported from the observer and the fonts, not while laying out)
+    const update = () => {
+      fit()
+      setRoom(hasBelow && !stacked.matches ? Math.max(0, Math.floor(inner() - tallest())) : null)
+    }
     fit()
-    // Again when the stage resizes, or the text does (web fonts arriving).
-    const observer = new ResizeObserver(fit)
+    // Again when the stage resizes or the text does (web fonts arriving).
+    const observer = new ResizeObserver(update)
     observer.observe(stage)
     observer.observe(copy)
-    void document.fonts?.ready.then(fit)
-    stacked.addEventListener('change', fit)
+    for (const c of copies) observer.observe(c)
+    void document.fonts?.ready.then(update)
+    stacked.addEventListener('change', update)
     return () => {
       observer.disconnect()
-      stacked.removeEventListener('change', fit)
+      stacked.removeEventListener('change', update)
     }
-  }, [copyRef, shown, lang])
+  }, [copyRef, shown, lang, hasBelow, belowMin])
 
   return (
-    <div ref={copyRef} className="pg-copy">
-      <p className="hc-copy__index" data-line>
-        <span>{pad(shown + 1)}</span>
-        <i aria-hidden="true" />
-        <span>{titles[shown]}</span>
-      </p>
-      <p className="hc-copy__kicker" data-line>
-        {text.kicker}
-      </p>
-      <h1 className="hc-copy__headline" id={titleId}>
-        <span data-line>
-          <MultiLine text={text.headline} />
-        </span>
-        <em data-line>{text.accent}</em>
-      </h1>
-      <p className="hc-copy__description" data-line>
-        {text.description}
-      </p>
-      <div className="pg-copy__actions" data-line>
-        {actions(shown)}
+    <div ref={copyRef} className="pg-copy" data-below={hasBelow || undefined}>
+      <div className="pg-copy__text">
+        <TextBlock text={text} index={shown} title={titles[shown]} titleId={titleId} live />
+        {actions && (
+          <div className="pg-copy__actions" data-line>
+            {actions(shown)}
+          </div>
+        )}
       </div>
+      {hasBelow && (
+        <div className="pg-copy__measure" aria-hidden="true">
+          {texts.map((t, i) => (
+            <div key={i}>
+              <TextBlock text={t} index={i} title={titles[i]} live={false} />
+            </div>
+          ))}
+        </div>
+      )}
+      {below?.(room)}
     </div>
   )
 }

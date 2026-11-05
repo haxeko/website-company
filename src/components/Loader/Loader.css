@@ -6,8 +6,8 @@
   place-items: center;
   pointer-events: none;
   transition:
-    opacity 0.8s var(--ease-out),
-    visibility 0s linear 0.8s;
+    opacity 0.5s var(--ease-out),
+    visibility 0s linear 0.5s;
 }
 
 .loader[data-done] {
