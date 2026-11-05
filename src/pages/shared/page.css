@@ -1,24 +1,33 @@
 /*
- * The stand-alone pages (Smart Home, Construction, Interior). On a computer each one is a
- * single screen, as the home page: the header, a strip under it, the theme's text over the
- * dark left of the photo with the live part on the right, the numbered themes along the
- * bottom — the wheel, the arrows, the themes or the keys change the theme. Phones and portrait
- * tablets stack the photo, the themes as tabs and the text, and the page only scrolls (no
- * swiping): under the tabs the "watch" button opens the story it plays.
+ * The stand-alone pages (Smart Home, Construction, Interior). On a computer the first screen
+ * is as the home page: the header, a strip under it, the theme's text over the dark left of
+ * the photo with the live part on the right, the numbered themes along the bottom — the
+ * arrows, the themes or the keys change the theme; the wheel scrolls the page, to the projects
+ * under that screen (Construction, Interior). Phones and portrait tablets stack the photo, the
+ * themes as tabs and the text, then the projects; the page only scrolls (no swiping): under
+ * the tabs the "watch" button opens the story it plays.
  */
 
-@media (max-width: 760px), (orientation: portrait) and (max-width: 1024px) {
-  html.is-page,
-  html.is-page body,
-  html.is-page #root {
-    height: auto;
-    min-height: 100%;
-  }
+html.is-page,
+html.is-page body,
+html.is-page #root {
+  height: auto;
+  min-height: 100%;
+}
 
-  html.is-page body {
-    overflow: visible;
-    overscroll-behavior: auto;
-  }
+/* (a dark, quiet scrollbar where the system draws one) */
+html.is-page {
+  scrollbar-color: rgb(244 240 233 / 0.24) var(--c-bg);
+}
+
+/* (a project's page stops the scrolling under it: the page keeps its width meanwhile) */
+html.is-page:has(.pj) {
+  scrollbar-gutter: stable;
+}
+
+html.is-page body {
+  overflow: visible;
+  overscroll-behavior: auto;
 }
 
 .pg {
@@ -340,6 +349,12 @@
     min-height: 100svh;
     /* (room for the Zalo button at the end of the page) */
     padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 84px);
+  }
+
+  /* (the projects follow the text: they keep that room under their grid) */
+  .pg-hero[data-more] {
+    min-height: 0;
+    padding-bottom: 0;
   }
 
   .pg-stage {

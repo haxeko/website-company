@@ -67,14 +67,15 @@ riêng** cùng một phong cách: [`/smart-home/`](#trang-smart-home), [`/constr
   thẻ 2 × 2), để vẫn thấy gần hết căn phòng và rèm kéo vào; xoay ngang điện thoại thì bảng dùng bố cục 4 thẻ một hàng như
   trên tường. Người dùng bật "giảm chuyển động" chỉ thấy bảng đổi trạng thái, ánh sáng và rèm, không có tuyết / lá.
 - **Ba trang riêng, cùng một khung**: header cố định, một dải biểu tượng dưới header, chữ của chủ đề bên trái (đúng cỡ
-  chữ và hiệu ứng đổi chữ của trang chủ), phần ảnh "sống" bên phải, bốn chủ đề ở hàng dưới cùng với gợi ý *"Click · Cuộn
-  chuột · Phím mũi tên"*. Trên máy tính mỗi trang **vừa đúng một màn hình** (không có nội dung bên dưới) và chuyển chủ đề
-  bằng **bánh xe chuột / trackpad** (một cử chỉ = một chủ đề), phím ← →, nút ← → bên phải hoặc bấm thẻ ở hàng dưới. Nút
-  **"Khám phá …"** (trang Smart Home) cùng kiểu với nút "Khám phá dự án" của trang chủ (chữ in hoa + vòng tròn mũi tên);
-  trang Xây dựng và Nội thất có **danh sách dự án** ở chỗ đó (xem [Dự án](#dự-án)).
-  - **Không vuốt ngang**: ba trang riêng không đổi chủ đề khi vuốt hay kéo ngang (trên điện thoại trang chỉ cuộn dọc);
-    đổi chủ đề bằng hàng thẻ, mũi tên ← → trên ảnh, phím ← → hoặc bánh xe chuột trên máy tính. Chạm vẫn là chạm (bật
-    đèn, chọn vật liệu…); thanh trượt và tia laser vẫn kéo được.
+  chữ và hiệu ứng đổi chữ của trang chủ), phần ảnh "sống" bên phải, bốn chủ đề ở hàng dưới cùng. Trên máy tính **màn hình
+  đầu** của mỗi trang là khung đó; chuyển chủ đề bằng phím ← →, nút ← → bên phải hoặc bấm thẻ ở hàng dưới (gợi ý *"Click ·
+  Phím mũi tên"*). **Bánh xe chuột / trackpad cuộn trang** như mọi trang web: ở trang Xây dựng và Nội thất là cuộn xuống
+  **danh sách dự án** dưới màn hình đầu (gợi ý *"Cuộn xuống · Các dự án"*, xem [Dự án](#dự-án)); trang Smart Home chỉ có
+  một màn hình. Nút **"Khám phá …"** (trang Smart Home) cùng kiểu với nút "Khám phá dự án" của trang chủ (chữ in hoa +
+  vòng tròn mũi tên).
+  - **Không vuốt ngang, không cuộn đổi chủ đề**: chủ đề chỉ đổi bằng hàng thẻ, mũi tên ← → trên ảnh hoặc phím ← →; vuốt,
+    kéo ngang hay cuộn chuột không đổi chủ đề. Chạm vẫn là chạm (bật đèn, chọn vật liệu…); thanh trượt và tia laser vẫn
+    kéo được.
   - **Trên điện thoại** (bố cục như trang chủ): dải biểu tượng thành **một dòng chạy chậm** dưới header, **ảnh "sống" ngay
     đầu trang**, bốn chủ đề thành **một hàng 4 thẻ ngay dưới ảnh, dàn đều hết chiều ngang** (tên ngắn gọn, cùng số dòng:
     Smart Home và Nội thất một dòng, Xây dựng hai dòng), rồi đến những gì chủ đề mở ra — kịch bản, thẻ vật liệu, công tắc
@@ -130,9 +131,15 @@ riêng** cùng một phong cách: [`/smart-home/`](#trang-smart-home), [`/constr
     Back của trình duyệt): ảnh thu nhỏ về đúng ô cũ, các dự án khác bay về chỗ. Vuốt từ mép màn hình để quay lại (iPhone,
     Android) thì trình duyệt đã tự diễn cảnh chuyển, nên dự án đóng ngay, không chiếu lại lần nữa.
   - **Mỗi dự án có link riêng**: `/construction/#<mã-dự-án>`, `/interior/#<mã-dự-án>` — gửi link là mở thẳng dự án đó.
-  - Trên máy tính (trang một màn hình) lưới nằm dưới chữ, kích thước ô tự tính theo chỗ còn lại (đo chữ dài nhất của cả
-    bốn chủ đề nên lưới không nhảy khi đổi chủ đề): 2 hàng nếu đủ cao, 1 hàng nếu không, và **các chấm** bên dưới để lật
-    sang trang ô tiếp theo (các ô cũ trượt đi, ô mới bay vào). Trên điện thoại hiện đủ mọi dự án, trang cuộn dọc.
+  - **Trên máy tính** lưới nằm **dưới màn hình đầu**, hết chiều ngang, có tiêu đề "Các dự án xây dựng / nội thất": mỗi
+    hàng **nhiều ô nhất có thể**, mỗi ô rộng khoảng 200–290 px tuỳ màn hình (tự tính: 4–5 ô ở laptop, 6 ô ở màn hình
+    lớn), hàng cuối thiếu thì nằm bên trái như màn hình điện thoại; hiệu ứng sắp xếp chạy khi cuộn tới. **Trên điện
+    thoại** vẫn 2 ô mỗi hàng ngay dưới chữ. Mọi dự án đều hiện, không phải lật trang.
+  - **Menu vòng cung** (trang dự án trên máy tính): khi cuộn qua ảnh bìa, ở lề tối bên trái hiện **4 nút tròn xếp trên
+    một cung tròn** — Trang chủ (dấu mái nhà của VILLA NEST), Smart Home, Xây dựng (cần cẩu), Nội thất (sofa) — cùng
+    kiểu biểu tượng nét mảnh của dải đầu trang, trang của dự án đang xem viền vàng (bấm vào là quay lại danh sách dự án),
+    rê chuột vào nút hiện tên trang. Menu chỉ hiện khi ảnh bìa đã cuộn đi nên không bao giờ đè lên ảnh; cuộn lên lại thì
+    ẩn. Lề hai bên luôn chừa đủ chỗ cho menu; điện thoại không có menu này.
   - 8 dự án hiện có là **dự án minh họa** (dùng ảnh concept của website, có ghi chú trong trang dự án) — thay bằng dự án
     thật trong **trang quản trị** `/admin/` (xem [Thêm / sửa dự án](#thêm--sửa-dự-án)).
 - **Trang quản trị dự án** (`/admin/`, chạy trên Pi): đăng nhập bằng mật khẩu, thêm / sửa / ẩn / xoá dự án, tải ảnh lên
@@ -276,9 +283,9 @@ static server nào); mở trực tiếp `dist/index.html` bằng `file://` sẽ 
     │   ├── Zalo/               Nút chat Zalo ở góc dưới phải (logo: Simple Icons, CC0)
     │   └── Loader/             Vạch tiến trình tối giản khi ảnh đang tải
     ├── pages/shared/           Khung chung của ba trang: Deck.tsx (dải biểu tượng, chữ chủ đề, nút, mũi tên, thanh chủ
-    │                           đề, kịch bản trên điện thoại) · useDeck (chuột, phím, bánh xe) · useDemo · page.css
+    │                           đề, kịch bản trên điện thoại) · useDeck (phím, thẻ) · useDemo · page.css
     │   └── projects/           Dự án: Projects.tsx (lưới ô vuông, hiệu ứng sắp xếp / văng ra, link #dự-án) ·
-    │                           ProjectView.tsx (trang dự án: ảnh lớn, thông số, ảnh) · data.ts · projects.css
+    │                           ProjectView.tsx (trang dự án: ảnh lớn, thông số, ảnh, menu vòng cung) · icons.tsx · data.ts · projects.css
     ├── pages/smart-home/       Trang Smart Home: content.ts (chữ VI/EN) · HeroVisual (ảnh + màn hình phối cảnh)
     │                           · ScenePanel (các màn hình của bảng, camera) · usePageHome (trạng thái, kịch bản) · icons.tsx
     ├── pages/construction/     Trang Xây dựng: content.ts · BuildVisual (ảnh + mô hình BIM, tia laser, chú thích, thẻ)
@@ -467,7 +474,7 @@ http://localhost:5173/admin/ (dữ liệu nằm trong `.admin-data/`; website �
 | Cảm ứng     | Vuốt trái/phải (vuốt dọc không bị chặn), chạm ảnh bên, chạm nhãn                           |
 | Bàn phím    | ← → chuyển slide; Tab tới nhãn / mũi tên / âm thanh / ngôn ngữ, Enter để chọn              |
 
-Trên ba trang riêng: bánh xe chuột / trackpad, phím ← →, nút ← → và thẻ chủ đề đổi chủ đề (vuốt / kéo ngang thì không);
+Trên ba trang riêng: phím ← →, nút ← → và thẻ chủ đề đổi chủ đề (vuốt, kéo ngang hay bánh xe thì không — bánh xe cuộn trang xuống các dự án);
 tia laser của trang Xây dựng kéo ngang được bằng chuột / ngón tay (vuốt dọc trên tia vẫn cuộn trang), hoặc chọn tay nắm
 (Tab) rồi dùng ← → (Shift + ← → bước lớn, Home / End).
 
@@ -494,19 +501,21 @@ Kiểm thử tự động bằng Playwright (Chromium) trên bản build:
 - Click ảnh bên, kéo chuột, kéo ngắn bật lại, vuốt cảm ứng, vuốt nhanh, vuốt dọc bị bỏ qua, phím ← → (kể cả bấm dồn
   dập qua điểm lặp vòng), bánh xe / trackpad (một cử chỉ = một slide), mũi tên, nhãn, logo, đổi ngôn ngữ VI/EN, bật/tắt âm thanh, link #lĩnh-vực.
 - Kiểm tra từng khung hình 60 fps bằng đồng hồ giả lập: không có ảnh nào nhảy vị trí hay nhấp nháy khi lặp vòng.
-- Ba trang riêng ở 1672×941, 1440×900, 1280×633, 1024×700 và iPhone 14 Pro, VI / EN: vừa một màn hình (chữ không chạm
-  thanh chủ đề), bánh xe (một cử chỉ = một chủ đề), phím, thẻ; vuốt ngang bằng sự kiện cảm ứng thật không đổi chủ đề,
+- Ba trang riêng ở 1672×941, 1440×900, 1280×633, 1024×700 và iPhone 14 Pro, VI / EN: màn hình đầu vừa một màn hình (chữ
+  không chạm thanh chủ đề), bánh xe / trackpad cuộn trang mà không đổi chủ đề, phím, thẻ; vuốt ngang bằng sự kiện cảm
+  ứng thật không đổi chủ đề,
   vuốt dọc cuộn trang, chạm vẫn bật thiết bị; điện thoại: ảnh + hàng thẻ ở màn hình đầu, nút "Xem …" đưa ảnh + kịch bản
   vào màn hình (iPhone SE 320×568, SE 3, 12 mini, 14 Pro, Galaxy S8, Pixel 7, 15 Plus: kịch bản nằm trọn, không bị nút
   Zalo che; 4 thẻ dàn đều hết chiều ngang, tên không tràn, cùng số dòng; chú thích kết cấu không lấn nhau, không ra
   ngoài ảnh); không có âm thanh khi chuyển cảnh; nút Zalo cố định ở góc dưới phải, không đè lên thẻ / nhãn nào; camera
   chạy giờ; kéo tia laser (không đổi chủ đề), phím trên tay nắm; thẻ tiến độ, chú thích kết cấu; điểm vật liệu đều nằm
   trong khung, thẻ vật liệu, ánh sáng buổi tối, nét kích thước.
-- Dự án: ở 1280×720 → 2560×1440 lưới không tràn ở chủ đề nào (chữ và lưới không chạm nhau, không chạm hàng chủ đề), ô
-  luôn vuông, 2 ô mỗi hàng; điện thoại: đủ mọi dự án, cách đều hai bên, còn chỗ cho nút Zalo; bấm mở dự án (ảnh bìa phóng
+- Dự án: máy tính 1280×720 → 1920×1080: lưới dưới màn hình đầu, ô vuông 200–290 px, nhiều ô mỗi hàng, không tràn ngang;
+  điện thoại: 2 ô mỗi hàng, đủ mọi dự án, cách đều hai bên, còn chỗ cho nút Zalo; bấm mở dự án (ảnh bìa phóng
   to ≥ 60% sau 0,2 giây, các ô khác văng ra), đóng bằng ×, Back, Esc — ô về đúng chỗ, trang không bị cuộn lệch; link
-  `#mã-dự-án` mở thẳng dự án; phím mũi tên và bánh xe không đổi chủ đề phía sau khi đang xem dự án; chấm lật trang;
-  tiếng Anh; "giảm chuyển động"; Back / Forward của trình duyệt (có hiệu ứng) và vuốt quay lại / tới (đóng / mở ngay,
+  `#mã-dự-án` mở thẳng dự án; phím mũi tên và bánh xe không đổi chủ đề phía sau khi đang xem dự án; menu vòng cung ở
+  1280×720, 1440×900, 1536×864, 1920×1080 (ẩn khi còn thấy ảnh bìa, hiện khi cuộn qua, nằm trong lề không chạm ảnh, đúng
+  trang đang xem, bấm trang khác thì chuyển trang); tiếng Anh; "giảm chuyển động"; Back / Forward của trình duyệt (có hiệu ứng) và vuốt quay lại / tới (đóng / mở ngay,
   các ô đúng chỗ ngay khung hình đầu); hàng thông tin gọn trên iPhone SE → 14 Pro Max và máy tính.
 - Trang quản trị (qua Nginx như trên Pi, iPhone 14 Pro và máy tính): sai mật khẩu bị từ chối, 5 lần sai thì phải chờ;
   thêm dự án (mã tạo từ tên tiếng Việt), tải 2 ảnh (ảnh chụp dọc có thẻ xoay vẫn đứng đúng chiều), tệp không phải ảnh

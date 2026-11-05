@@ -36,20 +36,43 @@ export const AreaIcon = () => (
   </Svg>
 )
 
+/** A tower crane: building (the Construction page, a construction project's scope). */
+export const CraneIcon = () => (
+  <Svg>
+    <path d="M8.4 21V6.6M5.2 21h6.4M3.2 6.6h17.6" />
+    <path d="M6.9 6.6 8.4 2.9l1.5 3.7M8.4 2.9l12.4 3.7M8.4 2.9 3.2 6.6" />
+    <path d="M17.4 6.6v5" />
+    <path d="M17.4 11.6a1.5 1.5 0 1 1-1.5 1.5" />
+    <rect className="is-filled" x="3.2" y="6.6" width="2.6" height="2.2" rx="0.3" />
+  </Svg>
+)
+
+/** A sofa: furnishing (the Interior page, an interior project's scope). */
+export const SofaIcon = () => (
+  <Svg>
+    <path d="M5.4 11.2V8.6A2.4 2.4 0 0 1 7.8 6.2h8.4a2.4 2.4 0 0 1 2.4 2.4v2.6" />
+    <path d="M3.4 18V12.8a1.6 1.6 0 0 1 3.2 0v1.8h10.8v-1.8a1.6 1.6 0 0 1 3.2 0V18z" />
+    <path d="M5.4 18v2M18.6 18v2" />
+  </Svg>
+)
+
 /** What was done: a tower crane (construction), a sofa (interior). */
-export const ScopeIcon = ({ category }: { category: ProjectCategory }) =>
-  category === 'construction' ? (
-    <Svg>
-      <path d="M8.4 21V6.6M5.2 21h6.4M3.2 6.6h17.6" />
-      <path d="M6.9 6.6 8.4 2.9l1.5 3.7M8.4 2.9l12.4 3.7M8.4 2.9 3.2 6.6" />
-      <path d="M17.4 6.6v5" />
-      <path d="M17.4 11.6a1.5 1.5 0 1 1-1.5 1.5" />
-      <rect className="is-filled" x="3.2" y="6.6" width="2.6" height="2.2" rx="0.3" />
-    </Svg>
-  ) : (
-    <Svg>
-      <path d="M5.4 11.2V8.6A2.4 2.4 0 0 1 7.8 6.2h8.4a2.4 2.4 0 0 1 2.4 2.4v2.6" />
-      <path d="M3.4 18V12.8a1.6 1.6 0 0 1 3.2 0v1.8h10.8v-1.8a1.6 1.6 0 0 1 3.2 0V18z" />
-      <path d="M5.4 18v2M18.6 18v2" />
-    </Svg>
-  )
+export const ScopeIcon = ({ category }: { category: ProjectCategory }) => (category === 'construction' ? <CraneIcon /> : <SofaIcon />)
+
+/** VILLA NEST's mark (the roof of its icon): the home page. */
+export const HomeMarkIcon = () => (
+  <Svg>
+    <path d="M4.6 14.6 12 6.8l7.4 7.8" />
+    <path d="M7.8 18.6h8.4" />
+  </Svg>
+)
+
+/** A house on Wi-Fi: the Smart Home page. */
+export const SmartHomeIcon = () => (
+  <Svg>
+    <path d="M4 11.2 12 4.6l8 6.6v8.8H4z" />
+    <path d="M8.9 14.6a4.4 4.4 0 0 1 6.2 0" />
+    <path d="M10.7 16.6a1.9 1.9 0 0 1 2.6 0" />
+    <circle className="is-filled" cx="12" cy="18.4" r="0.9" />
+  </Svg>
+)

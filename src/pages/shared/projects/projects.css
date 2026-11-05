@@ -1,16 +1,20 @@
 /*
- * Projects (Construction and Interior pages): the grid of square covers under the theme's text
- * (Projects) and the project's page over the site (ProjectView).
+ * Projects (Construction and Interior pages): the grid of square covers under the page's first
+ * screen (Projects) and the project's page over the site (ProjectView).
  */
 
 /* ── The grid ─────────────────────────────────────────────────────────── */
 
-/* (on a computer the square's size comes from the room under the text: Projects, whose
-   measures — margin, head, label, gap, dots — these heights are) */
+/* Computers: across the page under its first screen, as many squares to a row as fit — each
+   between --pj-min and --pj-max wide (the row fills the width; a short last row stays at the
+   left, as a phone's home screen). */
 .pj {
-  --pj-tile: 120px;
-  --pj-gap: 14px;
-  margin-top: 20px;
+  --pj-min: clamp(200px, 15.5vw, 290px);
+  --pj-gap: clamp(16px, 1.7vw, 30px);
+  position: relative;
+  max-width: 1720px;
+  margin: 0 auto;
+  padding: clamp(56px, 10vh, 120px) var(--gutter) clamp(90px, 14vh, 160px);
   pointer-events: auto;
 }
 
@@ -23,9 +27,9 @@
   align-items: center;
   gap: 12px;
   height: 14px;
-  margin: 0 0 14px;
+  margin: 0;
   color: var(--gold-2);
-  font-size: 10px;
+  font-size: 10.5px;
   font-weight: 500;
   letter-spacing: 0.28em;
   text-transform: uppercase;
@@ -42,10 +46,19 @@
   color: var(--muted);
 }
 
+.pj__title {
+  margin: 14px 0 clamp(28px, 4.4vh, 48px);
+  font-family: var(--font-serif);
+  font-size: clamp(32px, 3.1vw, 54px);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.05;
+}
+
 .pj__grid {
   display: grid;
-  grid-template-columns: repeat(2, var(--pj-tile));
-  gap: var(--pj-gap);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--pj-min)), 1fr));
+  gap: clamp(26px, 4vh, 44px) var(--pj-gap);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -58,7 +71,7 @@
 
 .pj__tile {
   display: grid;
-  gap: 8px;
+  gap: 12px;
   color: inherit;
   text-decoration: none;
   outline: none;
@@ -69,7 +82,7 @@
 .pj__cover {
   position: relative;
   display: block;
-  width: var(--pj-tile);
+  width: 100%;
   aspect-ratio: 1;
   overflow: hidden;
   border-radius: 14%;
@@ -133,15 +146,14 @@
 .pj__label {
   display: grid;
   align-content: start;
-  gap: 4px;
-  width: var(--pj-tile);
-  height: 36px;
+  gap: 5px;
+  min-width: 0;
 }
 
 .pj__label b {
   overflow: hidden;
   font-family: var(--font-serif);
-  font-size: clamp(14px, 1.05vw, 17px);
+  font-size: clamp(17px, 1.25vw, 21px);
   font-weight: 500;
   line-height: 1.15;
   text-overflow: ellipsis;
@@ -151,21 +163,11 @@
 .pj__label small {
   overflow: hidden;
   color: var(--muted);
-  font-size: 8.5px;
+  font-size: 9.5px;
   letter-spacing: 0.16em;
   text-overflow: ellipsis;
   text-transform: uppercase;
   white-space: nowrap;
-}
-
-/* (very short screens: the squares and their names only) */
-.pj[data-compact] .pj__head,
-.pj[data-compact] .pj__label small {
-  display: none;
-}
-
-.pj[data-compact] .pj__label {
-  height: 20px;
 }
 
 /* The project on show: its banner stands in for the square. */
@@ -173,94 +175,22 @@
   visibility: hidden;
 }
 
-/* The page turns (computers, more projects than the squares on show). */
-.pj__pages {
-  display: flex;
-  gap: 4px;
-  height: 22px;
-  margin-top: 10px;
-  margin-left: -9px;
-}
-
-.pj__pages button {
-  display: grid;
-  place-items: center;
-  width: 22px;
-  height: 22px;
-  padding: 0;
-  border: 0;
-  background: none;
-  cursor: pointer;
-}
-
-.pj__pages button::before {
-  content: '';
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: rgb(244 240 233 / 0.3);
-  transition:
-    background-color 0.3s ease,
-    scale 0.3s var(--ease-out);
-}
-
-.pj__pages button[aria-current]::before {
-  background: var(--gold-2);
-  scale: 1.25;
-}
-
-.pj__pages button:focus-visible {
-  outline: 1px solid var(--c-accent);
-  border-radius: 50%;
-}
-
-/* On a computer the grid keeps its place at the bottom of the text's column. */
-.pg-copy[data-below] {
-  display: flex;
-  flex-direction: column;
-  align-self: stretch;
-}
-
-.pg-copy[data-below] .pg-copy__text {
-  margin-block: auto;
-}
-
-.pg-copy[data-below] .pj {
-  flex: none;
-}
-
-/* Every theme's text, measured out of sight (DeckCopy), in the column's own width (and taking
-   no room: no scrolling of the one-screen page). */
-.pg-copy__measure {
-  position: absolute;
-  top: 0;
-  right: 0;
-  left: 0;
-  height: 0;
-  overflow: hidden;
-  padding-left: inherit;
-  visibility: hidden;
-  pointer-events: none;
-}
-
 /* While a project opens or closes, the grid is drawn over the project's dark (the others fly
-   over it), and the text above makes way. */
-.pg-copy[data-lifted] {
+   over it), its head and title making way. */
+.pj[data-lifted] {
   z-index: 46;
 }
 
-.pg-copy .pg-copy__text,
-.pg-copy .pj__head,
-.pg-copy .pj__pages {
+.pj :is(.pj__head, .pj__title) {
   transition: opacity 0.35s ease;
 }
 
-html[data-project-open] .pg-copy :is(.pg-copy__text, .pj__head, .pj__pages) {
+html[data-project-open] .pj :is(.pj__head, .pj__title) {
   opacity: 0;
 }
 
 /* (a swipe back: the browser has already shown the page as it was — no fade) */
-html[data-project-instant] .pg-copy :is(.pg-copy__text, .pj__head, .pj__pages) {
+html[data-project-instant] .pj :is(.pj__head, .pj__title) {
   transition: none;
 }
 
@@ -268,29 +198,39 @@ html[data-project-open] .pj {
   pointer-events: none;
 }
 
-/* ── Phones and portrait tablets ──────────────────────────────────────── */
+/* ── Phones and portrait tablets: two to a row, under the theme's text ── */
 
 @media (max-width: 760px), (orientation: portrait) and (max-width: 1024px) {
   .pj {
     --pj-gap: 14px;
-    --pj-tile: calc((100vw - 2 * var(--gutter) - var(--pj-gap)) / 2);
-    margin-top: 30px;
+    max-width: none;
+    margin: 0;
     /* (room for the Zalo button under the last row) */
-    padding-bottom: 76px;
+    padding: 30px var(--gutter) calc(env(safe-area-inset-bottom, 0px) + 84px);
   }
 
-  @media (min-width: 600px) {
-    .pj {
-      --pj-tile: min(calc((100vw - 2 * var(--gutter) - var(--pj-gap)) / 2), 300px);
-    }
+  .pj__head {
+    margin-bottom: 14px;
+    font-size: 10px;
   }
 
-  .pg-copy__measure {
+  .pj__title {
     display: none;
   }
 
-  .pj__label {
-    height: auto;
+  .pj__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--pj-gap);
+  }
+
+  @media (min-width: 600px) {
+    .pj__grid {
+      grid-template-columns: repeat(2, minmax(0, 300px));
+    }
+  }
+
+  .pj__tile {
+    gap: 8px;
   }
 
   .pj__label b {
@@ -309,6 +249,12 @@ html[data-project-open] {
 }
 
 .pv {
+  /* (the page's colours: the view is drawn outside the page, at the end of the document) */
+  --gold: #d2b07a;
+  --gold-2: #e8cf9f;
+  --line: rgb(244 240 233 / 0.12);
+  --muted: rgb(244 240 233 / 0.62);
+
   position: fixed;
   inset: 0;
   z-index: 44;
@@ -317,6 +263,7 @@ html[data-project-open] {
   overscroll-behavior: contain;
   color: var(--c-text);
   outline: none;
+  scrollbar-color: rgb(244 240 233 / 0.24) #0e0f11;
 }
 
 .pv__bg {
@@ -464,7 +411,8 @@ html[data-project-open] {
 }
 
 .pv__body {
-  max-width: 1180px;
+  /* (on a computer, the margins keep room for the pages' menu on the left: .pv-arc) */
+  max-width: min(1180px, 100vw - 200px);
   margin: calc(-1 * clamp(70px, 12vh, 140px)) auto 0;
   padding: 0 var(--gutter) clamp(60px, 10vh, 120px);
 }
@@ -533,6 +481,14 @@ html[data-project-open] {
 }
 
 .pv-icon {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.pv__fact .pv-icon {
   position: absolute;
   top: 50%;
   left: var(--pv-lead);
@@ -540,11 +496,6 @@ html[data-project-open] {
   height: var(--pv-icon);
   translate: 0 -50%;
   color: var(--c-text);
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.3;
-  stroke-linecap: round;
-  stroke-linejoin: round;
 }
 
 .pv-icon .is-filled {
@@ -567,6 +518,127 @@ html[data-project-open] {
   color: rgb(244 240 233 / 0.45);
   font-size: 11px;
   font-style: italic;
+}
+
+/*
+ * The site's pages on an arc in the left margin (computers): round buttons as the header's,
+ * the line icons of the strips under the pages' header, the project's own page in gold. They
+ * come in, one after another along the arc, once the banner is scrolled away — never over it.
+ */
+.pv-arc {
+  position: fixed;
+  top: 50%;
+  left: clamp(18px, 1.8vw, 32px);
+  z-index: 3;
+  translate: 0 -50%;
+  pointer-events: none;
+}
+
+.pv-arc__line {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+}
+
+.pv-arc__line path {
+  fill: none;
+  stroke: rgb(210 176 122 / 0.3);
+  stroke-width: 1;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 0.5s ease;
+}
+
+.pv[data-arc] .pv-arc__line path {
+  stroke-dashoffset: 0;
+  transition-duration: 0.9s;
+}
+
+.pv-arc__item {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border: 1px solid rgb(244 240 233 / 0.3);
+  border-radius: 50%;
+  background: rgb(14 14 16 / 0.6);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  color: var(--c-text);
+  opacity: 0;
+  translate: -22px 0;
+  visibility: hidden;
+  transition:
+    opacity 0.3s ease,
+    translate 0.4s var(--ease-out),
+    border-color 0.3s ease,
+    background-color 0.3s ease,
+    visibility 0s linear 0.4s;
+}
+
+.pv[data-arc] .pv-arc__item {
+  opacity: 1;
+  translate: 0 0;
+  visibility: visible;
+  pointer-events: auto;
+  transition:
+    opacity 0.45s ease calc(var(--i) * 0.07s + 0.1s),
+    translate 0.7s var(--ease-out) calc(var(--i) * 0.07s + 0.1s),
+    border-color 0.3s ease,
+    background-color 0.3s ease,
+    visibility 0s;
+}
+
+.pv-arc__item .pv-icon {
+  width: 22px;
+  height: 22px;
+}
+
+.pv-arc__item[aria-current] {
+  border-color: var(--c-accent);
+  background: rgb(210 176 122 / 0.14);
+  color: var(--gold-2);
+}
+
+@media (hover: hover) {
+  .pv-arc__item:hover {
+    border-color: var(--c-accent);
+    background: rgb(14 14 16 / 0.85);
+  }
+}
+
+.pv-arc__item:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 3px;
+}
+
+/* (its name, beside it while pointed at) */
+.pv-arc__label {
+  position: absolute;
+  top: 50%;
+  left: calc(100% + 12px);
+  padding: 8px 13px;
+  border: 1px solid rgb(244 240 233 / 0.16);
+  border-radius: 999px;
+  background: rgb(14 14 16 / 0.85);
+  color: var(--c-text);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  opacity: 0;
+  translate: -6px -50%;
+  pointer-events: none;
+  transition:
+    opacity 0.25s ease,
+    translate 0.35s var(--ease-out);
+}
+
+.pv-arc__item:is(:hover, :focus-visible) .pv-arc__label {
+  opacity: 1;
+  translate: 0 -50%;
 }
 
 /* The photos, two to a row under the first, which runs across. */
@@ -636,7 +708,12 @@ html[data-project-open] {
   }
 
   .pv__body {
+    max-width: 1180px;
     margin-top: -64px;
+  }
+
+  .pv-arc {
+    display: none;
   }
 
   /* (no lines between: they flow two or three to a row, a long place on a row of its own) */
@@ -686,5 +763,21 @@ html[data-project-open] {
   .pj__cover,
   .pj__cover img {
     transition: none;
+  }
+
+  .pv-arc__item,
+  .pv[data-arc] .pv-arc__item {
+    translate: 0 0;
+  }
+
+  .pv-arc__line path {
+    transition: none;
+  }
+}
+
+/* Phones held sideways and other short screens: no room for the menu. */
+@media (max-height: 560px) {
+  .pv-arc {
+    display: none;
   }
 }

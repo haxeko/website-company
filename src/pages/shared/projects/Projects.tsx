@@ -12,45 +12,12 @@ const scatter = (i: number, k: number) => Math.sin(i * 12.9898 + k * 78.233) * 0
 
 const reducedMotion = () => window.matchMedia(REDUCED_MOTION_QUERY).matches
 
-/*
- * On a computer the grid has the room under the text (DeckCopy), the page being one screen: two
- * rows of squares where they fit, one otherwise, and dots turn the pages, as on a phone's home
- * screen. The parts' heights, as projects.css sets them for computers:
- */
-const MARGIN = 20
-const HEAD = 28
-/** The gap over a square's label, and the label. */
-const LABEL = 44
-const ROW_GAP = 14
-const DOTS = 32
-const MIN_TILE = 72
-const MAX_TILE = 150
-/** Two rows only when their squares are at least this big. */
-const MIN_TILE_TWO_ROWS = 96
-
-/** The least room the grid needs under the text (one row of the smallest squares). */
-export const PROJECTS_MIN_ROOM = MARGIN + HEAD + DOTS + LABEL + MIN_TILE
-/** Very short screens: no "Projects" line over the grid, the squares' names only (projects.css). */
-const COMPACT_LABEL = 28
-const COMPACT_MIN_TILE = 56
-
-/** Rows and square size for the room under the text (null: phones — every project, CSS sizes). */
-function layout(room: number | null) {
-  if (room === null) return null
-  const two = Math.floor((room - MARGIN - HEAD - DOTS - 2 * LABEL - ROW_GAP) / 2)
-  if (two >= MIN_TILE_TWO_ROWS) return { rows: 2, tile: Math.min(two, MAX_TILE), compact: false }
-  if (room >= PROJECTS_MIN_ROOM) return { rows: 1, tile: Math.min(room - MARGIN - HEAD - DOTS - LABEL, MAX_TILE), compact: false }
-  return { rows: 1, tile: Math.max(COMPACT_MIN_TILE, room - MARGIN - DOTS - COMPACT_LABEL), compact: true }
-}
-
 interface ProjectsProps {
   category: ProjectCategory
   /** The page's name ("Xây dựng"), for the grid's label and the way back from a project. */
   name: string
   /** The page is shown: the covers arrange themselves. */
   ready: boolean
-  /** The room under the text (DeckCopy): px on a computer, null on phones, undefined until known. */
-  room: number | null | undefined
 }
 
 interface Open {
@@ -73,14 +40,22 @@ function browserAnimated(e: PopStateEvent, edgeTouch: { side: 'left' | 'right'; 
   return !!edgeTouch && edgeTouch.side === (forward ? 'right' : 'left') && performance.now() - edgeTouch.at < 3000
 }
 
+/** How many squares the grid has to a row (its CSS decides: two on phones, more on computers). */
+function columns(els: HTMLElement[]) {
+  const top = els[0]?.offsetTop
+  const n = els.findIndex((el) => el.offsetTop !== top)
+  return n < 0 ? els.length : Math.max(1, n)
+}
+
 /**
- * The page's projects, in place of its calls to action: square covers two to a row, which
- * arrive scattered and arrange themselves square by square (the dark squares of a chessboard
- * first, then the light ones), as the icons of a phone's home screen do. Tapping a project
- * throws the others off the screen while its cover grows into the project's page — the photos
- * under it (ProjectView). Each project has its own link: /construction/#<id>.
+ * The page's projects, under its first screen: square covers, two to a row on phones and as
+ * many as fit on a computer, which arrive scattered and arrange themselves square by square
+ * (the dark squares of a chessboard first, then the light ones), as the icons of a phone's
+ * home screen do. Tapping a project throws the others off the screen while its cover grows
+ * into the project's page — the photos under it (ProjectView). Each project has its own link:
+ * /construction/#<id>.
  */
-export function Projects({ category, name, ready, room }: ProjectsProps) {
+export function Projects({ category, name, ready }: ProjectsProps) {
   const { t, lang } = useI18n()
   const list = useProjects(category)
   const rootRef = useRef<HTMLElement>(null)
@@ -90,39 +65,28 @@ export function Projects({ category, name, ready, room }: ProjectsProps) {
   /** The view was opened here (with history.pushState): closing goes back. */
   const pushed = useRef(false)
   const arrived = useRef(false)
-  const fit = room === undefined ? undefined : layout(room)
-  const perPage = fit ? fit.rows * 2 : Infinity
-  const [page, setPage] = useState(0)
-  /** Which way the last page turn went (the covers come in from that side). */
-  const turn = useRef(0)
-  const pages = list ? Math.max(1, Math.ceil(list.length / perPage)) : 1
-  const current = Math.min(page, pages - 1)
-  const shown = !list || fit === undefined ? [] : perPage === Infinity ? list : list.slice(current * perPage, (current + 1) * perPage)
 
   const items = () => Array.from(gridRef.current?.children ?? []) as HTMLElement[]
   const itemOf = (id: string) => items().find((el) => el.dataset.id === id) ?? null
 
-  /** The covers come into their squares: scattered at first, from the side after a page turn. */
-  const play = (els: HTMLElement[], first: boolean) => {
+  /** The covers come into their squares, scattered at first. */
+  const play = (els: HTMLElement[]) => {
+    const cols = columns(els)
     els.forEach((el, i) => {
-      const row = Math.floor(i / 2)
-      const col = i % 2
-      const light = (row + col) % 2
-      const from = first
-        ? { x: scatter(i, 1) * 70, y: 60 + Math.abs(scatter(i, 2)) * 80, rotation: scatter(i, 3) * 16, scale: 0.5 }
-        : { x: turn.current * (140 + col * 40), y: scatter(i, 2) * 30, rotation: turn.current * 10, scale: 0.7 }
+      const row = Math.floor(i / cols)
+      const light = (row + (i % cols)) % 2
       gsap.fromTo(
         el,
-        { opacity: 0, ...from },
+        { opacity: 0, x: scatter(i, 1) * 70, y: 60 + Math.abs(scatter(i, 2)) * 80, rotation: scatter(i, 3) * 16, scale: 0.5 },
         {
           opacity: 1,
           x: 0,
           y: 0,
           rotation: 0,
           scale: 1,
-          duration: first ? 0.9 : 0.7,
+          duration: 0.9,
           ease: 'back.out(1.6)',
-          delay: first ? 0.12 + light * 0.2 + row * 0.08 : light * 0.12 + row * 0.05,
+          delay: 0.12 + light * 0.2 + row * 0.08,
           clearProps: 'transform,opacity',
         },
       )
@@ -130,8 +94,7 @@ export function Projects({ category, name, ready, room }: ProjectsProps) {
   }
 
   // Arrival: scattered covers settle into their squares (the dark squares first) once the grid
-  // comes into view (on phones it is further down the page); a page turn brings the next ones
-  // in from the side.
+  // comes into view, under the page's first screen; once only — a new list is simply there.
   useLayoutEffect(() => {
     const grid = gridRef.current
     const els = items()
@@ -140,14 +103,10 @@ export function Projects({ category, name, ready, room }: ProjectsProps) {
       gsap.set(els, { opacity: 0 })
       return
     }
+    if (arrived.current) return
     if (reducedMotion()) {
       arrived.current = true
       gsap.fromTo(els, { opacity: 0 }, { opacity: 1, duration: 0.3, clearProps: 'opacity' })
-      return
-    }
-    const first = !arrived.current
-    if (!first) {
-      play(els, false)
       return
     }
     gsap.set(els, { opacity: 0 })
@@ -156,37 +115,16 @@ export function Projects({ category, name, ready, room }: ProjectsProps) {
         if (!entries.some((e) => e.isIntersecting)) return
         watch.disconnect()
         arrived.current = true
-        play(els, true)
+        play(els)
       },
       { threshold: 0.2 },
     )
     watch.observe(grid)
     return () => watch.disconnect()
-  }, [list, ready, current, perPage])
-
-  /** The covers on show leave the other way, then the next page's arrive. */
-  const goPage = (next: number) => {
-    if (next === current || open) return
-    turn.current = next > current ? 1 : -1
-    const els = items()
-    if (reducedMotion() || !els.length) {
-      setPage(next)
-      return
-    }
-    gsap.to(els, {
-      x: -turn.current * 120,
-      opacity: 0,
-      rotation: -turn.current * 8,
-      scale: 0.8,
-      duration: 0.28,
-      ease: 'power2.in',
-      stagger: 0.03,
-      onComplete: () => setPage(next),
-    })
-  }
+  }, [list, ready])
 
   /** While the others fly, the grid is drawn over the view's dark (it fades in under them). */
-  const lift = (on: boolean) => rootRef.current?.closest<HTMLElement>('.pg-copy')?.toggleAttribute('data-lifted', on)
+  const lift = (on: boolean) => rootRef.current?.toggleAttribute('data-lifted', on)
 
   /** The other projects are thrown off the screen, away from the one tapped. */
   const fling = (id: string) => {
@@ -280,13 +218,10 @@ export function Projects({ category, name, ready, room }: ProjectsProps) {
 
   // A page opened at #<id> shows that project as soon as the list is read.
   const [listRead, setListRead] = useState<Project[] | null>(null)
-  if (list && fit !== undefined && listRead !== list) {
+  if (list && listRead !== list) {
     setListRead(list)
     const project = list.find((p) => p.id === decodeURIComponent(location.hash.slice(1)))
-    if (project) {
-      if (perPage !== Infinity) setPage(Math.floor(list.indexOf(project) / perPage))
-      show(project, null)
-    }
+    if (project) show(project, null)
   }
 
   const onTile = (project: Project) => (e: MouseEvent<HTMLAnchorElement>) => {
@@ -334,8 +269,6 @@ export function Projects({ category, name, ready, room }: ProjectsProps) {
     viaButton.current = false
     if (project && open?.project.id !== project.id) {
       pushed.current = false
-      // (on the page of covers that holds it, so closing shrinks it back into its square)
-      if (list && perPage !== Infinity) setPage(Math.floor(list.indexOf(project) / perPage))
       if (browserAnimated(e, edgeTouch.current, true)) flushSync(() => show(project, null, true))
       else show(project, null)
     } else if (!project && open && !closing) {
@@ -375,25 +308,22 @@ export function Projects({ category, name, ready, room }: ProjectsProps) {
     if (id) itemOf(id)?.querySelector('a')?.focus({ preventScroll: true })
   }
 
-  // (the section is there from the start, empty until the list is read: the text above it
-  // fits itself to what is below)
+  // (empty until the list is read, or when the page has no project on show)
   if (!list?.length) return <section ref={rootRef} className="pj" hidden />
 
   return (
-    <section
-      ref={rootRef}
-      className="pj"
-      aria-label={t.projectsOf.replace('{name}', name)}
-      data-compact={fit?.compact || undefined}
-      style={fit ? ({ '--pj-tile': `${fit.tile}px` } as CSSProperties) : undefined}
-    >
+    <section ref={rootRef} className="pj" aria-labelledby={`pj-title-${category}`}>
       <p className="pj__head" aria-hidden="true">
         <span>{t.projects}</span>
         <i />
         <span>{String(list.length).padStart(2, '0')}</span>
       </p>
+      {/* (computers: a title over the grid; phones have the line above only) */}
+      <h2 className="pj__title" id={`pj-title-${category}`}>
+        {t.projectsOf.replace('{name}', lang === 'vi' ? name.toLowerCase() : name)}
+      </h2>
       <ul ref={gridRef} className="pj__grid">
-        {shown.map((project, i) => (
+        {list.map((project, i) => (
           <li
             key={project.id}
             className="pj__item"
@@ -410,7 +340,7 @@ export function Projects({ category, name, ready, room }: ProjectsProps) {
               onFocus={() => preloadCover(project)}
             >
               <span className="pj__cover">
-                <Picture img={project.cover} sizes="(max-width: 760px) 46vw, 180px" />
+                <Picture img={project.cover} sizes="(max-width: 760px) 46vw, 300px" />
               </span>
               <span className="pj__label">
                 <b>{project.title[lang]}</b>
@@ -420,19 +350,6 @@ export function Projects({ category, name, ready, room }: ProjectsProps) {
           </li>
         ))}
       </ul>
-      {pages > 1 && (
-        <div className="pj__pages">
-          {Array.from({ length: pages }, (_, i) => (
-            <button
-              key={i}
-              type="button"
-              aria-label={`${t.projects} ${i + 1} / ${pages}`}
-              aria-current={i === current || undefined}
-              onClick={() => goPage(i)}
-            />
-          ))}
-        </div>
-      )}
       {open &&
         createPortal(
           <ProjectView

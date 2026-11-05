@@ -3,7 +3,7 @@ import { getSound, useSoundOn } from '../../audio/sound'
 import { Header } from '../../components/Header'
 import { useI18n } from '../../i18n/context'
 import { DeckControls, DeckCopy, DeckNav, PageStrip } from '../shared/Deck'
-import { Projects, PROJECTS_MIN_ROOM } from '../shared/projects/Projects'
+import { Projects } from '../shared/projects/Projects'
 import { useDeck } from '../shared/useDeck'
 import { usePageChrome } from '../shared/usePageChrome'
 import { BuildVisual } from './BuildVisual'
@@ -22,7 +22,7 @@ const HINT_MS = 4000
  * The Construction page (opened from "Explore" on the Construction space of the home page):
  * the villa as BIM model and as building, divided by a laser line that can be dragged; the
  * four phases of the build — design, structure, progress, handover — change like the home
- * page's spaces. Under the text, the construction projects.
+ * page's spaces. Under the first screen, the construction projects.
  */
 export function ConstructionPage() {
   const { lang } = useI18n()
@@ -51,7 +51,7 @@ export function ConstructionPage() {
     <div ref={rootRef} className="app pg cp" data-ready={ready} data-scrolled={scrolled || undefined}>
       <Header soundOn={soundOn} onToggleSound={() => getSound().setOn(!soundOn)} homeHref="../" />
       <main>
-        <section ref={heroRef} className="pg-hero" aria-roledescription="carousel" aria-labelledby="pg-title">
+        <section ref={heroRef} className="pg-hero" data-more aria-roledescription="carousel" aria-labelledby="pg-title">
           <PageStrip
             label={copy.stripLabel}
             items={copy.strip.map(({ name, note }, i) => ({ icon: <StripIcon index={i} />, name, note }))}
@@ -76,17 +76,17 @@ export function ConstructionPage() {
               titleId="pg-title"
               titles={PHASES.map((id) => copy.features[id].title)}
               texts={PHASES.map((id) => copy.themes[id])}
-              below={(room) => <Projects category="construction" name={copy.name} ready={ready} room={room} />}
-              belowMin={PROJECTS_MIN_ROOM}
             />
           </div>
 
-          <DeckNav label={copy.index} items={PHASES.map((id) => copy.features[id])} active={active} onSelect={show} />
+          <DeckNav label={copy.index} items={PHASES.map((id) => copy.features[id])} active={active} onSelect={show} more />
 
           <p className="visually-hidden" aria-live="polite">
             {copy.features[PHASES[active]].title}
           </p>
         </section>
+
+        <Projects category="construction" name={copy.name} ready={ready} />
       </main>
     </div>
   )

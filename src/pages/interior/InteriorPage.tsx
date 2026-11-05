@@ -3,7 +3,7 @@ import { getSound, useSoundOn } from '../../audio/sound'
 import { Header } from '../../components/Header'
 import { useI18n } from '../../i18n/context'
 import { DeckControls, DeckCopy, DeckNav, PageStrip } from '../shared/Deck'
-import { Projects, PROJECTS_MIN_ROOM } from '../shared/projects/Projects'
+import { Projects } from '../shared/projects/Projects'
 import { useDeck } from '../shared/useDeck'
 import { usePageChrome } from '../shared/usePageChrome'
 import { interiorCopy, MOODS, type FacetId, type MoodId } from './content'
@@ -26,7 +26,7 @@ const SunIcon = ({ mood }: { mood: MoodId }) => (
 /**
  * The Interior page (opened from "Explore" on the Interior space of the home page): the living
  * room with its materials, its light through the day and its made-to-measure pieces — four
- * facets that change like the home page's spaces. Under the text, the interior projects.
+ * facets that change like the home page's spaces. Under the first screen, the interior projects.
  */
 export function InteriorPage() {
   const { lang } = useI18n()
@@ -59,7 +59,7 @@ export function InteriorPage() {
     <div ref={rootRef} className="app pg ip" data-ready={ready} data-scrolled={scrolled || undefined}>
       <Header soundOn={soundOn} onToggleSound={() => getSound().setOn(!soundOn)} homeHref="../" />
       <main>
-        <section ref={heroRef} className="pg-hero" aria-roledescription="carousel" aria-labelledby="pg-title">
+        <section ref={heroRef} className="pg-hero" data-more aria-roledescription="carousel" aria-labelledby="pg-title">
           <PageStrip
             label={copy.stripLabel}
             items={copy.materials.map(({ name, origin }, i) => ({ icon: <Swatch index={i} className="ip-swatch" />, name, note: origin }))}
@@ -86,8 +86,6 @@ export function InteriorPage() {
               titleId="pg-title"
               titles={FACETS.map((id) => copy.features[id].title)}
               texts={FACETS.map((id) => copy.themes[id])}
-              below={(room) => <Projects category="interior" name={copy.name} ready={ready} room={room} />}
-              belowMin={PROJECTS_MIN_ROOM}
             />
 
             <aside className="ip-card" data-on={active === 1 || undefined} aria-hidden={active !== 1} aria-live="polite">
@@ -129,12 +127,14 @@ export function InteriorPage() {
             </div>
           </div>
 
-          <DeckNav label={copy.index} items={FACETS.map((id) => copy.features[id])} active={active} onSelect={show} />
+          <DeckNav label={copy.index} items={FACETS.map((id) => copy.features[id])} active={active} onSelect={show} more />
 
           <p className="visually-hidden" aria-live="polite">
             {copy.features[FACETS[active]].title}
           </p>
         </section>
+
+        <Projects category="interior" name={copy.name} ready={ready} />
       </main>
     </div>
   )

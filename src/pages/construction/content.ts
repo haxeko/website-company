@@ -50,8 +50,8 @@ const vi: ConstructionCopy = {
   strip: [
     { name: 'BIM 3D', note: 'Mô phỏng trước khi xây' },
     { name: 'Địa chất', note: 'Khảo sát trước khi đặt móng' },
-    { name: 'Bê tông M350', note: 'Nén mẫu 28 ngày' },
-    { name: 'Thép CB400', note: 'Có chứng chỉ xuất xưởng' },
+    { name: 'Bê tông', note: 'Nén mẫu 28 ngày' },
+    { name: 'Thép', note: 'Có chứng chỉ xuất xưởng' },
     { name: 'Giám sát 24/7', note: 'Camera công trường' },
     { name: 'Bảo hành 5 năm', note: 'Kết cấu & chống thấm' },
   ],
@@ -74,7 +74,7 @@ const vi: ConstructionCopy = {
     structure: {
       kicker: 'Kết cấu & vật liệu',
       headline: 'Khung bê tông\nđúng chuẩn.',
-      accent: 'Bê tông M350, thép CB400.',
+      accent: 'Bê tông, thép đạt chuẩn.',
       description:
         'Cột, dầm, sàn được tính theo tải trọng thực; cốt thép nghiệm thu trước mỗi lần đổ, mẫu bê tông nén thử ở 28 ngày, ván khuôn chỉ tháo khi bê tông đủ cường độ.',
     },
@@ -103,8 +103,8 @@ const vi: ConstructionCopy = {
     ['Sàn tầng 1', '±0.00'],
   ],
   callouts: [
-    ['Cột 400 × 400', 'Bê tông M350'],
-    ['Dầm 300 × 600', 'Thép CB400'],
+    ['Cột 400 × 400', 'Bê tông đạt chuẩn'],
+    ['Dầm 300 × 600', 'Thép có chứng chỉ'],
     ['Sàn BTCT 150 mm', 'Đổ liền khối'],
     ['Giàn chống, ván khuôn', 'Tháo sau 21 ngày'],
   ],
@@ -137,8 +137,8 @@ const en: ConstructionCopy = {
   strip: [
     { name: 'BIM 3D', note: 'Simulated before it is built' },
     { name: 'Soil survey', note: 'Before the foundations' },
-    { name: 'M350 concrete', note: 'Cube tests at 28 days' },
-    { name: 'CB400 steel', note: 'Mill certificates' },
+    { name: 'Concrete', note: 'Cube tests at 28 days' },
+    { name: 'Steel', note: 'Mill certificates' },
     { name: '24/7 monitoring', note: 'Site cameras' },
     { name: '5-year warranty', note: 'Structure & waterproofing' },
   ],
@@ -161,7 +161,7 @@ const en: ConstructionCopy = {
     structure: {
       kicker: 'Structure & materials',
       headline: 'A concrete frame\nbuilt to standard.',
-      accent: 'M350 concrete, CB400 steel.',
+      accent: 'Concrete and steel to standard.',
       description:
         'Columns, beams and slabs sized for the real loads; the rebar inspected before every pour, concrete cubes tested at 28 days, formwork struck only once the concrete is strong enough.',
     },
@@ -190,8 +190,8 @@ const en: ConstructionCopy = {
     ['Level 1', '±0.00'],
   ],
   callouts: [
-    ['Column 400 × 400', 'M350 concrete'],
-    ['Beam 300 × 600', 'CB400 steel'],
+    ['Column 400 × 400', 'Tested concrete'],
+    ['Beam 300 × 600', 'Certified rebar'],
     ['150 mm RC slab', 'Cast monolithic'],
     ['Shoring & formwork', 'Struck after 21 days'],
   ],

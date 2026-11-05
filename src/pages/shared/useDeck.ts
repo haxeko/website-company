@@ -1,12 +1,7 @@
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore, type RefObject } from 'react'
 
-/** Phones and portrait tablets: the stacked layout, where the page scrolls. */
+/** Phones and portrait tablets: the stacked layout. */
 export const PORTRAIT_QUERY = '(max-width: 760px), (orientation: portrait) and (max-width: 1024px)'
-
-/** As the home page's carousel: one step per wheel or trackpad gesture… */
-const WHEEL_STEP = 40
-/** …which ends after this much silence (ms), however long the trackpad's inertia runs. */
-const WHEEL_GESTURE_GAP = 200
 
 function subscribePortrait(onChange: () => void) {
   const query = window.matchMedia(PORTRAIT_QUERY)
@@ -40,9 +35,9 @@ interface DeckOptions {
 }
 
 /**
- * The themes of a page, changed with the arrows, the numbered navigation, the arrow keys and —
- * where the page is one screen — the mouse wheel or trackpad (not by swiping: on a phone the
- * page only scrolls). Wraps round at both ends.
+ * The themes of a page, changed with the arrows, the numbered navigation and the arrow keys —
+ * not with the wheel or by swiping: those scroll the page (to its projects). Wraps round at
+ * both ends.
  */
 export function useDeck(count: number, { heroRef, onChange }: DeckOptions) {
   const [active, setActive] = useState(0)
@@ -80,34 +75,6 @@ export function useDeck(count: number, { heroRef, onChange }: DeckOptions) {
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [onScreen, show])
-
-  // The wheel, where the page is one screen; the stacked layout scrolls with it instead.
-  const wheel = useRef({ acc: 0, last: -Infinity, locked: false })
-  useEffect(() => {
-    if (portrait) return
-    const onWheel = (e: WheelEvent) => {
-      if (e.ctrlKey) return // pinch-zoom
-      const scale = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? window.innerHeight : 1
-      const delta = (Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY) * scale
-      if (!delta) return
-      e.preventDefault()
-      const w = wheel.current
-      if (e.timeStamp - w.last > WHEEL_GESTURE_GAP) {
-        w.locked = false
-        w.acc = 0
-      }
-      w.last = e.timeStamp
-      if (w.locked) return
-      w.acc += delta
-      if (Math.abs(w.acc) >= WHEEL_STEP) {
-        show(activeRef.current + Math.sign(w.acc))
-        w.locked = true
-        w.acc = 0
-      }
-    }
-    window.addEventListener('wheel', onWheel, { passive: false })
-    return () => window.removeEventListener('wheel', onWheel)
-  }, [portrait, show])
 
   return { active, dir, show, portrait, onScreen }
 }
