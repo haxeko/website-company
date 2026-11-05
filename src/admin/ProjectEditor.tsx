@@ -1,13 +1,16 @@
-import { useEffect, useRef, useState, type ChangeEvent, type MouseEvent, type ReactNode } from 'react'
+import { useEffect, useEffectEvent, useRef, useState, type ChangeEvent, type MouseEvent, type ReactNode } from 'react'
 import { PROJECT_TYPES, PROJECT_TYPE_NAMES, imagePosition, imageSrc, type ProjectType } from '../pages/shared/projects/data'
 import { api, type AdminProject, type Localized, type ProjectCategory, type ProjectImage } from './api'
-import { CATEGORY_NAMES, siteLink, status } from './shared'
+import { CATEGORY_NAMES, UNSAVED, siteLink, status } from './shared'
 
 interface ProjectEditorProps {
   project: AdminProject
   error: string
   notice: string
+  /** Back to the list (once any changes not saved have been given up). */
   onBack: () => void
+  /** Whether there are changes not saved (the browser's Back asks first, as the way back does). */
+  onDirty: (dirty: boolean) => void
   /** Saves the project (null: it did not save). */
   onSave: (project: AdminProject) => Promise<AdminProject | null>
   onDelete: () => Promise<void>
@@ -99,18 +102,27 @@ function CoverField({ cover, onFocus }: { cover: ProjectImage; onFocus: (focus: 
  * (uploaded from a phone or a computer, in order, with captions). Nothing goes on the site
  * before "Lưu".
  */
-export function ProjectEditor({ project, error, notice, onBack, onSave, onDelete }: ProjectEditorProps) {
+export function ProjectEditor({ project, error, notice, onBack, onDirty, onSave, onDelete }: ProjectEditorProps) {
   const [saved, setSaved] = useState(project)
   const [draft, setDraft] = useState(project)
   const [busy, setBusy] = useState(false)
   const [uploads, setUploads] = useState<{ done: number; total: number; failed: string[] } | null>(null)
   const fileRef = useRef<HTMLInputElement>(null)
+  // (the way back has asked already: leaving the page does not ask again)
+  const leaving = useRef(false)
   const dirty = !same(draft, saved)
 
   // (leaving with changes not saved asks first)
+  const tell = useEffectEvent(onDirty)
+  useEffect(() => {
+    tell(dirty)
+    return () => tell(false)
+  }, [dirty])
   useEffect(() => {
     if (!dirty) return
-    const warn = (e: BeforeUnloadEvent) => e.preventDefault()
+    const warn = (e: BeforeUnloadEvent) => {
+      if (!leaving.current) e.preventDefault()
+    }
     window.addEventListener('beforeunload', warn)
     return () => window.removeEventListener('beforeunload', warn)
   }, [dirty])
@@ -126,7 +138,8 @@ export function ProjectEditor({ project, error, notice, onBack, onSave, onDelete
     })
 
   const back = () => {
-    if (dirty && !window.confirm('Bỏ các thay đổi chưa lưu?')) return
+    if (dirty && !window.confirm(UNSAVED)) return
+    leaving.current = true
     onBack()
   }
 
@@ -170,8 +183,11 @@ export function ProjectEditor({ project, error, notice, onBack, onSave, onDelete
   return (
     <div className="ad ad--edit">
       <header className="ad-top">
-        <button type="button" className="ad-link" onClick={back}>
-          ← Danh sách
+        <button type="button" className="ad-back" onClick={back} aria-label="Quay lại danh sách dự án">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M14.5 5.5 8 12l6.5 6.5" />
+          </svg>
+          Quay lại
         </button>
         <p className="ad-top__title">{draft.title.vi || 'Dự án'}</p>
         <span className="ad-chip" data-state={!saved.cover ? 'missing' : saved.hidden ? 'hidden' : 'shown'}>

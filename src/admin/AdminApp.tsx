@@ -1,12 +1,28 @@
-import { useEffect, useState, type FormEvent } from 'react'
+import { useEffect, useEffectEvent, useRef, useState, type FormEvent } from 'react'
 import { PROJECT_TYPES, PROJECT_TYPE_NAMES, imagePosition, imageSrc, type ProjectType } from '../pages/shared/projects/data'
 import { ApiError, api, idFor, type AdminProject, type ProjectCategory } from './api'
 import { ProjectEditor } from './ProjectEditor'
-import { CATEGORY_NAMES, status } from './shared'
+import { CATEGORY_NAMES, UNSAVED, status } from './shared'
 
 const CATEGORIES = Object.keys(CATEGORY_NAMES) as ProjectCategory[]
 
 type View = { name: 'loading' } | { name: 'login'; passwordSet: boolean } | { name: 'list' } | { name: 'edit'; id: string }
+
+/*
+ * A project open is an entry of the browser's history (#its-id): the phone's Back, or the
+ * browser's, comes back to the list (asking first if changes are not saved), and a reload stays on it.
+ */
+const LIST_URL = () => location.pathname + location.search
+/** The project an entry of the history is on (null: the list). */
+const editedIn = (state: unknown) => (state as { adminEdit?: string } | null)?.adminEdit ?? null
+/** The project in the address (#its-id), if any. */
+const idInAddress = () => {
+  try {
+    return decodeURIComponent(location.hash.slice(1))
+  } catch {
+    return ''
+  }
+}
 
 /**
  * The projects' admin (/admin/): sign in, the projects of each page in their order — move them,
@@ -18,6 +34,9 @@ export function AdminApp() {
   const [tab, setTab] = useState<ProjectCategory>('construction')
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
+  // (changes not saved in the project open; the way back has already asked)
+  const dirty = useRef(false)
+  const asked = useRef(false)
 
   const fail = (e: unknown) => {
     if (e instanceof ApiError && e.status === 401) {
@@ -31,8 +50,58 @@ export function AdminApp() {
   const load = async () => {
     const { projects } = await api.projects()
     setProjects(projects)
+    // (a reload, or signing in again, on a project: that project, the list a Back away)
+    const id = idInAddress()
+    if (id && projects.some((p) => p.id === id)) {
+      if (editedIn(history.state) !== id) {
+        history.replaceState(null, '', LIST_URL())
+        history.pushState({ adminEdit: id }, '', `#${encodeURIComponent(id)}`)
+      }
+      setView({ name: 'edit', id })
+      return
+    }
+    if (location.hash || editedIn(history.state)) history.replaceState(null, '', LIST_URL())
     setView({ name: 'list' })
   }
+
+  /** Opens a project, as an entry of the history. */
+  const open = (id: string) => {
+    history.pushState({ adminEdit: id }, '', `#${encodeURIComponent(id)}`)
+    setError('')
+    setView({ name: 'edit', id })
+  }
+
+  /** Back to the list (any changes not saved already given up): the history's own way back. */
+  const toList = () => {
+    setError('')
+    if (editedIn(history.state)) {
+      asked.current = true
+      history.back()
+      return
+    }
+    history.replaceState(null, '', LIST_URL())
+    setView({ name: 'list' })
+  }
+
+  // The browser's Back / Forward between the list and a project.
+  const onHistory = useEffectEvent((state: unknown) => {
+    if (view.name !== 'list' && view.name !== 'edit') return
+    const id = editedIn(state)
+    const sure = asked.current
+    asked.current = false
+    if (view.name === 'edit' && id !== view.id && dirty.current && !sure && !window.confirm(UNSAVED)) {
+      // (stays: the project's entry back on top)
+      history.pushState({ adminEdit: view.id }, '', `#${encodeURIComponent(view.id)}`)
+      return
+    }
+    setError('')
+    setView(id && projects.some((p) => p.id === id) ? { name: 'edit', id } : { name: 'list' })
+  })
+  useEffect(() => {
+    const pop = (e: PopStateEvent) => onHistory(e.state)
+    window.addEventListener('popstate', pop)
+    return () => window.removeEventListener('popstate', pop)
+  }, [])
 
   useEffect(() => {
     let live = true
@@ -109,9 +178,9 @@ export function AdminApp() {
           project={project}
           error={error}
           notice={notice}
-          onBack={() => {
-            setError('')
-            setView({ name: 'list' })
+          onBack={toList}
+          onDirty={(d) => {
+            dirty.current = d
           }}
           onSave={async (edited) => {
             try {
@@ -132,7 +201,8 @@ export function AdminApp() {
                 projects.filter((p) => p.id !== project.id),
                 `Đã xoá "${project.title.vi}".`,
               )
-              setView({ name: 'list' })
+              dirty.current = false
+              toList()
             } catch (e) {
               fail(e)
             }
@@ -178,7 +248,7 @@ export function AdminApp() {
     const next = at < 0 ? [...projects, fresh] : [...projects.slice(0, at), fresh, ...projects.slice(at)]
     try {
       await save(next, 'Đã tạo dự án — thêm ảnh và thông tin rồi bấm Lưu.')
-      setView({ name: 'edit', id })
+      open(id)
     } catch (e) {
       fail(e)
     }
@@ -226,7 +296,7 @@ export function AdminApp() {
               <span className="ad-row__thumb">
                 {p.cover && <img src={imageSrc(p.cover)} alt="" style={{ objectPosition: imagePosition(p.cover) }} />}
               </span>
-              <button type="button" className="ad-row__main" onClick={() => setView({ name: 'edit', id: p.id })}>
+              <button type="button" className="ad-row__main" onClick={() => open(p.id)}>
                 <b>{p.title.vi}</b>
                 <small>{[p.type && PROJECT_TYPE_NAMES[p.type].vi, p.place?.vi, p.year].filter(Boolean).join(' · ') || '—'}</small>
                 <span className="ad-chip" data-state={!p.cover ? 'missing' : p.hidden ? 'hidden' : 'shown'}>

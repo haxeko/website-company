@@ -127,8 +127,8 @@ riêng** cùng một phong cách: [`/smart-home/`](#trang-smart-home), [`/constr
     đó thành ảnh lớn đầu trang**, nền tối dần, rồi tên dự án, **hàng thông tin có biểu tượng** — địa điểm, năm, diện tích
     (chỉ ghi số thì tự thêm "m²"), hạng mục (cần cẩu cho xây dựng, sofa cho nội thất), cùng kiểu dải biểu tượng đầu các
     trang — phần giới thiệu và **các ảnh của dự án** xếp bên dưới (ảnh đầu trải ngang, các ảnh sau hai cột trên máy
-    tính, một cột trên điện thoại), cuối trang là nút tư vấn qua Zalo. Đóng (nút ×, "← Các dự án …", phím Esc hoặc nút
-    Back của trình duyệt): ảnh thu nhỏ về đúng ô cũ, các dự án khác bay về chỗ. Vuốt từ mép màn hình để quay lại (iPhone,
+    tính, một cột trên điện thoại), cuối trang là nút tư vấn qua Zalo. Đóng (nút **"← Các dự án …"** ở góc trên bên
+    trái — không có nút × — phím Esc hoặc nút Back của trình duyệt): ảnh thu nhỏ về đúng ô cũ, các dự án khác bay về chỗ. Vuốt từ mép màn hình để quay lại (iPhone,
     Android) thì trình duyệt đã tự diễn cảnh chuyển, nên dự án đóng ngay, không chiếu lại lần nữa.
   - **Mỗi dự án có link riêng**: `/construction/#<mã-dự-án>`, `/interior/#<mã-dự-án>` — gửi link là mở thẳng dự án đó.
   - **Trên máy tính** lưới nằm **dưới màn hình đầu**, hết chiều ngang, có tiêu đề "Các dự án xây dựng / nội thất": mỗi
@@ -142,7 +142,8 @@ riêng** cùng một phong cách: [`/smart-home/`](#trang-smart-home), [`/constr
   - **Bộ lọc loại công trình** (điện thoại và máy tính), cạnh dòng "Dự án — 04": mặc định **Tất cả**; danh sách chỉ
     gồm những loại mà các dự án của trang đó có (chọn trong trang quản trị khi thêm / sửa dự án — xem
     [Thêm / sửa dự án](#thêm--sửa-dự-án)): *Nhà phố, Biệt thự, Nhà vườn, Nhà hàng, Quán cafe, Shop bán hàng*. Chọn một
-    loại thì các ô sắp xếp lại, số đếm đổi theo. Trên điện thoại là danh sách chọn của máy (vòng xoay trên iPhone).
+    loại thì các ô sắp xếp lại, số đếm đổi theo. Trên điện thoại là danh sách chọn của máy (vòng xoay trên iPhone); trên
+    máy tính danh sách mở ra nền tối, chữ sáng như website.
   - **Biểu tượng các trang cạnh nút nhắn tin** (điện thoại): cuộn tới **cuối trang Smart Home, cuối danh sách dự án, cuối
     trang một dự án**, ở hàng dưới cùng bên trái nút nhắn tin hiện **4 nút tròn thẳng hàng ngang, tên trang ghi bên
     dưới** — Trang chủ, Smart Home, Xây dựng, Nội thất (cùng biểu tượng với menu vòng cung của máy tính), các nút ngang
@@ -431,8 +432,13 @@ website chạy `npm run admin:password` (các máy đang đăng nhập sẽ ph�
   ngay trên máy trước khi gửi (nhanh cả khi dùng 4G); máy chủ xoay đúng chiều và tạo các cỡ AVIF / WebP cho website.
   Ảnh đầu tiên thành ảnh bìa; mỗi ảnh có chú thích hai thứ tiếng, nút ↑ ↓, **Làm ảnh bìa**, **Xoá**. Ở ảnh bìa, chạm
   vào chỗ muốn đặt giữa ô vuông — ô vuông xem trước đổi theo.
-- **Lưu**: website cập nhật ngay (không cần build, không cần xoá cache). **Hoàn tác** bỏ các thay đổi chưa lưu; rời
-  trang khi chưa lưu sẽ được hỏi lại. **Xoá dự án** xoá cả ảnh của nó (không hoàn tác được).
+- **Quay lại** danh sách: nút **‹ Quay lại** ở đầu trang (luôn thấy, kể cả khi cuộn xuống cuối), hoặc nút / cử chỉ
+  **Back của điện thoại, trình duyệt** (Forward mở lại dự án). Dự án đang mở có địa chỉ riêng `/admin/#mã-dự-án`: tải
+  lại trang vẫn ở dự án đó.
+- **Lưu**: website cập nhật ngay (không cần build, không cần xoá cache). **Hoàn tác** bỏ các thay đổi chưa lưu; quay
+  lại hay rời trang khi chưa lưu sẽ được hỏi trước ("Không" thì ở lại, giữ nguyên thay đổi). **Xoá dự án** xoá cả ảnh
+  của nó (không hoàn tác được).
+- Các danh sách chọn (*Trang*, *Loại công trình*) mở ra nền tối, chữ sáng — đọc rõ trên mọi trình duyệt.
 - Dự án hiện trên website khi **có ảnh bìa** và **bật "Hiện trên website"** — dự án đang làm dở cứ để ẩn.
 - Ảnh nhận: JPEG, PNG, WebP, AVIF, tối đa 40 MB (ảnh HEIC của iPhone được Safari tự đổi sang JPEG khi tải lên).
 
@@ -547,7 +553,8 @@ Kiểm thử tự động bằng Playwright (Chromium) trên bản build:
   xuống, thẳng hàng với nút, đúng link, mở tab mới rồi thu lại; thu lại bằng ×, bấm ra ngoài, Esc; dùng được bằng bàn
   phím (Tab tới từng ứng dụng, Esc trả về nút);
   điện thoại: 2 ô mỗi hàng, đủ mọi dự án, cách đều hai bên, còn chỗ cho nút nhắn tin; bấm mở dự án (ảnh bìa phóng
-  to ≥ 60% sau 0,2 giây, các ô khác văng ra), đóng bằng ×, Back, Esc — ô về đúng chỗ, trang không bị cuộn lệch; link
+  to ≥ 60% sau 0,2 giây, các ô khác văng ra), không có nút × ở góc, nút "← Các dự án …" nằm trọn trong màn hình (cách
+  mép trên 12 px trên điện thoại) và được focus khi mở, đóng bằng nút đó, Back, Esc — ô về đúng chỗ, trang không bị cuộn lệch; link
   `#mã-dự-án` mở thẳng dự án; phím mũi tên và bánh xe không đổi chủ đề phía sau khi đang xem dự án; menu vòng cung ở
   1280×720, 1440×900, 1536×864, 1920×1080 (ẩn khi còn thấy ảnh bìa, hiện khi cuộn qua, nằm trong lề không chạm ảnh, đúng
   trang đang xem, bấm trang khác thì chuyển trang); tiếng Anh; "giảm chuyển động"; Back / Forward của trình duyệt (có hiệu ứng) và vuốt quay lại / tới (đóng / mở ngay,
@@ -556,7 +563,10 @@ Kiểm thử tự động bằng Playwright (Chromium) trên bản build:
   thêm dự án (mã tạo từ tên tiếng Việt), tải 2 ảnh (ảnh chụp dọc có thẻ xoay vẫn đứng đúng chiều), tệp không phải ảnh
   bị từ chối kèm lời nhắn, chạm chọn tâm ảnh bìa, lưu → website hiện ngay ở đầu trang, link riêng mở đúng dự án (tiếng
   Anh để trống thì dùng tiếng Việt), đổi thứ tự, ẩn, xoá (ảnh bị xoá theo), đăng xuất; rời trang khi chưa lưu được hỏi
-  lại, Hoàn tác; đổi mật khẩu thì các phiên cũ hết hạn; không đăng nhập, khác trang gửi tới, ảnh của dự án khác, mã dự
+  lại, Hoàn tác; nút **Quay lại** ở đầu trang sửa (cao ≥ 40 px, vẫn ở đầu khi cuộn tới cuối), Back / Forward của điện
+  thoại và trình duyệt giữa danh sách và dự án, có thay đổi chưa lưu thì hỏi đúng một lần ("Không": ở lại, thay đổi còn
+  nguyên, không lưu gì), tải lại vẫn ở dự án, link `/admin/#mã` mở dự án (mã lạ: về danh sách); danh sách chọn của trang
+  quản trị và bộ lọc website mở ra nền tối chữ sáng (chụp màn hình Chromium thật, trước khi sửa: nền trắng chữ trắng); đổi mật khẩu thì các phiên cũ hết hạn; không đăng nhập, khác trang gửi tới, ảnh của dự án khác, mã dự
   án lạ, dữ liệu quá lớn đều bị từ chối; máy chủ quản trị không chạy thì trang báo cách khởi động lại.
 - Tốc độ: trang chủ hiện đủ chữ sau ~1,4 giây (trước ~2,5 giây), ba trang riêng ~0,9 giây (trước ~1,5 giây); ảnh nào
   cũng tải bằng đường dẫn có mã theo nội dung file.

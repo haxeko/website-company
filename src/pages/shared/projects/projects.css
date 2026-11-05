@@ -110,10 +110,18 @@
   height: 100%;
   margin: 0;
   border: 0;
+  /* (unseen, but its open list takes these: dark, in the site's type) */
+  background-color: #18191c;
   opacity: 0;
+  font-family: inherit;
   font-size: 16px;
   cursor: pointer;
   appearance: none;
+}
+
+.pj__filter option {
+  background-color: #18191c;
+  color: var(--c-text);
 }
 
 .pj__filter:has(select:focus-visible) {
@@ -508,18 +516,16 @@ html[data-project-open] {
   top: 0;
   z-index: 3;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   height: 0;
   padding: 0 var(--gutter);
 }
 
-.pv__back,
-.pv__close {
+.pv__back {
   position: relative;
   display: inline-flex;
   align-items: center;
-  margin-top: calc(var(--gutter-top) + 44px);
+  margin-top: calc(var(--gutter-top) / 2);
   border: 1px solid rgb(244 240 233 / 0.3);
   background: rgb(14 14 16 / 0.45);
   -webkit-backdrop-filter: blur(10px);
@@ -529,9 +535,6 @@ html[data-project-open] {
   transition:
     border-color 0.3s ease,
     background-color 0.3s ease;
-}
-
-.pv__back {
   gap: 10px;
   height: 44px;
   padding: 0 18px 0 12px;
@@ -542,16 +545,7 @@ html[data-project-open] {
   text-transform: uppercase;
 }
 
-.pv__close {
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  padding: 0;
-  border-radius: 50%;
-}
-
-.pv__back svg,
-.pv__close svg {
+.pv__back svg {
   width: 18px;
   height: 18px;
   fill: none;
@@ -562,15 +556,13 @@ html[data-project-open] {
 }
 
 @media (hover: hover) {
-  .pv__back:hover,
-  .pv__close:hover {
+  .pv__back:hover {
     border-color: var(--c-accent);
     background: rgb(14 14 16 / 0.7);
   }
 }
 
-.pv__back:focus-visible,
-.pv__close:focus-visible {
+.pv__back:focus-visible {
   outline: 2px solid var(--c-accent);
   outline-offset: 2px;
 }
@@ -752,21 +744,13 @@ html[data-project-open] {
 }
 
 @media (max-width: 760px), (orientation: portrait) and (max-width: 1024px) {
-  .pv__back,
-  .pv__close {
-    margin-top: calc(var(--gutter-top) + 4px);
-  }
-
+  /* (close under the top, as the header: its top edge was cut off) */
   .pv__back {
+    margin-top: max(12px, env(safe-area-inset-top, 0px));
     height: 40px;
     padding: 0 14px 0 10px;
     font-size: 9px;
     letter-spacing: 0.18em;
-  }
-
-  .pv__close {
-    width: 40px;
-    height: 40px;
   }
 
   .pv__hero {

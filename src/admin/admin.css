@@ -108,6 +108,46 @@ a {
   color: var(--c-text);
 }
 
+/* (a project open: the way back to the list, first in the bar that stays at the top) */
+.ad-back {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 4px;
+  min-height: 42px;
+  padding: 0 16px 0 9px;
+  border: 1px solid rgb(244 240 233 / 0.3);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.06);
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.ad-back svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ad-back:active {
+  background: rgb(255 255 255 / 0.12);
+}
+
+@media (hover: hover) {
+  .ad-back:hover {
+    border-color: var(--c-accent);
+  }
+}
+
 .ad-main {
   display: grid;
   gap: 16px;
@@ -211,6 +251,18 @@ a {
   border-radius: 10px;
   background: rgb(255 255 255 / 0.04);
   font-size: 16px; /* (no zoom on iPhone) */
+}
+
+/* (a list's colours solid: the open list takes them — through a see-through one it came up white,
+   its light text unreadable) */
+.ad-field select {
+  background-color: #1f2022;
+}
+
+.ad-field option,
+.ad-field optgroup {
+  background-color: #1f2022;
+  color: var(--c-text);
 }
 
 .ad-field textarea {

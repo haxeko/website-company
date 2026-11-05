@@ -93,7 +93,7 @@ export function ProjectView({ project, origin, instant, target, closing, page, c
   const rootRef = useRef<HTMLDivElement>(null)
   const bgRef = useRef<HTMLDivElement>(null)
   const heroRef = useRef<HTMLDivElement>(null)
-  const closeRef = useRef<HTMLButtonElement>(null)
+  const backRef = useRef<HTMLButtonElement>(null)
   const arcRef = useRef<HTMLElement>(null)
 
   // Opening.
@@ -106,7 +106,7 @@ export function ProjectView({ project, origin, instant, target, closing, page, c
     const lines = root.querySelectorAll('[data-pv-line]')
     const bar = root.querySelector('.pv__bar')
     const heroImg = hero.querySelector('img')
-    closeRef.current?.focus({ preventScroll: true })
+    backRef.current?.focus({ preventScroll: true })
     if (instant) {
       gsap.set(bg, { opacity: 1 })
       return
@@ -233,14 +233,9 @@ export function ProjectView({ project, origin, instant, target, closing, page, c
     >
       <div ref={bgRef} className="pv__bg" aria-hidden="true" />
       <div className="pv__bar">
-        <button type="button" className="pv__back" onClick={onClose}>
+        <button ref={backRef} type="button" className="pv__back" onClick={onClose}>
           <SideArrow direction="left" />
           <span>{category}</span>
-        </button>
-        <button ref={closeRef} type="button" className="pv__close" aria-label={t.close} title={t.close} onClick={onClose}>
-          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M6 6l12 12M18 6 6 18" />
-          </svg>
         </button>
       </div>
 
