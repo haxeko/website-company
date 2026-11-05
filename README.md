@@ -143,9 +143,10 @@ riêng** cùng một phong cách: [`/smart-home/`](#trang-smart-home), [`/constr
     gồm những loại mà các dự án của trang đó có (chọn trong trang quản trị khi thêm / sửa dự án — xem
     [Thêm / sửa dự án](#thêm--sửa-dự-án)): *Nhà phố, Biệt thự, Nhà vườn, Nhà hàng, Quán cafe, Shop bán hàng*. Chọn một
     loại thì các ô sắp xếp lại, số đếm đổi theo. Trên điện thoại là danh sách chọn của máy (vòng xoay trên iPhone).
-  - **Biểu tượng các trang cạnh nút nhắn tin** (điện thoại): cuộn tới cuối danh sách dự án, ở hàng dưới cùng bên trái
-    nút nhắn tin hiện **4 nút tròn thẳng hàng ngang, tên trang ghi bên dưới** — Trang chủ, Smart Home, Xây dựng, Nội thất
-    (cùng biểu tượng với menu vòng cung của máy tính), các nút ngang hàng với nút nhắn tin; trang đang xem viền vàng (bấm vào là
+  - **Biểu tượng các trang cạnh nút nhắn tin** (điện thoại): cuộn tới **cuối trang Smart Home, cuối danh sách dự án, cuối
+    trang một dự án**, ở hàng dưới cùng bên trái nút nhắn tin hiện **4 nút tròn thẳng hàng ngang, tên trang ghi bên
+    dưới** — Trang chủ, Smart Home, Xây dựng, Nội thất (cùng biểu tượng với menu vòng cung của máy tính), các nút ngang
+    hàng với nút nhắn tin; trong trang một dự án, bấm nút trang của dự án là quay lại danh sách dự án; trang đang xem viền vàng (bấm vào là
     cuộn lên đầu trang); cuộn lên lại thì ẩn. Trang web chừa chỗ cho hàng nút nên không đè lên dự án nào.
   - **Menu vòng cung** (trang dự án trên máy tính): khi cuộn qua ảnh bìa, ở lề tối bên trái hiện **4 nút tròn xếp trên
     một cung tròn** — Trang chủ (dấu mái nhà của VILLA NEST), Smart Home, Xây dựng (cần cẩu), Nội thất (sofa) — cùng

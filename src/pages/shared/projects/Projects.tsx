@@ -16,7 +16,7 @@ import { useI18n } from '../../../i18n/context'
 import { REDUCED_MOTION_QUERY } from '../../../utils/device'
 import { usePortrait } from '../useDeck'
 import { PROJECT_TYPES, PROJECT_TYPE_NAMES, preloadCover, useProjects, type Project, type ProjectCategory, type ProjectType } from './data'
-import { PagesDock } from './PagesArc'
+import { PagesDockAtEnd } from './PagesArc'
 import { Picture, ProjectView, type CoverOrigin } from './ProjectView'
 import './projects.css'
 
@@ -266,19 +266,6 @@ export function Projects({ category, name, ready }: ProjectsProps) {
     gridRef.current?.removeAttribute('data-dragging')
     goTo(current)
   }
-
-  /* ── The site's pages beside the chat button (phones), once the projects' end is reached:
-     there the page keeps room for them under the squares ── */
-
-  const endRef = useRef<HTMLElement>(null)
-  const [near, setNear] = useState(false)
-  useEffect(() => {
-    const end = endRef.current
-    if (!end) return
-    const watch = new IntersectionObserver(([entry]) => setNear(entry.isIntersecting))
-    watch.observe(end)
-    return () => watch.disconnect()
-  }, [list])
 
   /** While the others fly, the grid is drawn over the view's dark (it fades in under them). */
   const lift = (on: boolean) => rootRef.current?.toggleAttribute('data-lifted', on)
@@ -583,8 +570,8 @@ export function Projects({ category, name, ready }: ProjectsProps) {
           ))}
         </div>
       )}
-      <i ref={endRef} className="pj__end" aria-hidden="true" />
-      {portrait && <PagesDock current={category} on={near && !open} onCurrent={() => window.scrollTo({ top: 0, behavior: 'smooth' })} />}
+      {/* (phones: the site's pages, once the end of the projects is reached) */}
+      <PagesDockAtEnd current={category} hidden={!!open} onCurrent={() => window.scrollTo({ top: 0, behavior: 'smooth' })} />
       {open &&
         createPortal(
           <ProjectView

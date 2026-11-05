@@ -4,6 +4,7 @@ import { useApplianceBeep } from '../../audio/useApplianceBeep'
 import { Header } from '../../components/Header'
 import { useI18n } from '../../i18n/context'
 import { Cta, DeckControls, DeckCopy, DeckNav, DeckStory, PageStrip, PlayButton } from '../shared/Deck'
+import { PagesDockAtEnd } from '../shared/projects/PagesArc'
 import { useDeck } from '../shared/useDeck'
 import { useDemo } from '../shared/useDemo'
 import { revealBelowHeader } from '../shared/reveal'
@@ -151,7 +152,9 @@ export function SmartHomePage() {
               visible={deck.onScreen}
               invite={invite}
               alt={copy.panel.label}
-              overlay={<DeckControls active={active} count={THEMES.length} onPrev={() => show(active - 1)} onNext={() => show(active + 1)} />}
+              overlay={
+                <DeckControls active={active} count={THEMES.length} onPrev={() => show(active - 1)} onNext={() => show(active + 1)} />
+              }
             >
               <ScenePanel
                 home={home}
@@ -213,6 +216,9 @@ export function SmartHomePage() {
             {copy.features[THEMES[active]].title}
           </p>
         </section>
+
+        {/* (phones: the site's pages, once the end of the page is reached) */}
+        <PagesDockAtEnd current="smart-home" onCurrent={() => window.scrollTo({ top: 0, behavior: 'smooth' })} />
       </main>
     </div>
   )

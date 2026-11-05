@@ -183,9 +183,11 @@
 /* ── Small screens ────────────────────────────────────────────────────── */
 
 @media (max-width: 760px) {
+  /* (close under the top of the screen: no empty band over the logo) */
   .site-header {
     grid-template-columns: 1fr auto;
     row-gap: 12px;
+    padding-top: max(10px, env(safe-area-inset-top, 0px));
     padding-bottom: 12px;
   }
 

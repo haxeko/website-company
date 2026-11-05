@@ -6,7 +6,7 @@ import { REDUCED_MOTION_QUERY } from '../../../utils/device'
 import { CtaArrow, SideArrow } from '../icons'
 import { imagePosition, imageSrc, imageSrcSet, type Project, type ProjectImage } from './data'
 import { AreaIcon, PlaceIcon, ScopeIcon, YearIcon } from './icons'
-import { PagesArc } from './PagesArc'
+import { PagesArc, PagesDockAtEnd } from './PagesArc'
 
 /** Where the cover was on the page when the project was opened: it grows from there. */
 export interface CoverOrigin {
@@ -309,6 +309,8 @@ export function ProjectView({ project, origin, instant, target, closing, page, c
             <CtaArrow />
           </span>
         </a>
+        {/* (phones: the site's pages, once the end of the project is reached; its own page: back to its projects) */}
+        <PagesDockAtEnd current={project.category} hidden={closing} onCurrent={onClose} />
       </article>
     </div>
   )

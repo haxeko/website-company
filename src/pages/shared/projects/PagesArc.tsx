@@ -1,7 +1,8 @@
-import { type CSSProperties, type MouseEvent, type ReactNode, type Ref } from 'react'
+import { useEffect, useRef, useState, type CSSProperties, type MouseEvent, type ReactNode, type Ref } from 'react'
 import { useI18n } from '../../../i18n/context'
-import type { ProjectCategory } from './data'
+import { usePortrait } from '../useDeck'
 import { CraneIcon, HomeMarkIcon, SmartHomeIcon, SofaIcon } from './icons'
+import './PagesArc.css'
 
 /*
  * The site's pages as round buttons with the line icons of the pages' strips: on a computer set
@@ -9,8 +10,11 @@ import { CraneIcon, HomeMarkIcon, SmartHomeIcon, SofaIcon } from './icons'
  * row with their names, in the chat button's row (PagesDock).
  */
 
+/** The site's pages. */
+export type PageId = 'home' | 'smart-home' | 'construction' | 'interior'
+
 interface Page {
-  id: string
+  id: PageId
   href: string
   label: string
   icon: ReactNode
@@ -27,15 +31,15 @@ function usePages(): Page[] {
 }
 
 interface PagesProps {
-  /** The page the projects are on: its button is gold. */
-  current: ProjectCategory
+  /** The page this is (or the page of the project on show): its button is gold. */
+  current: PageId
   /** What its button does (back to the projects, up to the page's top). */
   onCurrent: () => void
 }
 
 /** The page the projects are on does `onCurrent`; the others are plain links. */
 const onPage =
-  (id: string, { current, onCurrent }: PagesProps) =>
+  (id: PageId, { current, onCurrent }: PagesProps) =>
   (e: MouseEvent<HTMLAnchorElement>) => {
     if (id !== current || e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return
     e.preventDefault()
@@ -116,5 +120,29 @@ export function PagesDock({ on, ...props }: PagesProps & { on: boolean }) {
         </a>
       ))}
     </nav>
+  )
+}
+
+/**
+ * Phones: the row, at the end of what this is placed after (a page's content, a project's) — it
+ * comes in once that end is in view, where the page keeps room for it, and goes again higher up.
+ */
+export function PagesDockAtEnd({ hidden, ...props }: PagesProps & { hidden?: boolean }) {
+  const portrait = usePortrait()
+  const endRef = useRef<HTMLElement>(null)
+  const [near, setNear] = useState(false)
+  useEffect(() => {
+    const end = endRef.current
+    if (!end) return
+    const watch = new IntersectionObserver(([entry]) => setNear(entry.isIntersecting))
+    watch.observe(end)
+    return () => watch.disconnect()
+  }, [portrait])
+  if (!portrait) return null
+  return (
+    <>
+      <i ref={endRef} className="pages-end" aria-hidden="true" />
+      <PagesDock {...props} on={near && !hidden} />
+    </>
   )
 }

@@ -1,0 +1,282 @@
+/*
+ * The site's pages (PagesArc.tsx): on a computer on an arc in a project's left margin, on a
+ * phone in a row beside the chat button at the end of a page — and the line icons they share
+ * with the project's facts.
+ */
+
+.pv-icon {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.pv-icon .is-filled {
+  fill: currentColor;
+  stroke: none;
+}
+
+/*
+ * The site's pages on an arc (PagesArc, computers): round buttons as the header's, the line
+ * icons of the strips under the pages' header, the project's page in gold — in a project's left
+ * margin once its banner is scrolled away, never over it. They come in one after another along
+ * the arc.
+ */
+.pages-arc {
+  position: fixed;
+  top: 50%;
+  left: clamp(18px, 1.8vw, 32px);
+  z-index: 3;
+  translate: 0 -50%;
+  pointer-events: none;
+}
+
+.pages-arc__line {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+}
+
+.pages-arc__line path {
+  fill: none;
+  stroke: rgb(210 176 122 / 0.3);
+  stroke-width: 1;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 0.5s ease;
+}
+
+.pages-arc[data-on] .pages-arc__line path {
+  stroke-dashoffset: 0;
+  transition-duration: 0.9s;
+}
+
+.pages-arc__item {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border: 1px solid rgb(244 240 233 / 0.3);
+  border-radius: 50%;
+  background: rgb(14 14 16 / 0.6);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  color: var(--c-text);
+  opacity: 0;
+  translate: -22px 0;
+  visibility: hidden;
+  transition:
+    opacity 0.3s ease,
+    translate 0.4s var(--ease-out),
+    border-color 0.3s ease,
+    background-color 0.3s ease,
+    visibility 0s linear 0.4s;
+}
+
+.pages-arc[data-on] .pages-arc__item {
+  opacity: 1;
+  translate: 0 0;
+  visibility: visible;
+  pointer-events: auto;
+  transition:
+    opacity 0.45s ease calc(var(--i) * 0.07s + 0.1s),
+    translate 0.7s var(--ease-out) calc(var(--i) * 0.07s + 0.1s),
+    border-color 0.3s ease,
+    background-color 0.3s ease,
+    visibility 0s;
+}
+
+.pages-arc__item .pv-icon {
+  width: 22px;
+  height: 22px;
+}
+
+.pages-arc__item[aria-current] {
+  border-color: var(--c-accent);
+  background: rgb(210 176 122 / 0.14);
+  color: var(--gold-2);
+}
+
+@media (hover: hover) {
+  .pages-arc__item:hover {
+    border-color: var(--c-accent);
+    background: rgb(14 14 16 / 0.85);
+  }
+}
+
+.pages-arc__item:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 3px;
+}
+
+/* (its name, beside it while pointed at) */
+.pages-arc__label {
+  position: absolute;
+  top: 50%;
+  left: calc(100% + 12px);
+  padding: 8px 13px;
+  border: 1px solid rgb(244 240 233 / 0.16);
+  border-radius: 999px;
+  background: rgb(14 14 16 / 0.85);
+  color: var(--c-text);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  opacity: 0;
+  translate: -6px -50%;
+  pointer-events: none;
+  transition:
+    opacity 0.25s ease,
+    translate 0.35s var(--ease-out);
+}
+
+.pages-arc__item:is(:hover, :focus-visible) .pages-arc__label {
+  opacity: 1;
+  translate: 0 -50%;
+}
+
+/*
+ * Phones (PagesDock): the same buttons in a straight row, each name under its button, from the
+ * left edge to the chat button — the buttons in line with it. They come in once the end of the
+ * projects is reached (there the page keeps room for them), one after another.
+ */
+.pages-dock {
+  /* (a button, the gap under it, its name's line) */
+  --dock-button: 44px;
+  --dock-name: 12px;
+
+  position: fixed;
+  right: calc(var(--gutter) + var(--chat-size) + 12px);
+  /* (a button's centre on the chat button's) */
+  bottom: calc(var(--chat-bottom) + var(--chat-size) / 2 - var(--dock-button) / 2 - 5px - var(--dock-name));
+  left: calc(var(--gutter) - 6px);
+  z-index: 30;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: start;
+  pointer-events: none;
+}
+
+.pages-dock__item {
+  display: grid;
+  justify-items: center;
+  gap: 5px;
+  min-width: 0;
+  color: var(--c-text);
+  text-decoration: none;
+  opacity: 0;
+  translate: 0 18px;
+  visibility: hidden;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    opacity 0.3s ease,
+    translate 0.4s var(--ease-out),
+    visibility 0s linear 0.4s;
+}
+
+.pages-dock[data-on] .pages-dock__item {
+  opacity: 1;
+  translate: 0 0;
+  visibility: visible;
+  pointer-events: auto;
+  transition:
+    opacity 0.45s ease calc(var(--i) * 0.06s + 0.05s),
+    translate 0.6s var(--ease-out) calc(var(--i) * 0.06s + 0.05s),
+    visibility 0s;
+}
+
+.pages-dock__icon {
+  display: grid;
+  place-items: center;
+  width: var(--dock-button);
+  height: var(--dock-button);
+  border: 1px solid rgb(244 240 233 / 0.3);
+  border-radius: 50%;
+  background: rgb(14 14 16 / 0.6);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  transition:
+    border-color 0.3s ease,
+    background-color 0.3s ease,
+    scale 0.15s ease;
+}
+
+.pages-dock__icon .pv-icon {
+  width: 21px;
+  height: 21px;
+}
+
+.pages-dock__item:active .pages-dock__icon {
+  scale: 0.94;
+}
+
+.pages-dock__label {
+  max-width: 100%;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  line-height: var(--dock-name);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pages-dock__item[aria-current] .pages-dock__icon {
+  border-color: var(--c-accent);
+  background: rgb(210 176 122 / 0.14);
+  color: var(--gold-2);
+}
+
+.pages-dock__item[aria-current] .pages-dock__label {
+  color: var(--gold-2);
+}
+
+.pages-dock__item:focus-visible {
+  outline: none;
+}
+
+.pages-dock__item:focus-visible .pages-dock__icon {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 3px;
+}
+
+@media (max-width: 350px) {
+  .pages-dock {
+    --dock-button: 40px;
+  }
+
+  .pages-dock__label {
+    font-size: 9px;
+    letter-spacing: 0;
+  }
+}
+
+/* (where a page's content ends: the row comes in once it is in view, phones) */
+.pages-end {
+  display: block;
+  height: 1px;
+}
+
+/* Phones and portrait tablets: no arc (no margins); short screens: no room for it. */
+@media (max-width: 760px), (orientation: portrait) and (max-width: 1024px), (max-height: 560px) {
+  .pages-arc {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pages-arc__item,
+  .pages-arc[data-on] .pages-arc__item,
+  .pages-dock__item,
+  .pages-dock[data-on] .pages-dock__item {
+    translate: 0 0;
+  }
+
+  .pages-arc__line path {
+    transition: none;
+  }
+}
