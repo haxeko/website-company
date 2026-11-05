@@ -123,10 +123,12 @@ riêng** cùng một phong cách: [`/smart-home/`](#trang-smart-home), [`/constr
     đúng chỗ — các "ô đen" của bàn cờ trước, "ô trắng" sau. Rê chuột lên ô: ô nhấc lên, ảnh phóng nhẹ; chạm: ô lún xuống
     như bấm biểu tượng ứng dụng.
   - **Bấm vào một dự án**: các dự án khác **bị văng ra khỏi màn hình**, ảnh bìa của dự án được chọn **phóng to từ đúng ô
-    đó thành ảnh lớn đầu trang**, nền tối dần, rồi tên dự án, loại hạng mục, địa điểm · năm, phần giới thiệu, thông số
-    (địa điểm, năm, diện tích, hạng mục) và **các ảnh của dự án** xếp bên dưới (ảnh đầu trải ngang, các ảnh sau hai cột
-    trên máy tính, một cột trên điện thoại), cuối trang là nút tư vấn qua Zalo. Đóng (nút ×, "← Các dự án …", phím Esc
-    hoặc nút Back của trình duyệt): ảnh thu nhỏ về đúng ô cũ, các dự án khác bay về chỗ.
+    đó thành ảnh lớn đầu trang**, nền tối dần, rồi tên dự án, **hàng thông tin có biểu tượng** — địa điểm, năm, diện tích
+    (chỉ ghi số thì tự thêm "m²"), hạng mục (cần cẩu cho xây dựng, sofa cho nội thất), cùng kiểu dải biểu tượng đầu các
+    trang — phần giới thiệu và **các ảnh của dự án** xếp bên dưới (ảnh đầu trải ngang, các ảnh sau hai cột trên máy
+    tính, một cột trên điện thoại), cuối trang là nút tư vấn qua Zalo. Đóng (nút ×, "← Các dự án …", phím Esc hoặc nút
+    Back của trình duyệt): ảnh thu nhỏ về đúng ô cũ, các dự án khác bay về chỗ. Vuốt từ mép màn hình để quay lại (iPhone,
+    Android) thì trình duyệt đã tự diễn cảnh chuyển, nên dự án đóng ngay, không chiếu lại lần nữa.
   - **Mỗi dự án có link riêng**: `/construction/#<mã-dự-án>`, `/interior/#<mã-dự-án>` — gửi link là mở thẳng dự án đó.
   - Trên máy tính (trang một màn hình) lưới nằm dưới chữ, kích thước ô tự tính theo chỗ còn lại (đo chữ dài nhất của cả
     bốn chủ đề nên lưới không nhảy khi đổi chủ đề): 2 hàng nếu đủ cao, 1 hàng nếu không, và **các chấm** bên dưới để lật
@@ -504,7 +506,8 @@ Kiểm thử tự động bằng Playwright (Chromium) trên bản build:
   luôn vuông, 2 ô mỗi hàng; điện thoại: đủ mọi dự án, cách đều hai bên, còn chỗ cho nút Zalo; bấm mở dự án (ảnh bìa phóng
   to ≥ 60% sau 0,2 giây, các ô khác văng ra), đóng bằng ×, Back, Esc — ô về đúng chỗ, trang không bị cuộn lệch; link
   `#mã-dự-án` mở thẳng dự án; phím mũi tên và bánh xe không đổi chủ đề phía sau khi đang xem dự án; chấm lật trang;
-  tiếng Anh; "giảm chuyển động".
+  tiếng Anh; "giảm chuyển động"; Back / Forward của trình duyệt (có hiệu ứng) và vuốt quay lại / tới (đóng / mở ngay,
+  các ô đúng chỗ ngay khung hình đầu); hàng thông tin gọn trên iPhone SE → 14 Pro Max và máy tính.
 - Trang quản trị (qua Nginx như trên Pi, iPhone 14 Pro và máy tính): sai mật khẩu bị từ chối, 5 lần sai thì phải chờ;
   thêm dự án (mã tạo từ tên tiếng Việt), tải 2 ảnh (ảnh chụp dọc có thẻ xoay vẫn đứng đúng chiều), tệp không phải ảnh
   bị từ chối kèm lời nhắn, chạm chọn tâm ảnh bìa, lưu → website hiện ngay ở đầu trang, link riêng mở đúng dự án (tiếng

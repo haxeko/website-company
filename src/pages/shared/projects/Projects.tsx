@@ -1,6 +1,6 @@
 import { gsap } from 'gsap'
 import { useEffect, useEffectEvent, useLayoutEffect, useRef, useState, type CSSProperties, type MouseEvent } from 'react'
-import { createPortal } from 'react-dom'
+import { createPortal, flushSync } from 'react-dom'
 import { useI18n } from '../../../i18n/context'
 import { REDUCED_MOTION_QUERY } from '../../../utils/device'
 import { preloadCover, useProjects, type Project, type ProjectCategory } from './data'
@@ -56,6 +56,21 @@ interface ProjectsProps {
 interface Open {
   project: Project
   origin: CoverOrigin | null
+  /** Shown as it is, without its opening (the browser has already shown it: a swipe forward). */
+  instant?: boolean
+}
+
+/** iOS starts its swipe back at the screen's left edge (forward: the right one). */
+const EDGE = 24
+
+/**
+ * Did the browser animate this Back / Forward itself — a swipe, during which it already showed
+ * the page as it will be? Browsers that know say so; for the others, a touch from the screen's
+ * edge just before is taken for that swipe.
+ */
+function browserAnimated(e: PopStateEvent, edgeTouch: { side: 'left' | 'right'; at: number } | null, forward: boolean) {
+  if ((e as PopStateEvent & { hasUAVisualTransition?: boolean }).hasUAVisualTransition) return true
+  return !!edgeTouch && edgeTouch.side === (forward ? 'right' : 'left') && performance.now() - edgeTouch.at < 3000
 }
 
 /**
@@ -228,9 +243,33 @@ export function Projects({ category, name, ready, room }: ProjectsProps) {
     if (chosen) gsap.to(chosen.querySelectorAll('.pj__label'), { opacity: 1, duration: 0.4, delay: 0.55, clearProps: 'opacity' })
   }
 
-  const show = (project: Project, origin: CoverOrigin | null) => {
+  const show = (project: Project, origin: CoverOrigin | null, instant = false) => {
     setClosing(false)
-    setOpen({ project, origin })
+    setOpen({ project, origin, instant })
+  }
+
+  /**
+   * The browser has already shown the page under the view (a swipe back): the view goes at once
+   * and the squares are back in place in the same frame — playing the closing then would show
+   * the project again, then close it.
+   */
+  const closeNow = () => {
+    const id = open?.project.id
+    const els = items()
+    const labels = els.flatMap((el) => Array.from(el.querySelectorAll<HTMLElement>('.pj__label')))
+    gsap.killTweensOf([...els, ...labels])
+    gsap.set([...els, ...labels], { clearProps: 'transform,opacity' })
+    lift(false)
+    const html = document.documentElement
+    // (the text over the grid comes back without its fade)
+    html.setAttribute('data-project-instant', '')
+    html.removeAttribute('data-project-open')
+    flushSync(() => {
+      setOpen(null)
+      setClosing(false)
+    })
+    if (id) itemOf(id)?.querySelector('a')?.focus({ preventScroll: true })
+    requestAnimationFrame(() => requestAnimationFrame(() => html.removeAttribute('data-project-instant')))
   }
 
   // While a project is open the page under it keeps still (projects.css).
@@ -270,10 +309,16 @@ export function Projects({ category, name, ready, room }: ProjectsProps) {
     show(project, origin)
   }
 
+  /** The view's own way back is closing (its history.back() is never a swipe). */
+  const viaButton = useRef(false)
+  /** The last touch, when it started at the screen's edge (see browserAnimated). */
+  const edgeTouch = useRef<{ side: 'left' | 'right'; at: number } | null>(null)
+
   /** Close: back through the history when the view added to it, so Back and × agree. */
   const requestClose = () => {
     if (closing) return
     if (pushed.current) {
+      viaButton.current = true
       history.back()
       return
     }
@@ -282,22 +327,35 @@ export function Projects({ category, name, ready, room }: ProjectsProps) {
   }
 
   // The address decides: Back / Forward, a link to #<id>, a page opened at #<id>.
-  const sync = useEffectEvent(() => {
+  const sync = useEffectEvent((e: PopStateEvent) => {
     const id = decodeURIComponent(location.hash.slice(1))
     const project = list?.find((p) => p.id === id)
+    const ours = viaButton.current
+    viaButton.current = false
     if (project && open?.project.id !== project.id) {
       pushed.current = false
       // (on the page of covers that holds it, so closing shrinks it back into its square)
       if (list && perPage !== Infinity) setPage(Math.floor(list.indexOf(project) / perPage))
-      show(project, null)
+      if (browserAnimated(e, edgeTouch.current, true)) flushSync(() => show(project, null, true))
+      else show(project, null)
     } else if (!project && open && !closing) {
       pushed.current = false
-      setClosing(true)
+      if (!ours && browserAnimated(e, edgeTouch.current, false)) closeNow()
+      else setClosing(true)
     }
   })
   useEffect(() => {
+    const touch = (e: TouchEvent) => {
+      const x = e.touches[0]?.clientX ?? EDGE
+      edgeTouch.current =
+        x < EDGE ? { side: 'left', at: performance.now() } : x > innerWidth - EDGE ? { side: 'right', at: performance.now() } : null
+    }
     window.addEventListener('popstate', sync)
-    return () => window.removeEventListener('popstate', sync)
+    window.addEventListener('touchstart', touch, { capture: true, passive: true })
+    return () => {
+      window.removeEventListener('popstate', sync)
+      window.removeEventListener('touchstart', touch, { capture: true })
+    }
   }, [])
 
   // The closing animation starts: the others come back.
@@ -381,8 +439,10 @@ export function Projects({ category, name, ready, room }: ProjectsProps) {
             key={open.project.id}
             project={open.project}
             origin={open.origin}
+            instant={open.instant}
             target={target}
             closing={closing}
+            page={name}
             category={t.projectsOf.replace('{name}', name)}
             onClose={requestClose}
             onClosed={closed}

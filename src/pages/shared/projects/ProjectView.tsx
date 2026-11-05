@@ -5,6 +5,7 @@ import { useI18n } from '../../../i18n/context'
 import { REDUCED_MOTION_QUERY } from '../../../utils/device'
 import { CtaArrow, SideArrow } from '../icons'
 import { imagePosition, imageSrc, imageSrcSet, type Project, type ProjectImage } from './data'
+import { AreaIcon, PlaceIcon, ScopeIcon, YearIcon } from './icons'
 
 /** Where the cover was on the page when the project was opened: it grows from there. */
 export interface CoverOrigin {
@@ -18,10 +19,14 @@ interface ProjectViewProps {
   project: Project
   /** null: opened from a link (no square to grow from). */
   origin: CoverOrigin | null
+  /** Shown as it is, without its opening (the browser has already shown it: a swipe forward). */
+  instant?: boolean
   /** The project's square on the page, to shrink back into (null: fade out instead). */
   target: () => DOMRect | null
   closing: boolean
-  /** The page's name, for the way back ("Construction projects"). */
+  /** The page's name ("Nội thất"), over the title. */
+  page: string
+  /** The page's projects, for the way back ("Construction projects"). */
   category: string
   onClose: () => void
   /** The closing animation is over. */
@@ -74,12 +79,15 @@ const box = (rect: DOMRect, radius: number) => ({
 
 const onScreen = (rect: DOMRect) => rect.bottom > 0 && rect.top < window.innerHeight && rect.width > 0
 
+/** A bare number of square metres gets its unit ("300" → "300 m²"). */
+const withUnit = (area: string) => (/^\d+(?:[.,]\d+)?$/.test(area.trim()) ? `${area.trim()} m²` : area)
+
 /**
  * A project, over the page: its cover grows from the square that was tapped into the banner,
  * then the title, the facts and the photos rise in under it. Closing shrinks the banner back
  * into its square. Esc, the back button or the browser's Back close it.
  */
-export function ProjectView({ project, origin, target, closing, category, onClose, onClosed }: ProjectViewProps) {
+export function ProjectView({ project, origin, instant, target, closing, page, category, onClose, onClosed }: ProjectViewProps) {
   const { t, lang } = useI18n()
   const rootRef = useRef<HTMLDivElement>(null)
   const bgRef = useRef<HTMLDivElement>(null)
@@ -97,6 +105,10 @@ export function ProjectView({ project, origin, target, closing, category, onClos
     const bar = root.querySelector('.pv__bar')
     const heroImg = hero.querySelector('img')
     closeRef.current?.focus({ preventScroll: true })
+    if (instant) {
+      gsap.set(bg, { opacity: 1 })
+      return
+    }
     const tl = gsap.timeline()
     if (!origin || reduced) {
       tl.fromTo([bg, bar], { opacity: 0 }, { opacity: 1, duration: reduced ? 0.2 : 0.45, ease: 'power2.out' })
@@ -136,7 +148,7 @@ export function ProjectView({ project, origin, target, closing, category, onClos
       tl.kill()
       fly.remove()
     }
-  }, [origin])
+  }, [origin, instant])
 
   // Closing: the banner shrinks back into its square (or the view fades, when the square is
   // not on screen).
@@ -192,11 +204,11 @@ export function ProjectView({ project, origin, target, closing, category, onClos
   const onScroll = (e: UIEvent<HTMLDivElement>) => e.currentTarget.toggleAttribute('data-scrolled', e.currentTarget.scrollTop > 60)
 
   const facts = [
-    project.place && [t.projectPlace, project.place[lang]],
-    project.year && [t.projectYear, project.year],
-    project.area && [t.projectArea, project.area],
-    project.scope && [t.projectScope, project.scope[lang]],
-  ].filter((f): f is [string, string] => Boolean(f))
+    project.place && { icon: <PlaceIcon />, label: t.projectPlace, value: project.place[lang] },
+    project.year && { icon: <YearIcon />, label: t.projectYear, value: project.year },
+    project.area && { icon: <AreaIcon />, label: t.projectArea, value: withUnit(project.area) },
+    project.scope && { icon: <ScopeIcon category={project.category} />, label: t.projectScope, value: project.scope[lang] },
+  ].filter((f) => !!f)
 
   return (
     <div
@@ -229,32 +241,33 @@ export function ProjectView({ project, origin, target, closing, category, onClos
 
       <article className="pv__body">
         <header className="pv__head">
-          {project.scope && (
-            <p className="pv__kicker" data-pv-line>
-              {project.scope[lang]}
-            </p>
-          )}
+          <p className="pv__kicker" data-pv-line>
+            {page}
+          </p>
           <h2 className="pv__title" id="pv-title" data-pv-line>
             {project.title[lang]}
           </h2>
-          {project.place && (
-            <p className="pv__place" data-pv-line>
-              {[project.place[lang], project.year].filter(Boolean).join(' · ')}
-            </p>
-          )}
         </header>
 
-        <div className="pv__about" data-pv-line>
-          {project.summary && <p className="pv__summary">{project.summary[lang]}</p>}
-          <dl className="pv__facts">
-            {facts.map(([label, value]) => (
-              <div key={label}>
-                <dt>{label}</dt>
+        {/* (as the strip under the pages' header: an icon, the value, what it is) */}
+        {facts.length > 0 && (
+          <dl className="pv__facts" data-pv-line>
+            {facts.map(({ icon, label, value }) => (
+              <div key={label} className="pv__fact" data-wide={value.length > 20 || undefined}>
+                <dt>
+                  {icon}
+                  {label}
+                </dt>
                 <dd>{value}</dd>
               </div>
             ))}
           </dl>
-        </div>
+        )}
+        {project.summary && (
+          <p className="pv__summary" data-pv-line>
+            {project.summary[lang]}
+          </p>
+        )}
         {project.sample && (
           <p className="pv__note" data-pv-line>
             {t.projectSample}

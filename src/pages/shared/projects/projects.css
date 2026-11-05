@@ -259,6 +259,11 @@ html[data-project-open] .pg-copy :is(.pg-copy__text, .pj__head, .pj__pages) {
   opacity: 0;
 }
 
+/* (a swipe back: the browser has already shown the page as it was — no fade) */
+html[data-project-instant] .pg-copy :is(.pg-copy__text, .pj__head, .pj__pages) {
+  transition: none;
+}
+
 html[data-project-open] .pj {
   pointer-events: none;
 }
@@ -474,7 +479,7 @@ html[data-project-open] {
 }
 
 .pv__title {
-  margin: 14px 0 0;
+  margin: 12px 0 0;
   font-family: var(--font-serif);
   font-size: clamp(38px, 5vw, 76px);
   font-weight: 400;
@@ -482,53 +487,83 @@ html[data-project-open] {
   line-height: 1;
 }
 
-.pv__place {
-  margin: 14px 0 0;
-  color: var(--muted);
-  font-size: 11px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
+/* Where, when, how big, what: as the strip under the pages' header (Matter, Thread…) — an
+   icon, the value, what it is, a thin line between. */
+.pv__facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 0;
+  margin: clamp(20px, 3.2vh, 30px) 0 0;
+  padding: clamp(16px, 2.4vh, 22px) 0;
+  border-block: 1px solid var(--line);
 }
 
-.pv__about {
-  display: grid;
-  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
-  gap: clamp(28px, 5vw, 80px);
-  margin-top: clamp(28px, 5vh, 52px);
-  padding-top: clamp(24px, 4vh, 40px);
-  border-top: 1px solid var(--line);
+.pv__fact {
+  /* (the room before the icon, the icon) */
+  --pv-lead: 0px;
+  --pv-icon: clamp(24px, 1.8vw, 30px);
+  position: relative;
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: center;
+  gap: 5px;
+  min-height: var(--pv-icon);
+  padding: 0 clamp(18px, 2.4vw, 36px) 0 calc(var(--pv-lead) + var(--pv-icon) + 12px);
+}
+
+.pv__fact + .pv__fact {
+  --pv-lead: clamp(18px, 2.4vw, 36px);
+  border-left: 1px solid rgb(244 240 233 / 0.16);
+}
+
+.pv__fact dt {
+  color: var(--muted);
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.pv__fact dd {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: clamp(17px, 1.25vw, 20px);
+  font-weight: 500;
+  line-height: 1.15;
+}
+
+.pv-icon {
+  position: absolute;
+  top: 50%;
+  left: var(--pv-lead);
+  width: var(--pv-icon);
+  height: var(--pv-icon);
+  translate: 0 -50%;
+  color: var(--c-text);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.pv-icon .is-filled {
+  fill: currentColor;
+  stroke: none;
 }
 
 .pv__summary {
-  margin: 0;
+  max-width: 760px;
+  margin: clamp(18px, 3vh, 26px) 0 0;
   color: rgb(244 240 233 / 0.82);
   font-size: clamp(14px, 1.05vw, 16px);
-  line-height: 1.8;
-}
-
-.pv__facts {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 22px 28px;
-  margin: 0;
-}
-
-.pv__facts dt {
-  color: var(--muted);
-  font-size: 9px;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-}
-
-.pv__facts dd {
-  margin: 7px 0 0;
-  font-family: var(--font-serif);
-  font-size: clamp(17px, 1.3vw, 21px);
-  line-height: 1.2;
+  line-height: 1.75;
+  /* (the lines as typed in the admin) */
+  white-space: pre-line;
 }
 
 .pv__note {
-  margin: 22px 0 0;
+  margin: 14px 0 0;
   color: rgb(244 240 233 / 0.45);
   font-size: 11px;
   font-style: italic;
@@ -539,7 +574,7 @@ html[data-project-open] {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: clamp(14px, 2vw, 28px);
-  margin: clamp(40px, 7vh, 72px) 0 0;
+  margin: clamp(28px, 5vh, 56px) 0 0;
   padding: 0;
   list-style: none;
 }
@@ -604,8 +639,38 @@ html[data-project-open] {
     margin-top: -64px;
   }
 
-  .pv__about {
-    grid-template-columns: 1fr;
+  /* (no lines between: they flow two or three to a row, a long place on a row of its own) */
+  .pv__facts {
+    gap: 14px 22px;
+    margin-top: 18px;
+    padding: 14px 0;
+  }
+
+  .pv__fact,
+  .pv__fact + .pv__fact {
+    --pv-lead: 0px;
+    --pv-icon: 22px;
+    padding-right: 0;
+    border-left: 0;
+  }
+
+  .pv__fact[data-wide] {
+    flex-basis: 100%;
+  }
+
+  .pv__fact dt {
+    font-size: 8.5px;
+    letter-spacing: 0.2em;
+  }
+
+  .pv__fact dd {
+    font-size: 16px;
+  }
+
+  .pv__summary {
+    margin-top: 16px;
+    font-size: 14px;
+    line-height: 1.7;
   }
 
   .pv__photos {
