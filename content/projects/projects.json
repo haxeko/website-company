@@ -11,6 +11,7 @@
     {
       "id": "biet-thu-ho-boi",
       "category": "construction",
+      "type": "villa",
       "sample": true,
       "title": {
         "vi": "Biệt thự hồ bơi",
@@ -88,6 +89,7 @@
     {
       "id": "khung-be-tong-mep",
       "category": "construction",
+      "type": "townhouse",
       "sample": true,
       "title": {
         "vi": "Khung bê tông & cơ điện",
@@ -165,6 +167,7 @@
     {
       "id": "biet-thu-suon-doi",
       "category": "construction",
+      "type": "villa",
       "sample": true,
       "title": {
         "vi": "Biệt thự sườn đồi",
@@ -242,6 +245,7 @@
     {
       "id": "nha-vuon-nhiet-doi",
       "category": "construction",
+      "type": "garden-house",
       "sample": true,
       "title": {
         "vi": "Nhà vườn nhiệt đới",
@@ -319,6 +323,7 @@
     {
       "id": "phong-khach-travertine",
       "category": "interior",
+      "type": "villa",
       "sample": true,
       "title": {
         "vi": "Phòng khách travertine",
@@ -396,6 +401,7 @@
     {
       "id": "bep-dao-ban-an",
       "category": "interior",
+      "type": "townhouse",
       "sample": true,
       "title": {
         "vi": "Bếp đảo & bàn ăn",
@@ -550,6 +556,7 @@
     {
       "id": "khong-gian-mo",
       "category": "interior",
+      "type": "garden-house",
       "sample": true,
       "title": {
         "vi": "Không gian mở ra vườn",

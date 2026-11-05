@@ -1,20 +1,12 @@
 import { gsap } from 'gsap'
-import {
-  useEffect,
-  useEffectEvent,
-  useLayoutEffect,
-  useRef,
-  type CSSProperties,
-  type KeyboardEvent,
-  type MouseEvent,
-  type UIEvent,
-} from 'react'
+import { useEffect, useEffectEvent, useLayoutEffect, useRef, type KeyboardEvent, type UIEvent } from 'react'
 import { zaloHref } from '../../../config/contact'
 import { useI18n } from '../../../i18n/context'
 import { REDUCED_MOTION_QUERY } from '../../../utils/device'
 import { CtaArrow, SideArrow } from '../icons'
 import { imagePosition, imageSrc, imageSrcSet, type Project, type ProjectImage } from './data'
-import { AreaIcon, CraneIcon, HomeMarkIcon, PlaceIcon, ScopeIcon, SmartHomeIcon, SofaIcon, YearIcon } from './icons'
+import { AreaIcon, PlaceIcon, ScopeIcon, YearIcon } from './icons'
+import { PagesArc } from './PagesArc'
 
 /** Where the cover was on the page when the project was opened: it grows from there. */
 export interface CoverOrigin {
@@ -88,28 +80,6 @@ const box = (rect: DOMRect, radius: number) => ({
 
 const onScreen = (rect: DOMRect) => rect.bottom > 0 && rect.top < window.innerHeight && rect.width > 0
 
-/*
- * The site's pages, in the left margin on a computer: round buttons set on an arc, as on a
- * dial — the items at these angles of a circle whose centre is off the screen to the left.
- */
-const ARC_RADIUS = 220
-const ARC_ANGLES = [-33, -11, 11, 33]
-const ARC_BUTTON = 46
-const rad = (deg: number) => (deg * Math.PI) / 180
-/** The point at `deg` on the arc, in the menu's box (the outer items at its left edge). */
-const arcPoint = (deg: number) => ({
-  x: ARC_BUTTON / 2 + ARC_RADIUS * (Math.cos(rad(deg)) - Math.cos(rad(ARC_ANGLES.at(-1) ?? 0))),
-  y: ARC_BUTTON / 2 + ARC_RADIUS * (Math.sin(rad(deg)) + Math.sin(rad(ARC_ANGLES.at(-1) ?? 0))),
-})
-const ARC_ITEMS = ARC_ANGLES.map(arcPoint)
-const ARC_W = Math.max(...ARC_ITEMS.map((p) => p.x)) + ARC_BUTTON / 2
-const ARC_H = Math.max(...ARC_ITEMS.map((p) => p.y)) + ARC_BUTTON / 2
-/** The line the buttons sit on, a little longer than they reach. */
-const ARC_LINE = (() => {
-  const [a, b] = [arcPoint(-44), arcPoint(44)]
-  return `M${a.x.toFixed(1)} ${a.y.toFixed(1)}A${ARC_RADIUS} ${ARC_RADIUS} 0 0 1 ${b.x.toFixed(1)} ${b.y.toFixed(1)}`
-})()
-
 /** A bare number of square metres gets its unit ("300" → "300 m²"). */
 const withUnit = (area: string) => (/^\d+(?:[.,]\d+)?$/.test(area.trim()) ? `${area.trim()} m²` : area)
 
@@ -124,6 +94,7 @@ export function ProjectView({ project, origin, instant, target, closing, page, c
   const bgRef = useRef<HTMLDivElement>(null)
   const heroRef = useRef<HTMLDivElement>(null)
   const closeRef = useRef<HTMLButtonElement>(null)
+  const arcRef = useRef<HTMLElement>(null)
 
   // Opening.
   useLayoutEffect(() => {
@@ -194,7 +165,7 @@ export function ProjectView({ project, origin, instant, target, closing, page, c
     const reduced = window.matchMedia(REDUCED_MOTION_QUERY).matches
     const rect = squareRect()
     const from = hero.getBoundingClientRect()
-    const content = root.querySelectorAll('[data-pv-line], .pv__bar, .pv-arc')
+    const content = root.querySelectorAll('[data-pv-line], .pv__bar, .pages-arc')
     const tl = gsap.timeline({ onComplete: () => finished() })
     let fly: HTMLImageElement | null = null
     if (rect && onScreen(rect) && onScreen(from) && !reduced) {
@@ -237,21 +208,9 @@ export function ProjectView({ project, origin, instant, target, closing, page, c
   const onScroll = (e: UIEvent<HTMLDivElement>) => {
     const view = e.currentTarget
     view.toggleAttribute('data-scrolled', view.scrollTop > 60)
+    const arc = arcRef.current
     const banner = heroRef.current?.getBoundingClientRect().bottom ?? 0
-    view.toggleAttribute('data-arc', banner < (window.innerHeight - ARC_H) / 2 - 24)
-  }
-
-  const pages = [
-    { id: 'home', href: '../', label: t.pageHome, icon: <HomeMarkIcon /> },
-    { id: 'smart-home', href: '../smart-home/', label: t.pageSmartHome, icon: <SmartHomeIcon /> },
-    { id: 'construction', href: '../construction/', label: t.pageConstruction, icon: <CraneIcon /> },
-    { id: 'interior', href: '../interior/', label: t.pageInterior, icon: <SofaIcon /> },
-  ]
-  // (the project's own page: back to its projects)
-  const onPage = (id: string) => (e: MouseEvent<HTMLAnchorElement>) => {
-    if (id !== project.category || e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return
-    e.preventDefault()
-    onClose()
+    arc?.toggleAttribute('data-on', banner < (window.innerHeight - arc.offsetHeight) / 2 - 24)
   }
 
   const facts = [
@@ -285,24 +244,8 @@ export function ProjectView({ project, origin, instant, target, closing, page, c
         </button>
       </div>
 
-      <nav className="pv-arc" aria-label={t.pagesNav} style={{ width: ARC_W, height: ARC_H }}>
-        <svg className="pv-arc__line" width={ARC_W} height={ARC_H} aria-hidden="true" focusable="false">
-          <path d={ARC_LINE} pathLength={1} />
-        </svg>
-        {pages.map(({ id, href, label, icon }, i) => (
-          <a
-            key={id}
-            className="pv-arc__item"
-            href={href}
-            aria-current={id === project.category ? 'page' : undefined}
-            onClick={onPage(id)}
-            style={{ left: ARC_ITEMS[i].x - ARC_BUTTON / 2, top: ARC_ITEMS[i].y - ARC_BUTTON / 2, '--i': i } as CSSProperties}
-          >
-            {icon}
-            <span className="pv-arc__label">{label}</span>
-          </a>
-        ))}
-      </nav>
+      {/* (the project's own page: back to its projects) */}
+      <PagesArc variant="side" current={project.category} onCurrent={onClose} navRef={arcRef} />
 
       <div ref={heroRef} className="pv__hero">
         <Picture img={project.cover} sizes="100vw" alt={project.title[lang]} />

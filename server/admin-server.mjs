@@ -14,7 +14,7 @@ import { randomBytes } from 'node:crypto'
 import { watchFile } from 'node:fs'
 import { createServer } from 'node:http'
 import { checkPassword, passwordIsSet } from './password.mjs'
-import { DATA_DIR, UserError, addPhoto, passwordFile, readProjects, saveProjects, seed } from './store.mjs'
+import { DATA_DIR, UserError, addPhoto, migrate, passwordFile, readProjects, saveProjects, seed } from './store.mjs'
 
 const PORT = Number(process.env.ADMIN_PORT ?? 8787)
 const HOST = process.env.ADMIN_HOST ?? '127.0.0.1'
@@ -175,6 +175,7 @@ async function handle(req, res) {
 }
 
 await seed()
+await migrate()
 // A new password (npm run admin:password) signs every browser out.
 watchFile(passwordFile, { interval: 3000 }, (now, before) => {
   if (now.mtimeMs !== before.mtimeMs) sessions.clear()

@@ -25,6 +25,8 @@ const publicList = join(DATA_DIR, 'public/data/projects.json')
 const photosDir = join(DATA_DIR, 'public/projects')
 
 const CATEGORIES = ['construction', 'interior']
+/** The building types (src/pages/shared/projects/data.ts): the pages' filter. */
+const TYPES = ['townhouse', 'villa', 'garden-house', 'restaurant', 'cafe', 'shop']
 const ID = /^[a-z0-9]+(-[a-z0-9]+)*$/
 const MAX_PROJECTS = 300
 const MAX_PHOTOS = 80
@@ -60,6 +62,20 @@ export async function seed() {
   if (existsSync(join(repo, 'public/projects'))) await cp(join(repo, 'public/projects'), photosDir, { recursive: true })
   await writeJson(adminFile, { projects: built.projects ?? [] })
   await publish(built.projects ?? [])
+}
+
+/**
+ * The sample projects (the repository's illustrations) get the building type the repository
+ * gives them, when they have none yet (they were copied before there were types).
+ */
+export async function migrate() {
+  const built = JSON.parse(await readFile(join(repo, 'public/data/projects.json'), 'utf8')).projects ?? []
+  const types = new Map(built.filter((p) => p.type).map((p) => [p.id, p.type]))
+  const list = await readProjects()
+  const missing = list.filter((p) => p.sample && !p.type && types.has(p.id))
+  if (!missing.length) return
+  for (const p of missing) p.type = types.get(p.id)
+  await saveProjects(list)
 }
 
 export async function readProjects() {
@@ -117,6 +133,10 @@ function project(value, ids) {
   const photos = value.photos ?? []
   if (!Array.isArray(photos) || photos.length > MAX_PHOTOS) fail(`${id}: tối đa ${MAX_PHOTOS} ảnh.`)
   const out = { id, category: value.category }
+  if (value.type != null && value.type !== '') {
+    if (!TYPES.includes(value.type)) fail(`${id}: loại công trình không hợp lệ.`)
+    out.type = value.type
+  }
   if (value.hidden) out.hidden = true
   if (value.sample) out.sample = true
   out.title = title

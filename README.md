@@ -133,8 +133,20 @@ riêng** cùng một phong cách: [`/smart-home/`](#trang-smart-home), [`/constr
   - **Mỗi dự án có link riêng**: `/construction/#<mã-dự-án>`, `/interior/#<mã-dự-án>` — gửi link là mở thẳng dự án đó.
   - **Trên máy tính** lưới nằm **dưới màn hình đầu**, hết chiều ngang, có tiêu đề "Các dự án xây dựng / nội thất": mỗi
     hàng **nhiều ô nhất có thể**, mỗi ô rộng khoảng 200–290 px tuỳ màn hình (tự tính: 4–5 ô ở laptop, 6 ô ở màn hình
-    lớn), hàng cuối thiếu thì nằm bên trái như màn hình điện thoại; hiệu ứng sắp xếp chạy khi cuộn tới. **Trên điện
-    thoại** vẫn 2 ô mỗi hàng ngay dưới chữ. Mọi dự án đều hiện, không phải lật trang.
+    lớn), hàng cuối thiếu thì nằm bên trái như màn hình điện thoại; hiệu ứng sắp xếp chạy khi cuộn tới; mọi dự án đều
+    hiện.
+  - **Trên điện thoại** lưới ngay dưới chữ, 2 ô mỗi hàng, **mỗi trang 4 dự án (2 × 2)**: **vuốt sang trái / phải** để
+    sang trang (các trang trượt theo ngón tay, buông tay là dừng đúng trang; vuốt lên xuống vẫn cuộn trang web như
+    thường), **dấu chấm** bên dưới cho biết đang ở trang nào (bấm chấm để chuyển). Khi còn trang sau, góc phải hàng
+    tiêu đề có dấu **"← Vuốt"** (mũi tên nhích sang trái); tới trang cuối thì ẩn.
+  - **Bộ lọc loại công trình** (điện thoại và máy tính), cạnh dòng "Dự án — 04": mặc định **Tất cả**; danh sách chỉ
+    gồm những loại mà các dự án của trang đó có (chọn trong trang quản trị khi thêm / sửa dự án — xem
+    [Thêm / sửa dự án](#thêm--sửa-dự-án)): *Nhà phố, Biệt thự, Nhà vườn, Nhà hàng, Quán cafe, Shop bán hàng*. Chọn một
+    loại thì các ô sắp xếp lại, số đếm đổi theo. Trên điện thoại là danh sách chọn của máy (vòng xoay trên iPhone).
+  - **Biểu tượng các trang cạnh nút Zalo** (điện thoại): cuộn tới cuối danh sách dự án, ở hàng dưới cùng bên trái nút
+    Zalo hiện **4 nút tròn xếp trên một cung tròn** — Trang chủ, Smart Home, Xây dựng, Nội thất (giống menu vòng cung
+    của máy tính), trang đang xem viền vàng (bấm vào là cuộn lên đầu trang); cuộn lên lại thì ẩn. Trang web chừa chỗ
+    cho hàng nút nên không đè lên dự án nào.
   - **Menu vòng cung** (trang dự án trên máy tính): khi cuộn qua ảnh bìa, ở lề tối bên trái hiện **4 nút tròn xếp trên
     một cung tròn** — Trang chủ (dấu mái nhà của VILLA NEST), Smart Home, Xây dựng (cần cẩu), Nội thất (sofa) — cùng
     kiểu biểu tượng nét mảnh của dải đầu trang, trang của dự án đang xem viền vàng (bấm vào là quay lại danh sách dự án),
@@ -285,7 +297,9 @@ static server nào); mở trực tiếp `dist/index.html` bằng `file://` sẽ 
     ├── pages/shared/           Khung chung của ba trang: Deck.tsx (dải biểu tượng, chữ chủ đề, nút, mũi tên, thanh chủ
     │                           đề, kịch bản trên điện thoại) · useDeck (phím, thẻ) · useDemo · page.css
     │   └── projects/           Dự án: Projects.tsx (lưới ô vuông, hiệu ứng sắp xếp / văng ra, link #dự-án) ·
-    │                           ProjectView.tsx (trang dự án: ảnh lớn, thông số, ảnh, menu vòng cung) · icons.tsx · data.ts · projects.css
+    │                           ProjectView.tsx (trang dự án: ảnh lớn, thông số, ảnh) · PagesArc.tsx (các trang
+    │                           trên cung tròn: lề trái máy tính, cạnh Zalo trên điện thoại) · icons.tsx · data.ts
+    │                           (loại công trình) · projects.css
     ├── pages/smart-home/       Trang Smart Home: content.ts (chữ VI/EN) · HeroVisual (ảnh + màn hình phối cảnh)
     │                           · ScenePanel (các màn hình của bảng, camera) · usePageHome (trạng thái, kịch bản) · icons.tsx
     ├── pages/construction/     Trang Xây dựng: content.ts · BuildVisual (ảnh + mô hình BIM, tia laser, chú thích, thẻ)
@@ -401,6 +415,9 @@ website chạy `npm run admin:password` (các máy đang đăng nhập sẽ ph�
   án (link riêng `/construction/#biet-thu-thao-dien`) tự tạo từ tên.
 - **Thông tin**: tên, địa điểm, hạng mục, giới thiệu — ô tiếng Việt và ô tiếng Anh (để trống tiếng Anh thì website
   dùng tiếng Việt); năm, diện tích; chuyển dự án sang trang kia; công tắc **Hiện trên website**.
+- **Loại công trình** (chọn khi thêm dự án, sửa được sau): *Nhà phố, Biệt thự, Nhà vườn, Nhà hàng, Quán cafe, Shop bán
+  hàng* — dùng cho **bộ lọc** trên website (bộ lọc chỉ hiện những loại đang có dự án); để "Chưa chọn" thì dự án chỉ hiện
+  ở mục *Tất cả*. Danh sách trong trang quản trị ghi loại ở đầu dòng nhỏ dưới tên. (Các dự án minh họa có sẵn loại.)
 - **Ảnh**: **+ Thêm ảnh** chọn một hay nhiều ảnh (trên điện thoại: thư viện ảnh hoặc chụp luôn). Ảnh lớn được thu nhỏ
   ngay trên máy trước khi gửi (nhanh cả khi dùng 4G); máy chủ xoay đúng chiều và tạo các cỡ AVIF / WebP cho website.
   Ảnh đầu tiên thành ảnh bìa; mỗi ảnh có chú thích hai thứ tiếng, nút ↑ ↓, **Làm ảnh bìa**, **Xoá**. Ở ảnh bìa, chạm
@@ -511,6 +528,12 @@ Kiểm thử tự động bằng Playwright (Chromium) trên bản build:
   chạy giờ; kéo tia laser (không đổi chủ đề), phím trên tay nắm; thẻ tiến độ, chú thích kết cấu; điểm vật liệu đều nằm
   trong khung, thẻ vật liệu, ánh sáng buổi tối, nét kích thước.
 - Dự án: máy tính 1280×720 → 1920×1080: lưới dưới màn hình đầu, ô vuông 200–290 px, nhiều ô mỗi hàng, không tràn ngang;
+  điện thoại với 7 dự án (2 trang): vuốt trái sang trang 2 (bằng sự kiện cảm ứng thật), quá trang cuối thì bật lại,
+  vuốt nhanh sang phải quay về, vuốt dọc trên các ô vẫn cuộn trang, vuốt không mở nhầm dự án, chạm vẫn mở; dấu
+  "← Vuốt" hiện khi còn trang sau, ẩn ở trang cuối, chỉ còn mũi tên trên màn 320 px; link tới dự án ở trang 2 đóng lại
+  về đúng trang 2; bộ lọc (Biệt thự / Nhà vườn / Tất cả) trên điện thoại và máy tính, số đếm đổi theo; trang quản trị:
+  chọn loại khi thêm dự án → bộ lọc của website có loại đó, máy chủ từ chối loại lạ; hàng nút các trang cạnh Zalo hiện
+  ở cuối danh sách, đúng hàng nút Zalo, không đè ô nào, cuộn lên thì ẩn;
   điện thoại: 2 ô mỗi hàng, đủ mọi dự án, cách đều hai bên, còn chỗ cho nút Zalo; bấm mở dự án (ảnh bìa phóng
   to ≥ 60% sau 0,2 giây, các ô khác văng ra), đóng bằng ×, Back, Esc — ô về đúng chỗ, trang không bị cuộn lệch; link
   `#mã-dự-án` mở thẳng dự án; phím mũi tên và bánh xe không đổi chủ đề phía sau khi đang xem dự án; menu vòng cung ở

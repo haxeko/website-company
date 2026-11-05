@@ -10,6 +10,19 @@ import type { Lang } from '../../../i18n/strings'
 export type Localized = Record<Lang, string>
 export type ProjectCategory = 'construction' | 'interior'
 
+/** What was built, for the pages' filter (chosen in the admin when a project is added). */
+export const PROJECT_TYPES = ['townhouse', 'villa', 'garden-house', 'restaurant', 'cafe', 'shop'] as const
+export type ProjectType = (typeof PROJECT_TYPES)[number]
+
+export const PROJECT_TYPE_NAMES: Record<ProjectType, Localized> = {
+  townhouse: { vi: 'Nhà phố', en: 'Townhouse' },
+  villa: { vi: 'Biệt thự', en: 'Villa' },
+  'garden-house': { vi: 'Nhà vườn', en: 'Garden house' },
+  restaurant: { vi: 'Nhà hàng', en: 'Restaurant' },
+  cafe: { vi: 'Quán cafe', en: 'Café' },
+  shop: { vi: 'Shop bán hàng', en: 'Shop' },
+}
+
 export interface ProjectImage {
   /** `projects/<id>/<photo>.<key>`: the files are `<base>-<width>.avif / .webp`. */
   base: string
@@ -25,6 +38,7 @@ export interface ProjectImage {
 export interface Project {
   id: string
   category: ProjectCategory
+  type?: ProjectType
   /** An illustrative project (the site's concept images). */
   sample?: boolean
   title: Localized

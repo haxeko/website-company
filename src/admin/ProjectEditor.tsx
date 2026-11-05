@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ChangeEvent, type MouseEvent, type ReactNode } from 'react'
-import { imagePosition, imageSrc } from '../pages/shared/projects/data'
+import { PROJECT_TYPES, PROJECT_TYPE_NAMES, imagePosition, imageSrc, type ProjectType } from '../pages/shared/projects/data'
 import { api, type AdminProject, type Localized, type ProjectCategory, type ProjectImage } from './api'
 import { CATEGORY_NAMES, siteLink, status } from './shared'
 
@@ -207,6 +207,18 @@ export function ProjectEditor({ project, error, notice, onBack, onSave, onDelete
               ))}
             </select>
           </label>
+          <label className="ad-field">
+            <span>Loại công trình</span>
+            <select value={draft.type ?? ''} onChange={(e) => set({ type: (e.target.value || undefined) as ProjectType | undefined })}>
+              <option value="">— Chưa chọn —</option>
+              {PROJECT_TYPES.map((type) => (
+                <option key={type} value={type}>
+                  {PROJECT_TYPE_NAMES[type].vi}
+                </option>
+              ))}
+            </select>
+          </label>
+          <p className="ad-help">Website có bộ lọc theo loại công trình (chỉ hiện những loại có dự án).</p>
           <p className="ad-help">
             Link của dự án:{' '}
             <a href={siteLink(saved)} target="_blank" rel="noopener">

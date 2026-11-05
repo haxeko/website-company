@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react'
-import { imagePosition, imageSrc } from '../pages/shared/projects/data'
+import { PROJECT_TYPES, PROJECT_TYPE_NAMES, imagePosition, imageSrc, type ProjectType } from '../pages/shared/projects/data'
 import { ApiError, api, idFor, type AdminProject, type ProjectCategory } from './api'
 import { ProjectEditor } from './ProjectEditor'
 import { CATEGORY_NAMES, status } from './shared'
@@ -162,9 +162,17 @@ export function AdminApp() {
     }
   }
 
-  const add = async (name: string, category: ProjectCategory) => {
+  const add = async (name: string, category: ProjectCategory, type?: ProjectType) => {
     const id = idFor(name, new Set(projects.map((p) => p.id)))
-    const fresh: AdminProject = { id, category, hidden: true, title: { vi: name, en: '' }, cover: null, photos: [] }
+    const fresh: AdminProject = {
+      id,
+      category,
+      ...(type ? { type } : {}),
+      hidden: true,
+      title: { vi: name, en: '' },
+      cover: null,
+      photos: [],
+    }
     // (first on its page: the newest projects lead)
     const at = projects.findIndex((p) => p.category === category)
     const next = at < 0 ? [...projects, fresh] : [...projects.slice(0, at), fresh, ...projects.slice(at)]
@@ -220,7 +228,7 @@ export function AdminApp() {
               </span>
               <button type="button" className="ad-row__main" onClick={() => setView({ name: 'edit', id: p.id })}>
                 <b>{p.title.vi}</b>
-                <small>{[p.place?.vi, p.year].filter(Boolean).join(' · ') || '—'}</small>
+                <small>{[p.type && PROJECT_TYPE_NAMES[p.type].vi, p.place?.vi, p.year].filter(Boolean).join(' · ') || '—'}</small>
                 <span className="ad-chip" data-state={!p.cover ? 'missing' : p.hidden ? 'hidden' : 'shown'}>
                   {status(p)}
                   {p.sample ? ' · mẫu' : ''}
@@ -296,10 +304,17 @@ function Login({ passwordSet, error, onSignIn }: { passwordSet: boolean; error: 
   )
 }
 
-function AddProject({ category, onAdd }: { category: ProjectCategory; onAdd: (name: string, category: ProjectCategory) => Promise<void> }) {
+function AddProject({
+  category,
+  onAdd,
+}: {
+  category: ProjectCategory
+  onAdd: (name: string, category: ProjectCategory, type?: ProjectType) => Promise<void>
+}) {
   const [open, setOpen] = useState(false)
   const [name, setName] = useState('')
   const [page, setPage] = useState<ProjectCategory>(category)
+  const [type, setType] = useState<ProjectType | ''>('')
   const [busy, setBusy] = useState(false)
   if (!open) {
     return (
@@ -319,7 +334,7 @@ function AddProject({ category, onAdd }: { category: ProjectCategory; onAdd: (na
     e.preventDefault()
     if (!name.trim()) return
     setBusy(true)
-    await onAdd(name.trim(), page)
+    await onAdd(name.trim(), page, type || undefined)
     setBusy(false)
   }
   return (
@@ -343,6 +358,17 @@ function AddProject({ category, onAdd }: { category: ProjectCategory; onAdd: (na
           </label>
         ))}
       </fieldset>
+      <label className="ad-field">
+        <span>Loại công trình</span>
+        <select value={type} onChange={(e) => setType(e.target.value as ProjectType | '')}>
+          <option value="">— Chưa chọn —</option>
+          {PROJECT_TYPES.map((t) => (
+            <option key={t} value={t}>
+              {PROJECT_TYPE_NAMES[t].vi}
+            </option>
+          ))}
+        </select>
+      </label>
       <div className="ad-actions">
         <button type="button" className="ad-button ad-button--quiet" onClick={() => setOpen(false)}>
           Huỷ

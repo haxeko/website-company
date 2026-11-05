@@ -22,8 +22,18 @@
   display: none;
 }
 
+/* The head's row: "Projects — 04", the building-type filter, (phones) the swipe hint. */
+.pj__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 20px;
+  min-height: 34px;
+}
+
 .pj__head {
   display: flex;
+  flex: none;
   align-items: center;
   gap: 12px;
   height: 14px;
@@ -44,6 +54,124 @@
 
 .pj__head span:last-child {
   color: var(--muted);
+}
+
+/* The filter: a pill showing the type chosen; the browser's own list lies over it, unseen — the
+   wheel on a phone, a menu on a computer (and, at 16 px, no zoom on an iPhone). */
+.pj__filter {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  max-width: 100%;
+  height: 34px;
+  padding: 0 11px 0 15px;
+  border: 1px solid rgb(244 240 233 / 0.24);
+  border-radius: 999px;
+  color: var(--c-text);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition:
+    border-color 0.3s ease,
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+.pj__filter[data-on] {
+  border-color: var(--c-accent);
+  background: rgb(210 176 122 / 0.12);
+  color: var(--gold-2);
+}
+
+.pj__filter-value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pj__filter svg {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.pj__filter select {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  border: 0;
+  opacity: 0;
+  font-size: 16px;
+  cursor: pointer;
+  appearance: none;
+}
+
+.pj__filter:has(select:focus-visible) {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 2px;
+}
+
+@media (hover: hover) {
+  .pj__filter:hover {
+    border-color: var(--c-accent);
+  }
+}
+
+/* (phones, more than one page: "Swipe ←", the arrow nudging the way to go; gone on the last) */
+.pj__swipe {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: opacity 0.4s ease;
+}
+
+.pj__swipe[data-done] {
+  opacity: 0;
+}
+
+.pj__swipe svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: var(--gold-2);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  animation: pj-swipe 1.8s var(--ease-out) infinite;
+}
+
+@keyframes pj-swipe {
+  0%,
+  35% {
+    translate: 0 0;
+  }
+
+  55% {
+    translate: -7px 0;
+  }
+
+  85%,
+  100% {
+    translate: 0 0;
+  }
 }
 
 .pj__title {
@@ -67,6 +195,12 @@
 .pj__item {
   position: relative;
   min-width: 0;
+}
+
+/* (where the squares end: the pages' arc comes in once it is in view, phones) */
+.pj__end {
+  display: block;
+  height: 1px;
 }
 
 .pj__tile {
@@ -181,16 +315,16 @@
   z-index: 46;
 }
 
-.pj :is(.pj__head, .pj__title) {
+.pj :is(.pj__bar, .pj__title, .pj__dots) {
   transition: opacity 0.35s ease;
 }
 
-html[data-project-open] .pj :is(.pj__head, .pj__title) {
+html[data-project-open] .pj :is(.pj__bar, .pj__title, .pj__dots) {
   opacity: 0;
 }
 
 /* (a swipe back: the browser has already shown the page as it was — no fade) */
-html[data-project-instant] .pj :is(.pj__head, .pj__title) {
+html[data-project-instant] .pj :is(.pj__bar, .pj__title, .pj__dots) {
   transition: none;
 }
 
@@ -205,27 +339,100 @@ html[data-project-open] .pj {
     --pj-gap: 14px;
     max-width: none;
     margin: 0;
-    /* (room for the Zalo button under the last row) */
-    padding: 30px var(--gutter) calc(env(safe-area-inset-bottom, 0px) + 84px);
+    /* (room for the pages' arc and the Zalo button under the last row) */
+    padding: 30px var(--gutter) calc(env(safe-area-inset-bottom, 0px) + 116px);
+  }
+
+  .pj__bar {
+    flex-wrap: nowrap;
+    gap: 14px;
+    margin-bottom: 14px;
   }
 
   .pj__head {
-    margin-bottom: 14px;
+    gap: 10px;
     font-size: 10px;
+  }
+
+  .pj__head i {
+    width: 18px;
   }
 
   .pj__title {
     display: none;
   }
 
+  /* The pages side by side, the one on show across the screen: a horizontal swipe moves them
+     with the finger (the page still scrolls up and down), let go they settle on one. */
+  .pj__pages {
+    display: flex;
+    gap: calc(2 * var(--gutter));
+    touch-action: pan-y;
+    -webkit-user-select: none;
+    user-select: none;
+    transition: transform 0.55s var(--ease-out);
+  }
+
+  .pj__pages:is([data-instant], [data-dragging]) {
+    transition: none;
+  }
+
   .pj__grid {
+    flex: 0 0 100%;
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-content: start;
     gap: var(--pj-gap);
   }
 
   @media (min-width: 600px) {
     .pj__grid {
       grid-template-columns: repeat(2, minmax(0, 300px));
+    }
+  }
+
+  .pj__dots {
+    display: flex;
+    justify-content: center;
+    gap: 2px;
+    margin-top: 16px;
+  }
+
+  .pj__dots button {
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+  }
+
+  .pj__dots button::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 3px;
+    background: rgb(244 240 233 / 0.3);
+    transition:
+      width 0.35s var(--ease-out),
+      background-color 0.35s ease;
+  }
+
+  .pj__dots button[aria-current]::before {
+    width: 18px;
+    background: var(--gold-2);
+  }
+
+  .pj__dots button:focus-visible {
+    outline: 1px solid var(--c-accent);
+    border-radius: 50%;
+  }
+
+  @media (max-width: 360px) {
+    .pj__swipe {
+      font-size: 0;
+      gap: 0;
     }
   }
 
@@ -411,7 +618,7 @@ html[data-project-open] {
 }
 
 .pv__body {
-  /* (on a computer, the margins keep room for the pages' menu on the left: .pv-arc) */
+  /* (on a computer, the margins keep room for the pages' menu on the left: .pages-arc) */
   max-width: min(1180px, 100vw - 200px);
   margin: calc(-1 * clamp(70px, 12vh, 140px)) auto 0;
   padding: 0 var(--gutter) clamp(60px, 10vh, 120px);
@@ -521,26 +728,44 @@ html[data-project-open] {
 }
 
 /*
- * The site's pages on an arc in the left margin (computers): round buttons as the header's,
- * the line icons of the strips under the pages' header, the project's own page in gold. They
- * come in, one after another along the arc, once the banner is scrolled away — never over it.
+ * The site's pages on an arc (PagesArc): round buttons as the header's, the line icons of the
+ * strips under the pages' header, the page of the projects in gold. On a computer, in a
+ * project's left margin once its banner is scrolled away — never over it; on a phone, along
+ * the bottom row beside the Zalo button while the projects are in view. They come in one after
+ * another along the arc.
  */
-.pv-arc {
+.pages-arc {
   position: fixed;
-  top: 50%;
-  left: clamp(18px, 1.8vw, 32px);
   z-index: 3;
-  translate: 0 -50%;
   pointer-events: none;
 }
 
-.pv-arc__line {
+.pages-arc[data-variant='side'] {
+  top: 50%;
+  left: clamp(18px, 1.8vw, 32px);
+  translate: 0 -50%;
+}
+
+.pages-arc[data-variant='dock'] {
+  bottom: max(3.2vh, calc(env(safe-area-inset-bottom, 0px) + 14px));
+  left: var(--gutter);
+  z-index: 30;
+  transform-origin: left bottom;
+}
+
+@media (max-width: 340px) {
+  .pages-arc[data-variant='dock'] {
+    scale: 0.86;
+  }
+}
+
+.pages-arc__line {
   position: absolute;
   inset: 0;
   overflow: visible;
 }
 
-.pv-arc__line path {
+.pages-arc__line path {
   fill: none;
   stroke: rgb(210 176 122 / 0.3);
   stroke-width: 1;
@@ -549,12 +774,12 @@ html[data-project-open] {
   transition: stroke-dashoffset 0.5s ease;
 }
 
-.pv[data-arc] .pv-arc__line path {
+.pages-arc[data-on] .pages-arc__line path {
   stroke-dashoffset: 0;
   transition-duration: 0.9s;
 }
 
-.pv-arc__item {
+.pages-arc__item {
   position: absolute;
   display: grid;
   place-items: center;
@@ -577,7 +802,11 @@ html[data-project-open] {
     visibility 0s linear 0.4s;
 }
 
-.pv[data-arc] .pv-arc__item {
+.pages-arc[data-variant='dock'] .pages-arc__item {
+  translate: 0 20px;
+}
+
+.pages-arc[data-on] .pages-arc__item {
   opacity: 1;
   translate: 0 0;
   visibility: visible;
@@ -590,31 +819,31 @@ html[data-project-open] {
     visibility 0s;
 }
 
-.pv-arc__item .pv-icon {
+.pages-arc__item .pv-icon {
   width: 22px;
   height: 22px;
 }
 
-.pv-arc__item[aria-current] {
+.pages-arc__item[aria-current] {
   border-color: var(--c-accent);
   background: rgb(210 176 122 / 0.14);
   color: var(--gold-2);
 }
 
 @media (hover: hover) {
-  .pv-arc__item:hover {
+  .pages-arc__item:hover {
     border-color: var(--c-accent);
     background: rgb(14 14 16 / 0.85);
   }
 }
 
-.pv-arc__item:focus-visible {
+.pages-arc__item:focus-visible {
   outline: 2px solid var(--c-accent);
   outline-offset: 3px;
 }
 
 /* (its name, beside it while pointed at) */
-.pv-arc__label {
+.pages-arc__label {
   position: absolute;
   top: 50%;
   left: calc(100% + 12px);
@@ -636,9 +865,21 @@ html[data-project-open] {
     translate 0.35s var(--ease-out);
 }
 
-.pv-arc__item:is(:hover, :focus-visible) .pv-arc__label {
+.pages-arc__item:is(:hover, :focus-visible) .pages-arc__label {
   opacity: 1;
   translate: 0 -50%;
+}
+
+/* (on a phone the name goes over the button) */
+.pages-arc[data-variant='dock'] .pages-arc__label {
+  top: auto;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  translate: -50% 6px;
+}
+
+.pages-arc[data-variant='dock'] .pages-arc__item:is(:hover, :focus-visible) .pages-arc__label {
+  translate: -50% 0;
 }
 
 /* The photos, two to a row under the first, which runs across. */
@@ -712,7 +953,7 @@ html[data-project-open] {
     margin-top: -64px;
   }
 
-  .pv-arc {
+  .pages-arc[data-variant='side'] {
     display: none;
   }
 
@@ -765,19 +1006,24 @@ html[data-project-open] {
     transition: none;
   }
 
-  .pv-arc__item,
-  .pv[data-arc] .pv-arc__item {
+  .pages-arc__item,
+  .pages-arc[data-variant] .pages-arc__item,
+  .pages-arc[data-on] .pages-arc__item {
     translate: 0 0;
   }
 
-  .pv-arc__line path {
+  .pj__swipe svg {
+    animation: none;
+  }
+
+  .pages-arc__line path {
     transition: none;
   }
 }
 
 /* Phones held sideways and other short screens: no room for the menu. */
 @media (max-height: 560px) {
-  .pv-arc {
+  .pages-arc[data-variant='side'] {
     display: none;
   }
 }

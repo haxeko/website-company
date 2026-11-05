@@ -26,6 +26,8 @@ const outDir = join(root, 'public/projects')
 const dataFile = join(root, 'public/data/projects.json')
 
 const CATEGORIES = ['construction', 'interior']
+/** The building types (src/pages/shared/projects/data.ts): the pages' filter. */
+const TYPES = ['townhouse', 'villa', 'garden-house', 'restaurant', 'cafe', 'shop']
 const LANGS = ['vi', 'en']
 
 const fail = (message) => {
@@ -84,6 +86,7 @@ for (const project of projects) {
   if (ids.has(project.id)) fail(`${project.id}: the id is used twice`)
   ids.add(project.id)
   if (!CATEGORIES.includes(project.category)) fail(`${project.id}: category is "construction" or "interior"`)
+  if (project.type != null && !TYPES.includes(project.type)) fail(`${project.id}: type is one of ${TYPES.join(', ')}`)
   if (!project.cover) fail(`${project.id}: "cover" is missing`)
   const files = []
   const cover = await photo(project, project.cover, 'cover', COVER_WIDTHS)
@@ -98,6 +101,7 @@ for (const project of projects) {
   list.push({
     id: project.id,
     category: project.category,
+    ...(project.type ? { type: project.type } : {}),
     ...(project.sample ? { sample: true } : {}),
     title: text(project.id, 'title', project.title, true),
     place: text(project.id, 'place', project.place),
